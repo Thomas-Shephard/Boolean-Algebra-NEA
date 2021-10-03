@@ -1,3 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using BooleanAlgebra.Lexer;
+using BooleanAlgebra.Lexer.Lexemes;
 
-Console.WriteLine("Hello World!");
+while (true) {
+    Console.Write("Enter text > ");
+    string rawText = Console.ReadLine() ?? "";
+    List<ILexeme> lexemes = Lexer.Lex(rawText).ToList();
+    lexemes.ForEach(Console.WriteLine);
+}
