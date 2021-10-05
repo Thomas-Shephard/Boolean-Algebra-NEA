@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using BooleanAlgebra.Lexer.Lexemes;
-using BooleanAlgebra.Parser.Syntax;
-using BooleanAlgebra.Parser.Syntax.Identifiers;
-using BooleanAlgebra.Parser.Syntax.Operands;
-using BooleanAlgebra.Parser.Syntax.Operators;
+using BooleanAlgebra.Syntax;
+using BooleanAlgebra.Syntax.Identifiers;
+using BooleanAlgebra.Syntax.Operands;
+using BooleanAlgebra.Syntax.Operators;
 
 namespace BooleanAlgebra.Parser {
     public static class Parser {

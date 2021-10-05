@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BooleanAlgebra.Lexer.Lexemes;
 
-namespace BooleanAlgebra.Parser.Syntax.Identifiers {
+namespace BooleanAlgebra.Syntax.Identifiers {
     public class SyntaxIdentifier : IEquatable<SyntaxIdentifier> {
         public LexemeIdentifier LexemeIdentifier { get; }
         public SyntaxIdentifierType SyntaxIdentifierType { get; }

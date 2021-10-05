@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BooleanAlgebra.Parser.Syntax.Operators {
+namespace BooleanAlgebra.Syntax.Operators {
     public class UnaryOperator : SyntaxItem {
         public string LexemeType { get; }
         public SyntaxItem SyntaxItem { get; }

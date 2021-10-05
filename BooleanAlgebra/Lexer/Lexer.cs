@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using BooleanAlgebra.Lexer.Lexemes;
+using BooleanAlgebra.Syntax.Identifiers;
 using BooleanAlgebra.Utils;
 
 namespace BooleanAlgebra.Lexer {

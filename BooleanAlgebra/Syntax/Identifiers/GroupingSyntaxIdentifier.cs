@@ -1,7 +1,7 @@
 ﻿using System;
 using BooleanAlgebra.Lexer.Lexemes;
 
-namespace BooleanAlgebra.Parser.Syntax.Identifiers {
+namespace BooleanAlgebra.Syntax.Identifiers {
     public class GroupingSyntaxIdentifier : SyntaxIdentifier {
         private LexemeIdentifier LexemeIdentifier2 { get; }
         

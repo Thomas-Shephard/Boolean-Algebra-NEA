@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BooleanAlgebra.Parser.Syntax {
+namespace BooleanAlgebra.Syntax {
     public abstract class SyntaxItem : IEquatable<SyntaxItem> {
         public abstract override string ToString();
         public abstract bool Equals(SyntaxItem? other);

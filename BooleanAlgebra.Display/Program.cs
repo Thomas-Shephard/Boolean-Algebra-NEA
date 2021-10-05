@@ -4,8 +4,6 @@ using System.Linq;
 using BooleanAlgebra.Lexer;
 using BooleanAlgebra.Lexer.Lexemes;
 using BooleanAlgebra.Parser;
-using BooleanAlgebra.Parser.Syntax;
-using BooleanAlgebra.Parser.Syntax.Operands;
 
 while (true) {
     Console.Write("Enter text > ");

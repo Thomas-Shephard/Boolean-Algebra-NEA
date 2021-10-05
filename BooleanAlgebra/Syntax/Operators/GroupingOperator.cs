@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BooleanAlgebra.Parser.Syntax.Operators {
+namespace BooleanAlgebra.Syntax.Operators {
     public class GroupingOperator : SyntaxItem {
         public SyntaxItem SyntaxItem { get; }
 

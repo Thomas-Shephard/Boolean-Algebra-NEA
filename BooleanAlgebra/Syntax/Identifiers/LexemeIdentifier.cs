@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace BooleanAlgebra.Lexer.Lexemes {
+namespace BooleanAlgebra.Syntax.Identifiers {
     public class LexemeIdentifier : IEquatable<LexemeIdentifier> {
         public string Name { get; }
         public bool IsContextRequired { get; }
