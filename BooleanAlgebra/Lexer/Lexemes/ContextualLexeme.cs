@@ -1,4 +1,5 @@
 ﻿using System;
+using BooleanAlgebra.Syntax.Identifiers;
 
 namespace BooleanAlgebra.Lexer.Lexemes {
     public class ContextualLexeme : ILexeme {

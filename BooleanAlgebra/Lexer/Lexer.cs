@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using BooleanAlgebra.Lexer.Lexemes;
+using BooleanAlgebra.Syntax.Identifiers;
 using BooleanAlgebra.Utils;
 
 namespace BooleanAlgebra.Lexer {
     public static class Lexer {
-        public static IEnumerable<ILexeme> Lex(string rawText) {
+        public static bool Lex(string rawText, out List<ILexeme> lexemes) {
             if (rawText is null)
                 throw new ArgumentNullException(nameof(rawText));
+            lexemes = new List<ILexeme>();
+            Func<char, bool>[] permittedCharacters = { CharUtils.IsDigit, CharUtils.IsVariable };
             uint currentPosition = 0;
 
             while (TryGetCharacterAtPosition(rawText, currentPosition, out char currentCharacter)) {
@@ -19,56 +22,33 @@ namespace BooleanAlgebra.Lexer {
                 }
 
                 uint startPosition = currentPosition;
-                string lexemeValue;
+                string lexemeValue = GenerateStringFromPattern(rawText, permittedCharacters
+                    .FirstOrDefault(permittedCharacter => permittedCharacter(currentCharacter)) ?? CharUtils.IsOtherCharacter, ref currentPosition);
 
-                if (currentCharacter.IsDigit()) {
-                    lexemeValue = GenerateNumber(rawText, ref currentPosition);
-                } else if (currentCharacter.IsVariable()) {
-                    lexemeValue = GenerateVariable(rawText, ref currentPosition);
-                } else {
-                    lexemeValue = currentCharacter.ToString();
-                    currentPosition++;
-                }
-                
                 LexemePosition lexemePosition = new(startPosition, currentPosition);
-                LexemeIdentifier lexemeIdentifierMatch = LexemeIdentifier.GetLexemeIdentifiers()
-                                                        .FirstOrDefault(lexemeIdentifier => lexemeIdentifier.RegexPattern.IsMatch(lexemeValue))
-                                                        ?? LexemeIdentifier.UNKNOWN;
-                
-                if (lexemeIdentifierMatch.IsContextRequired) {
-                    yield return new ContextualLexeme(lexemeIdentifierMatch, lexemePosition, lexemeValue);
-                } else {
-                    yield return new ContextFreeLexeme(lexemeIdentifierMatch, lexemePosition);
-                }
+                LexemeIdentifier lexemeIdentifier = IdentifierUtils.GetLexemeIdentifierFromString(lexemeValue);
+
+                lexemes.Add(lexemeIdentifier.IsContextRequired 
+                    ? new ContextualLexeme(lexemeIdentifier, lexemePosition, lexemeValue)
+                    : new ContextFreeLexeme(lexemeIdentifier, lexemePosition));
             }
+
+            return !lexemes.Any(lexeme => lexeme.LexemeIdentifier.Equals(IdentifierUtils.LEXEME_ERROR));
         }
 
-        private static string GenerateVariable(string rawText, ref uint currentPosition) {
-            StringBuilder outputVariable = new();
+        private static string GenerateStringFromPattern(string rawText, Func<char, bool> permittedCharacters, ref uint currentPosition) {
+            StringBuilder outputString = new();
 
-            while (TryGetCharacterAtPosition(rawText, currentPosition, out char currentCharacter) &&
-                   currentCharacter.IsVariable()) {
-                outputVariable.Append(currentCharacter);
+            while (TryGetCharacterAtPosition(rawText, currentPosition, out char currentCharacter) && permittedCharacters(currentCharacter)) {
+                outputString.Append(currentCharacter);
                 currentPosition++;
             }
 
-            return outputVariable.ToString();
-        }
-
-        private static string GenerateNumber(string rawText, ref uint currentPosition) {
-            StringBuilder outputNumber = new();
-
-            while (TryGetCharacterAtPosition(rawText, currentPosition, out char currentCharacter) &&
-                   currentCharacter.IsDigit()) {
-                outputNumber.Append(currentCharacter);
-                currentPosition++;
-            }
-
-            return outputNumber.ToString();
+            return outputString.ToString();
         }
 
         private static bool TryGetCharacterAtPosition(string rawText, uint currentPosition, out char currentCharacter) {
-            if (currentPosition < rawText.Length && currentPosition < int.MaxValue) {
+            if (currentPosition < rawText.Length) {
                 currentCharacter = rawText[(int) currentPosition];
                 return true;
             }
