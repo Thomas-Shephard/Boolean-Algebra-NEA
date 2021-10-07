@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using BooleanAlgebra.Lexer.Lexemes;
 using BooleanAlgebra.Syntax.Identifiers;
@@ -11,6 +10,7 @@ namespace BooleanAlgebra.Lexer {
         public static IEnumerable<ILexeme> Lex(string rawText) {
             if (rawText is null)
                 throw new ArgumentNullException(nameof(rawText));
+            List<ILexeme> lexemeList = new();
             uint currentPosition = 0;
 
             while (TryGetCharacterAtPosition(rawText, currentPosition, out char currentCharacter)) {
@@ -23,49 +23,37 @@ namespace BooleanAlgebra.Lexer {
                 string lexemeValue;
 
                 if (currentCharacter.IsDigit()) {
-                    lexemeValue = GenerateNumber(rawText, ref currentPosition);
+                    lexemeValue = GenerateStringFromPattern(rawText, CharUtils.IsDigit, ref currentPosition);
                 } else if (currentCharacter.IsVariable()) {
-                    lexemeValue = GenerateVariable(rawText, ref currentPosition);
+                    lexemeValue = GenerateStringFromPattern(rawText, CharUtils.IsVariable, ref currentPosition);
                 } else {
                     lexemeValue = currentCharacter.ToString();
                     currentPosition++;
                 }
                 
                 LexemePosition lexemePosition = new(startPosition, currentPosition);
-                LexemeIdentifier lexemeIdentifierMatch = IdentifierUtils.GetLexemeIdentifiers()
-                                                        .FirstOrDefault(lexemeIdentifier => lexemeIdentifier.Regex.IsMatch(lexemeValue))
-                                                        ?? IdentifierUtils.LEXEME_ERROR;
-                
-                if (lexemeIdentifierMatch.IsContextRequired) {
-                    yield return new ContextualLexeme(lexemeIdentifierMatch, lexemePosition, lexemeValue);
+                LexemeIdentifier lexemeIdentifier = IdentifierUtils.GetLexemeIdentifierFromString(lexemeValue);
+
+                if (lexemeIdentifier.IsContextRequired) {
+                    lexemeList.Add(new ContextualLexeme(lexemeIdentifier, lexemePosition, lexemeValue));
                 } else {
-                    yield return new ContextFreeLexeme(lexemeIdentifierMatch, lexemePosition);
+                    lexemeList.Add(new ContextFreeLexeme(lexemeIdentifier, lexemePosition));
                 }
             }
+
+            return lexemeList;
         }
 
-        private static string GenerateVariable(string rawText, ref uint currentPosition) {
-            StringBuilder outputVariable = new();
+        private static string GenerateStringFromPattern(string rawText, Func<char, bool> isCharacterMatch, ref uint currentPosition) {
+            StringBuilder outputString = new();
 
-            while (TryGetCharacterAtPosition(rawText, currentPosition, out char currentCharacter) &&
-                   currentCharacter.IsVariable()) {
-                outputVariable.Append(currentCharacter);
+            while (TryGetCharacterAtPosition(rawText, currentPosition, out char currentCharacter)) {
+                if (!isCharacterMatch(currentCharacter)) break;
+                outputString.Append(currentCharacter);
                 currentPosition++;
             }
 
-            return outputVariable.ToString();
-        }
-
-        private static string GenerateNumber(string rawText, ref uint currentPosition) {
-            StringBuilder outputNumber = new();
-
-            while (TryGetCharacterAtPosition(rawText, currentPosition, out char currentCharacter) &&
-                   currentCharacter.IsDigit()) {
-                outputNumber.Append(currentCharacter);
-                currentPosition++;
-            }
-
-            return outputNumber.ToString();
+            return outputString.ToString();
         }
 
         private static bool TryGetCharacterAtPosition(string rawText, uint currentPosition, out char currentCharacter) {
