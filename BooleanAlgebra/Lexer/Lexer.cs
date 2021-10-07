@@ -8,10 +8,10 @@ using BooleanAlgebra.Utils;
 
 namespace BooleanAlgebra.Lexer {
     public static class Lexer {
-        public static IEnumerable<ILexeme> Lex(string rawText) {
+        public static bool Lex(string rawText, out List<ILexeme> lexemes) {
             if (rawText is null)
                 throw new ArgumentNullException(nameof(rawText));
-            List<ILexeme> lexemeList = new();
+            lexemes = new List<ILexeme>();
             Func<char, bool>[] permittedCharacters = { CharUtils.IsDigit, CharUtils.IsVariable };
             uint currentPosition = 0;
 
@@ -28,12 +28,12 @@ namespace BooleanAlgebra.Lexer {
                 LexemePosition lexemePosition = new(startPosition, currentPosition);
                 LexemeIdentifier lexemeIdentifier = IdentifierUtils.GetLexemeIdentifierFromString(lexemeValue);
 
-                lexemeList.Add(lexemeIdentifier.IsContextRequired 
+                lexemes.Add(lexemeIdentifier.IsContextRequired 
                     ? new ContextualLexeme(lexemeIdentifier, lexemePosition, lexemeValue)
                     : new ContextFreeLexeme(lexemeIdentifier, lexemePosition));
             }
 
-            return lexemeList;
+            return !lexemes.Any(lexeme => lexeme.LexemeIdentifier.Equals(IdentifierUtils.LEXEME_ERROR));
         }
 
         private static string GenerateStringFromPattern(string rawText, Func<char, bool> permittedCharacters, ref uint currentPosition) {
