@@ -32,9 +32,9 @@ namespace BooleanAlgebra.Lexer {
                 }
                 
                 LexemePosition lexemePosition = new(startPosition, currentPosition);
-                LexemeIdentifier lexemeIdentifierMatch = LexemeIdentifier.GetLexemeIdentifiers()
-                                                        .FirstOrDefault(lexemeIdentifier => lexemeIdentifier.RegexPattern.IsMatch(lexemeValue))
-                                                        ?? LexemeIdentifier.UNKNOWN;
+                LexemeIdentifier lexemeIdentifierMatch = IdentifierUtils.GetLexemeIdentifiers()
+                                                        .FirstOrDefault(lexemeIdentifier => lexemeIdentifier.Regex.IsMatch(lexemeValue))
+                                                        ?? IdentifierUtils.LEXEME_ERROR;
                 
                 if (lexemeIdentifierMatch.IsContextRequired) {
                     yield return new ContextualLexeme(lexemeIdentifierMatch, lexemePosition, lexemeValue);
