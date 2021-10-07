@@ -15,5 +15,11 @@
                    character.IsDigit()  ||
                    character == 95; //_
         }
+
+        public static bool IsOtherCharacter(this char character) {
+            return !(character.IsLetter() 
+                     || character.IsDigit() 
+                     || character.IsVariable());
+        }
     }
 }

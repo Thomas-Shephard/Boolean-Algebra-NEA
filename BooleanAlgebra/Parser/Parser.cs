@@ -9,12 +9,12 @@ using BooleanAlgebra.Syntax.Operators;
 namespace BooleanAlgebra.Parser {
     public static class Parser {
         public static SyntaxItem? Parse(IReadOnlyList<ILexeme> lexemes) {
-            uint x = 0;
-            return InternalParse(lexemes, ref x);
+            uint currentPosition = 0;
+            return InternalParse(lexemes, ref currentPosition);
         }
 
         private static SyntaxItem? InternalParse(IReadOnlyList<ILexeme> lexemes, ref uint currentPosition, uint currentPrecedence = 0, LexemeIdentifier? endLexemeIdentifier = null, SyntaxItem? previousSyntaxItem = null) {
-            if(currentPrecedence < IdentifierUtils.GetMaximumPrecedence())
+            if(currentPrecedence < IdentifierUtils.GetMaximumSyntaxIdentifierPrecedence())
                 previousSyntaxItem = InternalParse(lexemes, ref currentPosition, currentPrecedence + 1, endLexemeIdentifier, previousSyntaxItem);
             
             if(!TryGetLexemeAtPosition(lexemes, currentPosition, out ILexeme currentLexeme) || currentLexeme.LexemeIdentifier.Equals(endLexemeIdentifier))

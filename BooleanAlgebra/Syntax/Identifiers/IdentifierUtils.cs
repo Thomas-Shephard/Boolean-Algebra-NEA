@@ -16,15 +16,19 @@ namespace BooleanAlgebra.Syntax.Identifiers {
             };
         }
 
+        public static LexemeIdentifier GetLexemeIdentifierFromString(string lexemeValue) {
+            return GetLexemeIdentifiers().FirstOrDefault(lexemeIdentifier => lexemeIdentifier.Regex.IsMatch(lexemeValue)) ?? LEXEME_ERROR;
+        }
+
         public static IEnumerable<LexemeIdentifier> GetLexemeIdentifiers() {
             return GetSyntaxIdentifiers().SelectMany(syntaxIdentifier => syntaxIdentifier.GetLexemeIdentifiers()).ToList();
         }
 
-        public static uint GetMaximumPrecedence() {
+        public static uint GetMaximumSyntaxIdentifierPrecedence() {
             return GetSyntaxIdentifiers().Max(syntaxIdentifier => syntaxIdentifier.Precedence);
         }
 
-        public static readonly LexemeIdentifier LEXEME_ERROR = new("ERROR", "", false);
+        public static readonly LexemeIdentifier LEXEME_ERROR = new("ERROR", "", true);
         public static readonly SingleSyntaxIdentifier SYNTAX_ERROR = new(LEXEME_ERROR, SyntaxIdentifierType.UNKNOWN, 0);
     }
 }
