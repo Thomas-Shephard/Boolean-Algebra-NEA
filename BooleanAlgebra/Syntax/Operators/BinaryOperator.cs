@@ -7,9 +7,18 @@ namespace BooleanAlgebra.Syntax.Operators {
         public string LexemeType { get; }
         public IEnumerable<SyntaxItem> SyntaxItems { get; }
 
+        public BinaryOperator(string lexemeType, SyntaxItem syntaxItem1, SyntaxItem syntaxItem2) 
+            : this(lexemeType, new[] {syntaxItem1, syntaxItem2}) { }
+
         public BinaryOperator(string lexemeType, IEnumerable<SyntaxItem> syntaxItems) {
+            if (syntaxItems is null)
+                throw new ArgumentNullException(nameof(syntaxItems));
+            IEnumerable<SyntaxItem> enumerable = syntaxItems.ToArray();
+            if (enumerable.Count() < 2) 
+                throw new ArgumentException("There must be at least two syntax items");
+            
             LexemeType = lexemeType;
-            SyntaxItems = syntaxItems;
+            SyntaxItems = enumerable;
         }
 
         public override string ToString() {

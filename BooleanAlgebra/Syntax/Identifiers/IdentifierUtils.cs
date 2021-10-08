@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace BooleanAlgebra.Syntax.Identifiers {
     public static class IdentifierUtils {
@@ -11,8 +10,8 @@ namespace BooleanAlgebra.Syntax.Identifiers {
                 new SingleSyntaxIdentifier(new LexemeIdentifier("AND", "^(?i)AND$", false), SyntaxIdentifierType.BINARY_OPERATOR, 2),
                 new SingleSyntaxIdentifier(new LexemeIdentifier("NOT", "^(?i)NOT$", false), SyntaxIdentifierType.UNARY_OPERATOR, 3),
                 new MultipleSyntaxIdentifier(new []{ new LexemeIdentifier("LEFT_PAREN", "^\\($", false), new LexemeIdentifier("RIGHT_PAREN", "^\\)$", false)  }, SyntaxIdentifierType.GROUPING_OPERATOR, 4),
-                new SingleSyntaxIdentifier(new LexemeIdentifier("VARIABLE", "^[A-Za-z]+$", true), SyntaxIdentifierType.VARIABLE_OPERAND, 5),
-                new SingleSyntaxIdentifier(new LexemeIdentifier("LITERAL", "^(?i)(TRUE|FALSE)$", true), SyntaxIdentifierType.LITERAL_OPERAND, 5),
+                new SingleSyntaxIdentifier(new LexemeIdentifier("VARIABLE", "^[A-Za-z]+$", true), SyntaxIdentifierType.OPERAND, 5),
+                new SingleSyntaxIdentifier(new LexemeIdentifier("LITERAL", "^(1|0)$", true), SyntaxIdentifierType.OPERAND, 5),
             };
         }
 

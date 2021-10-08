@@ -1,10 +1,10 @@
 ﻿using System;
 
 namespace BooleanAlgebra.Syntax.Operands {
-    public class BooleanOperand : SyntaxItem {
+    public class Operand : SyntaxItem {
         public string Value { get; }
 
-        public BooleanOperand(string value) {
+        public Operand(string value) {
             Value = value.ToUpper();
         }
 
@@ -13,8 +13,8 @@ namespace BooleanAlgebra.Syntax.Operands {
         }
 
         public override bool Equals(SyntaxItem? other) {
-            return other is BooleanOperand otherBooleanOperand
-                   && Value == otherBooleanOperand.Value;
+            return other is Operand otherOperand
+                   && Value == otherOperand.Value;
         }
 
         public override bool Equals(object? obj) {

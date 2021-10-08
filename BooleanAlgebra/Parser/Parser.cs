@@ -17,56 +17,31 @@ namespace BooleanAlgebra.Parser {
             if(currentPrecedence < IdentifierUtils.GetMaximumSyntaxIdentifierPrecedence())
                 previousSyntaxItem = InternalParse(lexemes, ref currentPosition, currentPrecedence + 1, endLexemeIdentifier, previousSyntaxItem);
             
-            if(!TryGetLexemeAtPosition(lexemes, currentPosition, out ILexeme currentLexeme) || currentLexeme.LexemeIdentifier.Equals(endLexemeIdentifier))
-                return previousSyntaxItem;
-
-            if (TryGetSyntaxIdentifierFromLexeme(currentLexeme, currentPrecedence, out ISyntaxIdentifier currentSyntaxIdentifier)) {
-                ContextualLexeme? contextualLexeme = null;
-                if (currentLexeme.LexemeIdentifier.IsContextRequired) {
-                    if (currentLexeme is not ContextualLexeme tempContextualLexeme) 
-                        throw new ParserException(currentLexeme.LexemePosition, "Was not of type contextual lexeme");
-                    contextualLexeme = tempContextualLexeme;
-                }
-
+            while(TryGetLexemeAtPosition(lexemes, currentPosition, out ILexeme currentLexeme)) {
+                if (currentLexeme.LexemeIdentifier.Equals(endLexemeIdentifier))
+                    break;
+                if (!TryGetSyntaxIdentifierFromLexeme(currentLexeme, currentPrecedence, out ISyntaxIdentifier currentSyntaxIdentifier))
+                    break;
+                
+                currentPosition++;
                 SyntaxItem? nextSyntaxItem;
                 switch (currentSyntaxIdentifier.SyntaxIdentifierType) {
-                    case SyntaxIdentifierType.LITERAL_OPERAND:
+                    case SyntaxIdentifierType.OPERAND:
                         if (previousSyntaxItem is not null)
                             throw new ParserException(currentLexeme.LexemePosition, "Expected null");
-                        if(contextualLexeme is null)
-                            throw new ParserException(currentLexeme.LexemePosition, "Was not of type contextual lexeme");
-                        currentPosition++;
-                        previousSyntaxItem = new BooleanOperand(contextualLexeme.LexemeValue);
-                        break;
-                    case SyntaxIdentifierType.VARIABLE_OPERAND:
-                        if (previousSyntaxItem is not null)
-                            throw new ParserException(currentLexeme.LexemePosition, "Expected null");
-                        if(contextualLexeme is null)
-                            throw new ParserException(currentLexeme.LexemePosition, "Was not of type contextual lexeme");
-                        currentPosition++;
-                        previousSyntaxItem = new VariableOperand(contextualLexeme.LexemeValue);
+                        previousSyntaxItem = new Operand((currentLexeme as ContextualLexeme)?.LexemeValue ?? throw new ParserException(currentLexeme.LexemePosition, "Was not of type contextual lexeme"));
                         break;
                     case SyntaxIdentifierType.BINARY_OPERATOR:
                         if (previousSyntaxItem is null)
                             throw new ParserException(currentLexeme.LexemePosition, "Expected not null");
-                        List<SyntaxItem> syntaxItems = new() {previousSyntaxItem};
-                        do {
-                            currentPosition++;
-                            nextSyntaxItem = InternalParse(lexemes, ref currentPosition, currentPrecedence + 1, endLexemeIdentifier);
-                            if (nextSyntaxItem is null)
-                                throw new ParserException(currentLexeme.LexemePosition,
-                                    $"Expected operand after highlighted token @ position '{currentLexeme.LexemePosition}'");
-                            syntaxItems.Add(nextSyntaxItem);
-                        } while (TryGetLexemeAtPosition(lexemes, currentPosition, out currentLexeme)
-                                 && TryGetSyntaxIdentifierFromLexeme(currentLexeme, currentPrecedence, out ISyntaxIdentifier tempSyntaxIdentifier)
-                                 && currentSyntaxIdentifier.Equals(tempSyntaxIdentifier));
-
-                        previousSyntaxItem = new BinaryOperator(currentSyntaxIdentifier.GetLexemeIdentifiers().First().Name, syntaxItems);
+                        nextSyntaxItem = InternalParse(lexemes, ref currentPosition, currentPrecedence + 1, endLexemeIdentifier);
+                        if (nextSyntaxItem is null)
+                            throw new ParserException(currentLexeme.LexemePosition, $"Expected operand after highlighted token @ position '{currentLexeme.LexemePosition}'");
+                        previousSyntaxItem = new BinaryOperator(currentSyntaxIdentifier.GetLexemeIdentifiers().First().Name, previousSyntaxItem, nextSyntaxItem);
                         break;
                     case SyntaxIdentifierType.UNARY_OPERATOR:
                         if (previousSyntaxItem is not null)
                             throw new ParserException(currentLexeme.LexemePosition, "Expected null");
-                        currentPosition++;
                         nextSyntaxItem = InternalParse(lexemes, ref currentPosition, currentPrecedence, endLexemeIdentifier);
                         if (nextSyntaxItem is null)
                             throw new ParserException(currentLexeme.LexemePosition, "Expected not null");
@@ -76,30 +51,20 @@ namespace BooleanAlgebra.Parser {
                         LexemeIdentifier endIdentifier = currentSyntaxIdentifier.GetLexemeIdentifiers().Last();
                         if (previousSyntaxItem is not null)
                             throw new ParserException(currentLexeme.LexemePosition, "Expected null");
-                        currentPosition++;
                         nextSyntaxItem = InternalParse(lexemes, ref currentPosition, 0, endIdentifier);
                         if (nextSyntaxItem is null)
                             throw new ParserException(currentLexeme.LexemePosition, "Expected not null");
                         if (!TryGetLexemeAtPosition(lexemes, currentPosition, out currentLexeme) ||
                             !currentLexeme.LexemeIdentifier.Equals(endIdentifier))
-                            throw new ParserException(currentLexeme.LexemePosition,$"Expected right parenthesis after highlighted token");
+                            throw new ParserException(currentLexeme.LexemePosition,"Expected right parenthesis after highlighted token");
                         currentPosition++;
                         previousSyntaxItem = new GroupingOperator(nextSyntaxItem);
                         break;
                     default:
                         throw new ParserException(currentLexeme.LexemePosition, "Unknown token");
                 }
-                
             }
 
-            if (currentPrecedence == 0 && currentLexeme is not null && !currentLexeme.LexemeIdentifier.Equals(endLexemeIdentifier)) {
-                if (previousSyntaxItem is null)
-                    throw new ParserException(currentLexeme.LexemePosition,
-                        $"Unexpected token (highlighted) @ position '{currentLexeme.LexemePosition}', was expecting a unary operator");
-                throw new ParserException(currentLexeme.LexemePosition,
-                    $"Unexpected token (highlighted) @ position '{currentLexeme.LexemePosition}', was expecting a binary operator");
-            }
-            
             return previousSyntaxItem;
         }
         
