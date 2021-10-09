@@ -8,7 +8,7 @@ namespace BooleanAlgebra.Lexer.Lexemes {
 
         public LexemePosition(uint startPosition, uint endPosition) {
             if (endPosition < startPosition)
-                throw new ArgumentException("Start position cannot be greater than the end position");
+                throw new ArgumentException($"The parameter {nameof(startPosition)} cannot be greater than the parameter {nameof(endPosition)}.");
             StartPosition = startPosition;
             EndPosition = endPosition;
         }

@@ -6,7 +6,7 @@ namespace BooleanAlgebra.Lexer.Lexemes {
         public string LexemeValue { get; }
 
         public ContextualLexeme(LexemeIdentifier lexemeIdentifier, LexemePosition lexemePosition, string lexemeValue) : base (lexemeIdentifier, lexemePosition) {
-            LexemeValue = lexemeValue;
+            LexemeValue = lexemeValue ?? throw new ArgumentNullException(nameof(lexemeValue));
         }
         
         public override string ToString() {

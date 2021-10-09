@@ -7,8 +7,8 @@ namespace BooleanAlgebra.Lexer.Lexemes {
         public LexemePosition LexemePosition { get; }
         
         public Lexeme(LexemeIdentifier lexemeIdentifier, LexemePosition lexemePosition) {
-            LexemeIdentifier = lexemeIdentifier;
-            LexemePosition = lexemePosition;
+            LexemeIdentifier = lexemeIdentifier ?? throw new ArgumentNullException(nameof(lexemeIdentifier));
+            LexemePosition = lexemePosition ?? throw new ArgumentNullException(nameof(lexemePosition));
         }
 
         public override string ToString() {
