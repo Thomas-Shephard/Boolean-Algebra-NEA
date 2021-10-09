@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BooleanAlgebra.Identifiers;
 using BooleanAlgebra.Lexer.Lexemes;
-using BooleanAlgebra.Syntax;
-using BooleanAlgebra.Syntax.Identifiers;
-using BooleanAlgebra.Syntax.Operands;
-using BooleanAlgebra.Syntax.Operators;
+using BooleanAlgebra.Parser.Syntax;
 
 namespace BooleanAlgebra.Parser {
     public static class Parser {

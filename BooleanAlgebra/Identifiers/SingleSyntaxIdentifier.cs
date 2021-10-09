@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BooleanAlgebra.Syntax.Identifiers {
+namespace BooleanAlgebra.Identifiers {
     public class SingleSyntaxIdentifier : ISyntaxIdentifier {
         public LexemeIdentifier LexemeIdentifier { get; }
         public SyntaxIdentifierType SyntaxIdentifierType { get; }

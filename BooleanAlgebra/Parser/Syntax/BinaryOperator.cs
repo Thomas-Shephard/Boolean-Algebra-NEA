@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BooleanAlgebra.Syntax.Operators {
+namespace BooleanAlgebra.Parser.Syntax {
     public class BinaryOperator : SyntaxItem {
         public string LexemeType { get; }
         public IEnumerable<SyntaxItem> SyntaxItems { get; }

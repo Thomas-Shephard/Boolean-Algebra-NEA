@@ -1,11 +1,13 @@
 ﻿using System;
-using BooleanAlgebra.Syntax.Identifiers;
+using BooleanAlgebra.Identifiers;
 
 namespace BooleanAlgebra.Lexer.Lexemes {
     public class ContextualLexeme : Lexeme, IEquatable<ContextualLexeme> {
         public string LexemeValue { get; }
 
         public ContextualLexeme(LexemeIdentifier lexemeIdentifier, LexemePosition lexemePosition, string lexemeValue) : base (lexemeIdentifier, lexemePosition) {
+            if(LexemePosition.Length != lexemeValue.Length)
+                throw new ArgumentException($"The parameter {nameof(lexemePosition)} must be of an equal length to the parameter {nameof(lexemeValue)}.");
             LexemeValue = lexemeValue ?? throw new ArgumentNullException(nameof(lexemeValue));
         }
         

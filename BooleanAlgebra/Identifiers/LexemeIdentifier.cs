@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace BooleanAlgebra.Syntax.Identifiers {
+namespace BooleanAlgebra.Identifiers {
     public class LexemeIdentifier : IEquatable<LexemeIdentifier> {
         public string Name { get; }
         public Regex Regex { get; }

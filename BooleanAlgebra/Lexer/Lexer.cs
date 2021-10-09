@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BooleanAlgebra.Identifiers;
 using BooleanAlgebra.Lexer.Lexemes;
-using BooleanAlgebra.Syntax.Identifiers;
-using BooleanAlgebra.Utils;
 
 namespace BooleanAlgebra.Lexer {
     public static class Lexer {
@@ -21,7 +20,7 @@ namespace BooleanAlgebra.Lexer {
 
                 uint startPosition = currentPosition;
                 
-                CharacterPattern? characterPattern = CharUtils.GetCharacterPatterns().FirstOrDefault(x => x.IsCharMatch(currentCharacter));
+                LexemePattern? characterPattern = LexemePattern.GetLexemePatterns().FirstOrDefault(x => x.IsCharacterMatch(currentCharacter));
 
                 string lexemeValue;
                 if (characterPattern is null) {
@@ -42,11 +41,11 @@ namespace BooleanAlgebra.Lexer {
             return !lexemes.Any(lexeme => lexeme.LexemeIdentifier.Equals(IdentifierUtils.LEXEME_UNKNOWN));
         }
 
-        private static string GenerateStringFromPattern(string rawText, CharacterPattern characterPattern, ref uint currentPosition) {
+        private static string GenerateStringFromPattern(string rawText, LexemePattern lexemePattern, ref uint currentPosition) {
             StringBuilder outputString = new();
 
             while (TryGetCharacterAtPosition(rawText, currentPosition, out char currentCharacter)) {
-                if(!characterPattern.IsCharMatch(currentCharacter)) break;
+                if(!lexemePattern.IsCharacterMatch(currentCharacter)) break;
                 outputString.Append(currentCharacter);
                 currentPosition++;
             }

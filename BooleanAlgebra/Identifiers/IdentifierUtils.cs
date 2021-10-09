@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace BooleanAlgebra.Syntax.Identifiers {
+namespace BooleanAlgebra.Identifiers {
     public static class IdentifierUtils {
         public static IEnumerable<ISyntaxIdentifier> GetSyntaxIdentifiers() {
             return new [] {

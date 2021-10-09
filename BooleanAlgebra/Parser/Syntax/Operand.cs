@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BooleanAlgebra.Syntax.Operands {
+namespace BooleanAlgebra.Parser.Syntax {
     public class Operand : SyntaxItem {
         public string Value { get; }
 

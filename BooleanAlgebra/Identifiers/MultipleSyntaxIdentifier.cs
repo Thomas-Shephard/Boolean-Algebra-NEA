@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BooleanAlgebra.Syntax.Identifiers {
+namespace BooleanAlgebra.Identifiers {
     public class MultipleSyntaxIdentifier : ISyntaxIdentifier {
         public LexemeIdentifier[] LexemeIdentifiers { get; }
         public SyntaxIdentifierType SyntaxIdentifierType { get; }

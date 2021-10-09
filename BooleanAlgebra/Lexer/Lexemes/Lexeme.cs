@@ -1,5 +1,5 @@
 ﻿using System;
-using BooleanAlgebra.Syntax.Identifiers;
+using BooleanAlgebra.Identifiers;
 
 namespace BooleanAlgebra.Lexer.Lexemes {
     public class Lexeme : IEquatable<Lexeme> {

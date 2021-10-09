@@ -1,4 +1,4 @@
-﻿namespace BooleanAlgebra.Syntax.Identifiers {
+﻿namespace BooleanAlgebra.Identifiers {
     public enum SyntaxIdentifierType {
         BINARY_OPERATOR,
         UNARY_OPERATOR,
