@@ -2,11 +2,11 @@
 using BooleanAlgebra.Syntax.Identifiers;
 
 namespace BooleanAlgebra.Lexer.Lexemes {
-    public class ContextFreeLexeme : ILexeme {
+    public class Lexeme : IEquatable<Lexeme> {
         public LexemeIdentifier LexemeIdentifier { get; }
         public LexemePosition LexemePosition { get; }
         
-        public ContextFreeLexeme(LexemeIdentifier lexemeIdentifier, LexemePosition lexemePosition) {
+        public Lexeme(LexemeIdentifier lexemeIdentifier, LexemePosition lexemePosition) {
             LexemeIdentifier = lexemeIdentifier;
             LexemePosition = lexemePosition;
         }
@@ -15,14 +15,14 @@ namespace BooleanAlgebra.Lexer.Lexemes {
             return $"[{LexemeIdentifier}, {LexemePosition}]";
         }
 
-        public bool Equals(ILexeme? other) {
-            return other is ContextFreeLexeme otherContextFreeLexeme
-                   && LexemeIdentifier.Equals(otherContextFreeLexeme.LexemeIdentifier)
-                   && LexemePosition.Equals(otherContextFreeLexeme.LexemePosition);
+        public bool Equals(Lexeme? other) {
+            return other is not null
+                   && LexemeIdentifier.Equals(other.LexemeIdentifier)
+                   && LexemePosition.Equals(other.LexemePosition);
         }
 
         public override bool Equals(object? obj) {
-            return Equals(obj as ILexeme);
+            return Equals(obj as Lexeme);
         }
 
         public override int GetHashCode() {

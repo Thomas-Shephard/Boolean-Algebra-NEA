@@ -8,9 +8,9 @@ using BooleanAlgebra.Utils;
 
 namespace BooleanAlgebra.Lexer {
     public static class Lexer {
-        public static bool Lex(string rawText, out List<ILexeme> lexemes) {
+        public static bool Lex(string rawText, out List<Lexeme> lexemes) {
             if (rawText is null) throw new ArgumentNullException(nameof(rawText));
-            lexemes = new List<ILexeme>();
+            lexemes = new List<Lexeme>();
             uint currentPosition = 0;
 
             while (TryGetCharacterAtPosition(rawText, currentPosition, out char currentCharacter)) {
@@ -36,7 +36,7 @@ namespace BooleanAlgebra.Lexer {
                 
                 lexemes.Add(lexemeIdentifier.IsContextRequired 
                     ? new ContextualLexeme(lexemeIdentifier, lexemePosition, lexemeValue)
-                    : new ContextFreeLexeme(lexemeIdentifier, lexemePosition));
+                    : new Lexeme(lexemeIdentifier, lexemePosition));
             }
 
             return !lexemes.Any(lexeme => lexeme.LexemeIdentifier.Equals(IdentifierUtils.LEXEME_UNKNOWN));
@@ -46,7 +46,7 @@ namespace BooleanAlgebra.Lexer {
             StringBuilder outputString = new();
 
             while (TryGetCharacterAtPosition(rawText, currentPosition, out char currentCharacter)) {
-                if(!characterPattern.IsCharMatch(currentCharacter)) continue;
+                if(!characterPattern.IsCharMatch(currentCharacter)) break;
                 outputString.Append(currentCharacter);
                 currentPosition++;
             }

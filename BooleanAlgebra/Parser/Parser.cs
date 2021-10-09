@@ -9,18 +9,18 @@ using BooleanAlgebra.Syntax.Operators;
 
 namespace BooleanAlgebra.Parser {
     public static class Parser {
-        public static SyntaxItem? Parse(IReadOnlyList<ILexeme> lexemes) {
+        public static SyntaxItem? Parse(IReadOnlyList<Lexeme> lexemes) {
             uint currentPosition = 0;
             return InternalParse(lexemes, ref currentPosition);
         }
 
-        private static SyntaxItem? InternalParse(IReadOnlyList<ILexeme> lexemes, ref uint currentPosition, uint currentPrecedence = 0, LexemeIdentifier? endLexemeIdentifier = null, SyntaxItem? previousSyntaxItem = null) {
+        private static SyntaxItem? InternalParse(IReadOnlyList<Lexeme> lexemes, ref uint currentPosition, uint currentPrecedence = 0, LexemeIdentifier? endLexemeIdentifier = null, SyntaxItem? previousSyntaxItem = null) {
             if (lexemes.Any(lexeme => lexeme.LexemeIdentifier.Equals(IdentifierUtils.LEXEME_UNKNOWN)))
                 throw new ArgumentException($"The parameter {nameof(lexemes)} must not contain an unknown lexeme.");
             if(currentPrecedence < IdentifierUtils.GetMaximumSyntaxIdentifierPrecedence())
                 previousSyntaxItem = InternalParse(lexemes, ref currentPosition, currentPrecedence + 1, endLexemeIdentifier, previousSyntaxItem);
             
-            while(TryGetLexemeAtPosition(lexemes, currentPosition, out ILexeme currentLexeme)) {
+            while(TryGetLexemeAtPosition(lexemes, currentPosition, out Lexeme currentLexeme)) {
                 if (currentLexeme.LexemeIdentifier.Equals(endLexemeIdentifier))
                     break;
                 if (!TryGetSyntaxIdentifierFromLexeme(currentLexeme, currentPrecedence, out ISyntaxIdentifier currentSyntaxIdentifier))
@@ -71,19 +71,19 @@ namespace BooleanAlgebra.Parser {
             return previousSyntaxItem;
         }
         
-        private static bool TryGetSyntaxIdentifierFromLexeme(ILexeme currentLexeme, uint currentPrecedence, out ISyntaxIdentifier currentSyntaxIdentifier) {
+        private static bool TryGetSyntaxIdentifierFromLexeme(Lexeme currentLexeme, uint currentPrecedence, out ISyntaxIdentifier currentSyntaxIdentifier) {
             currentSyntaxIdentifier = IdentifierUtils.GetSyntaxIdentifiers().FirstOrDefault(syntaxIdentifier => syntaxIdentifier.GetLexemeIdentifiers().Any(lexemeIdentifier => Equals(lexemeIdentifier, currentLexeme.LexemeIdentifier)) && syntaxIdentifier.Precedence == currentPrecedence) 
                                       ?? IdentifierUtils.SYNTAX_UNKNOWN;
             return currentSyntaxIdentifier.SyntaxIdentifierType is not SyntaxIdentifierType.UNKNOWN;
         }
         
-        private static bool TryGetLexemeAtPosition(IReadOnlyList<ILexeme> lexemes, uint currentPosition, out ILexeme currentLexeme) {
+        private static bool TryGetLexemeAtPosition(IReadOnlyList<Lexeme> lexemes, uint currentPosition, out Lexeme currentLexeme) {
             if (currentPosition < lexemes.Count && currentPosition < int.MaxValue) {
                 currentLexeme = lexemes[(int)currentPosition];
                 return true;
             }
 
-            currentLexeme = new ContextFreeLexeme(IdentifierUtils.LEXEME_UNKNOWN, new LexemePosition(currentPosition));
+            currentLexeme = new Lexeme(IdentifierUtils.LEXEME_UNKNOWN, new LexemePosition(currentPosition));
             return false;
         }
     }

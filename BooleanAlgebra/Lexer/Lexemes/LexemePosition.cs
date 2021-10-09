@@ -13,10 +13,7 @@ namespace BooleanAlgebra.Lexer.Lexemes {
             EndPosition = endPosition;
         }
 
-        public LexemePosition(uint startPosition) {
-            StartPosition = startPosition;
-            EndPosition = startPosition;
-        }
+        public LexemePosition(uint startPosition) : this(startPosition, startPosition) { }
         
         public override string ToString() {
             return $"[{StartPosition}, {EndPosition}]";

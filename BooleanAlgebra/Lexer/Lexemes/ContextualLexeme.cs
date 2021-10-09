@@ -2,14 +2,10 @@
 using BooleanAlgebra.Syntax.Identifiers;
 
 namespace BooleanAlgebra.Lexer.Lexemes {
-    public class ContextualLexeme : ILexeme {
-        public LexemeIdentifier LexemeIdentifier { get; }
-        public LexemePosition LexemePosition { get; }
+    public class ContextualLexeme : Lexeme, IEquatable<ContextualLexeme> {
         public string LexemeValue { get; }
 
-        public ContextualLexeme(LexemeIdentifier lexemeIdentifier, LexemePosition lexemePosition, string lexemeValue) {
-            LexemeIdentifier = lexemeIdentifier;
-            LexemePosition = lexemePosition;
+        public ContextualLexeme(LexemeIdentifier lexemeIdentifier, LexemePosition lexemePosition, string lexemeValue) : base (lexemeIdentifier, lexemePosition) {
             LexemeValue = lexemeValue;
         }
         
@@ -17,15 +13,15 @@ namespace BooleanAlgebra.Lexer.Lexemes {
             return $"[{LexemeIdentifier}, {LexemeValue}, {LexemePosition}]";
         }
         
-        public bool Equals(ILexeme? other) {
-            return other is ContextualLexeme otherContextualLexeme
-                   && LexemeIdentifier.Equals(otherContextualLexeme.LexemeIdentifier)
-                   && LexemePosition.Equals(otherContextualLexeme.LexemePosition)
-                   && LexemeValue == otherContextualLexeme.LexemeValue;
+        public bool Equals(ContextualLexeme? other) {
+            return other is not null
+                   && LexemeIdentifier.Equals(other.LexemeIdentifier)
+                   && LexemePosition.Equals(other.LexemePosition)
+                   && LexemeValue == other.LexemeValue;
         }
 
         public override bool Equals(object? obj) {
-            return Equals(obj as ILexeme);
+            return Equals(obj as ContextualLexeme);
         }
 
         public override int GetHashCode() {

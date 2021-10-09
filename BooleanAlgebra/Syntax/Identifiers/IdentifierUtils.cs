@@ -5,7 +5,17 @@ using System.Linq;
 namespace BooleanAlgebra.Syntax.Identifiers {
     public static class IdentifierUtils {
         public static IEnumerable<ISyntaxIdentifier> GetSyntaxIdentifiers() {
-            return Array.Empty<ISyntaxIdentifier>();
+            return new [] {
+                (ISyntaxIdentifier)
+                new SingleSyntaxIdentifier(new LexemeIdentifier("OR", "^(?i)OR$", false), SyntaxIdentifierType.BINARY_OPERATOR, 1),
+                new SingleSyntaxIdentifier(new LexemeIdentifier("XOR", "^(?i)XOR$", false), SyntaxIdentifierType.BINARY_OPERATOR, 2),
+                new SingleSyntaxIdentifier(new LexemeIdentifier("AND", "^(?i)AND$", false), SyntaxIdentifierType.BINARY_OPERATOR, 3),
+                new SingleSyntaxIdentifier(new LexemeIdentifier("NOT", "^(?i)NOT$", false), SyntaxIdentifierType.UNARY_OPERATOR, 4),
+                new MultipleSyntaxIdentifier(new []{ new LexemeIdentifier("LEFT_PAREN", "^\\($", false), new LexemeIdentifier("RIGHT_PAREN", "^\\)$", false)  }, SyntaxIdentifierType.GROUPING_OPERATOR, 5),
+                new SingleSyntaxIdentifier(new LexemeIdentifier("VARIABLE", "^[A-Za-z]+$", true), SyntaxIdentifierType.OPERAND, 6),
+                new SingleSyntaxIdentifier(new LexemeIdentifier("LITERAL", "^(1|0)$", true), SyntaxIdentifierType.OPERAND, 6),
+            };
+            //return Array.Empty<ISyntaxIdentifier>();
         }
 
         public static LexemeIdentifier GetLexemeIdentifierFromString(string lexemeValue) {

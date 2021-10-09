@@ -13,7 +13,7 @@ while (true) {
         Console.WriteLine($"Debug mode has been {(isDebugModeEnabled ? "enabled" : "disabled")}");
         continue;
     }
-    bool hasLexedSuccessfully = Lexer.Lex(rawText, out List<ILexeme> lexemes);
+    bool hasLexedSuccessfully = Lexer.Lex(rawText, out List<Lexeme> lexemes);
     if (!hasLexedSuccessfully) {
         Console.WriteLine("Unknown lexeme identified in input string");
         lexemes.ForEach(Console.WriteLine);
