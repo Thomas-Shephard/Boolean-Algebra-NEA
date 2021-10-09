@@ -1,25 +1,28 @@
-﻿namespace BooleanAlgebra.Utils {
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace BooleanAlgebra.Utils {
     public static class CharUtils {
-        public static bool IsLetter(this char character) {
-            return character >= 65 && character <= 90 || //A-Z 
-                   character >= 97 && character <= 122;  //a-z
+        public static IEnumerable<CharacterPattern> GetCharacterPatterns() {
+            return new[] {
+                new CharacterPattern(new[] { '.' }, new[] { new Tuple<int, int>('0', '9') }),
+                new CharacterPattern(new[] { '_' }, new[] { new Tuple<int, int>('A', 'Z'), new Tuple<int, int>('a', 'z') }),
+            };
         }
-        
-        public static bool IsDigit(this char character) {
-            return character >= 48 && character <= 57 || //0-9
-                   character == 46;                      //.
-        }
-        
-        public static bool IsVariable(this char character) {
-            return character.IsLetter() ||
-                   character.IsDigit()  ||
-                   character == 95; //_
+    }
+
+    public class CharacterPattern {
+        private readonly char[] _acceptedCharacters;
+        private readonly Tuple<int, int>[] _acceptedCharacterBounds;
+
+        public CharacterPattern(char[] acceptedCharacters, Tuple<int, int>[] acceptedCharacterBounds) {
+            _acceptedCharacters = acceptedCharacters;
+            _acceptedCharacterBounds = acceptedCharacterBounds;
         }
 
-        public static bool IsOtherCharacter(this char character) {
-            return !(character.IsLetter() 
-                     || character.IsDigit() 
-                     || character.IsVariable());
+        public bool IsCharMatch(char character) {
+            return _acceptedCharacters.Contains(character) || _acceptedCharacterBounds.Any(acceptedCharBound => character >= acceptedCharBound.Item1 && character <= acceptedCharBound.Item2);
         }
     }
 }

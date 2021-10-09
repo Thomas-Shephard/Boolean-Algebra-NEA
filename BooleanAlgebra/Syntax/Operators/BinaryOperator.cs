@@ -22,7 +22,7 @@ namespace BooleanAlgebra.Syntax.Operators {
         }
 
         public override string ToString() {
-            return SyntaxItems.Aggregate("(", (current, operand) => current + operand + " " + LexemeType + " ")[..^(LexemeType.ToString().Length + 2)] + ")";
+            return SyntaxItems.Aggregate("(", (current, operand) => current + operand + " " + LexemeType + " ")[..^(LexemeType.Length + 2)] + ")";
         }
 
         public override bool Equals(SyntaxItem? other) {
