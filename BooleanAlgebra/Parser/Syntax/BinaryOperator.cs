@@ -13,23 +13,27 @@ namespace BooleanAlgebra.Parser.Syntax {
         public BinaryOperator(string lexemeType, IEnumerable<SyntaxItem> syntaxItems) {
             if (syntaxItems is null)
                 throw new ArgumentNullException(nameof(syntaxItems));
-            IEnumerable<SyntaxItem> enumerable = syntaxItems.ToArray();
-            if (enumerable.Count() < 2) 
+            List<SyntaxItem> enumerable = syntaxItems.ToList();
+            if (enumerable.Count < 2) 
                 throw new ArgumentException("There must be at least two syntax items");
-            
             Value = lexemeType;
             SyntaxItems = enumerable.ToList();
+            
+            bool hasFoundMatch;
+            do {
+                hasFoundMatch = false;
+                for (int i = SyntaxItems.Count - 1; i >= 0; i--) {
+                    if (SyntaxItems[i] is not BinaryOperator binaryOperator ||
+                        binaryOperator.Value != lexemeType) continue;
+                    SyntaxItems.RemoveAt(i);
+                    binaryOperator.SyntaxItems.ForEach(syntaxItem => SyntaxItems.Add(syntaxItem));
+                    hasFoundMatch = true;
+                }
+            } while (hasFoundMatch);
         }
-
-        public IEnumerable<BinaryOperator> GetConstituentBinaryOperators(int startPosition = 0) {
-            List<BinaryOperator> returnValue = new();
-            for (int currentPosition = startPosition + 1; currentPosition < SyntaxItems.Count; currentPosition++) {
-                returnValue.Add(new BinaryOperator(Value, SyntaxItems[startPosition], SyntaxItems[currentPosition]));   
-            }
-
-            if (startPosition + 1 < SyntaxItems.Count)
-                returnValue = returnValue.Concat(GetConstituentBinaryOperators(startPosition + 1)).ToList();
-            return returnValue;
+        
+        public override SyntaxItem[] GetAllSyntaxItems() {
+            return new[] {this}.Concat(SyntaxItems).ToArray();
         }
 
         public override SyntaxItem[] GetSyntaxItems() {

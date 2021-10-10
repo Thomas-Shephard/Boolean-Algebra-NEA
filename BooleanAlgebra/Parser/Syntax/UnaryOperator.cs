@@ -1,17 +1,22 @@
 ﻿using System;
+using System.Linq;
 
 namespace BooleanAlgebra.Parser.Syntax {
     public class UnaryOperator : SyntaxItem {
         public override string Value { get; }
-        public SyntaxItem SyntaxItem { get; }
+        public SyntaxItem SyntaxItem { get; set; }
 
         public UnaryOperator(string lexemeType, SyntaxItem syntaxItem) {
             Value = lexemeType ?? throw new ArgumentNullException(nameof(lexemeType));
             SyntaxItem = syntaxItem ?? throw new ArgumentNullException(nameof(syntaxItem));
         }
         
+        public override SyntaxItem[] GetAllSyntaxItems() {
+            return new[] {this}.Concat(SyntaxItem.GetAllSyntaxItems()).ToArray();
+        }
+        
         public override SyntaxItem[] GetSyntaxItems() {
-            return new[] {SyntaxItem};
+            return new []{ SyntaxItem };
         }
 
         public override string ToString() {

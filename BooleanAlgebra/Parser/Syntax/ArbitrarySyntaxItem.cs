@@ -7,9 +7,13 @@ namespace BooleanAlgebra.Parser.Syntax {
         public ArbitrarySyntaxItem(string value) {
             Value = value ?? throw new ArgumentNullException(nameof(value));
         }
+        
+        public override SyntaxItem[] GetAllSyntaxItems() {
+            return new SyntaxItem[] {this};
+        }
 
         public override string ToString() {
-            return $"'{Value}'";
+            return $"'Arbitrary {Value}'";
         }
         
         public override bool Equals(SyntaxItem? other) {
