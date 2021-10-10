@@ -35,10 +35,20 @@ namespace BooleanAlgebra.Parser {
                     case SyntaxIdentifierType.BINARY_OPERATOR:
                         if (previousSyntaxItem is null)
                             throw new ParserException(currentLexeme.LexemePosition, "Expected not null before (x001)");
-                        nextSyntaxItem = InternalParse(lexemes, ref currentPosition, currentPrecedence + 1, endLexemeIdentifier);
-                        if (nextSyntaxItem is null)
-                            throw new ParserException(currentLexeme.LexemePosition, "Expected not null after (x002)");
-                        previousSyntaxItem = new BinaryOperator(currentSyntaxIdentifier.GetLexemeIdentifiers().First().Name, previousSyntaxItem, nextSyntaxItem);
+                        List<SyntaxItem> syntaxItems = new() {previousSyntaxItem};
+                        bool isFirst = true;
+                        do {
+                            if (!isFirst) currentPosition++;
+                            else isFirst = false;
+                            nextSyntaxItem = InternalParse(lexemes, ref currentPosition, currentPrecedence + 1, endLexemeIdentifier);
+                            if (nextSyntaxItem is null)
+                                throw new ParserException(currentLexeme.LexemePosition, "Expected not null after (x002)");
+                            syntaxItems.Add(nextSyntaxItem);
+                        } while (TryGetLexemeAtPosition(lexemes, currentPosition, out currentLexeme)
+                                 && TryGetSyntaxIdentifierFromLexeme(currentLexeme, currentPrecedence, out ISyntaxIdentifier tempSyntaxIdentifier)
+                                 && currentSyntaxIdentifier.Equals(tempSyntaxIdentifier));
+
+                        previousSyntaxItem = new BinaryOperator(currentSyntaxIdentifier.GetLexemeIdentifiers().First().Name, syntaxItems);
                         break;
                     case SyntaxIdentifierType.UNARY_OPERATOR:
                         if (previousSyntaxItem is not null)
@@ -59,7 +69,7 @@ namespace BooleanAlgebra.Parser {
                             !currentLexeme.LexemeIdentifier.Equals(endIdentifier))
                             throw new ParserException(currentLexeme.LexemePosition,"Expected right parenthesis after highlighted token");
                         currentPosition++;
-                        previousSyntaxItem = new GroupingOperator(nextSyntaxItem);
+                        previousSyntaxItem = new GroupingOperator(nextSyntaxItem, currentSyntaxIdentifier.GetLexemeIdentifiers().First().Name);
                         break;
                     default:
                         throw new ParserException(currentLexeme.LexemePosition, "Unknown token");

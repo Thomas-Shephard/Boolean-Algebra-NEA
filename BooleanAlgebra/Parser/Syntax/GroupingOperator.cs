@@ -2,10 +2,16 @@
 
 namespace BooleanAlgebra.Parser.Syntax {
     public class GroupingOperator : SyntaxItem {
+        public override string Value { get; }
         public SyntaxItem SyntaxItem { get; }
 
-        public GroupingOperator(SyntaxItem syntaxItem) {
-            SyntaxItem = syntaxItem;
+        public GroupingOperator(SyntaxItem syntaxItem, string value) {
+            SyntaxItem = syntaxItem ?? throw new ArgumentNullException(nameof(syntaxItem));
+            Value = value ?? throw new ArgumentNullException(nameof(value));
+        }
+
+        public override SyntaxItem[] GetSyntaxItems() {
+            return new[] {SyntaxItem};
         }
 
         public override string ToString() {

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using BooleanAlgebra.Lexer;
 using BooleanAlgebra.Lexer.Lexemes;
 using BooleanAlgebra.Parser;
+using BooleanAlgebra.Parser.Syntax;
+using BooleanAlgebra.Simplification;
 
 bool isDebugModeEnabled = false;
 while (true) {
@@ -21,5 +23,8 @@ while (true) {
     }
     if(isDebugModeEnabled)
         lexemes.ForEach(Console.WriteLine);
-    Console.WriteLine(Parser.Parse(lexemes)?.ToString() ?? "");
+    SyntaxItem? syntaxItem = Parser.Parse(lexemes); 
+    Console.WriteLine( syntaxItem?.ToString() ?? "");
+    if(syntaxItem is not null)
+        Console.WriteLine(new Simplification(syntaxItem).ToString());
 }

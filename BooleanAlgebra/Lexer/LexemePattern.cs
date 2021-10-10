@@ -8,8 +8,8 @@ namespace BooleanAlgebra.Lexer {
         private readonly Tuple<int, int>[] _acceptedCharacterBounds;
 
         private LexemePattern(char[] acceptedCharacters, Tuple<int, int>[] acceptedCharacterBounds) {
-            _acceptedCharacters = acceptedCharacters;
-            _acceptedCharacterBounds = acceptedCharacterBounds;
+            _acceptedCharacters = acceptedCharacters ?? throw new ArgumentNullException(nameof(acceptedCharacters));
+            _acceptedCharacterBounds = acceptedCharacterBounds ?? throw new ArgumentNullException(nameof(acceptedCharacterBounds));
         }
 
         public bool IsCharacterMatch(char character) {
