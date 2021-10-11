@@ -7,9 +7,6 @@ namespace BooleanAlgebra.Parser.Syntax {
         public override string Value { get; }
         public List<SyntaxItem> SyntaxItems { get; }
 
-        public BinaryOperator(string lexemeType, SyntaxItem syntaxItem1, SyntaxItem syntaxItem2) 
-            : this(lexemeType, new[] {syntaxItem1, syntaxItem2}) { }
-
         public BinaryOperator(string lexemeType, IEnumerable<SyntaxItem> syntaxItems) {
             if (syntaxItems is null)
                 throw new ArgumentNullException(nameof(syntaxItems));
@@ -36,7 +33,7 @@ namespace BooleanAlgebra.Parser.Syntax {
             return new[] {this}.Concat(SyntaxItems).ToArray();
         }
 
-        public override SyntaxItem[] GetSyntaxItems() {
+        public virtual SyntaxItem[] GetSyntaxItems() {
             return SyntaxItems.ToArray();
         }
 
@@ -47,7 +44,7 @@ namespace BooleanAlgebra.Parser.Syntax {
         public override bool Equals(SyntaxItem? other) {
             return other is BinaryOperator otherBinaryOperator
                    && Value == otherBinaryOperator.Value
-                   && SyntaxItems.SequenceEqual(otherBinaryOperator.SyntaxItems);
+                   && ScrambledEquals(SyntaxItems, otherBinaryOperator.SyntaxItems);
         }
 
         public override bool Equals(object? other) {
@@ -56,6 +53,25 @@ namespace BooleanAlgebra.Parser.Syntax {
 
         public override int GetHashCode() {
             return HashCode.Combine(Value, SyntaxItems);
+        }
+        
+        public static bool ScrambledEquals<T>(IEnumerable<T> list1, IEnumerable<T> list2) {
+            Dictionary<T, int>? cnt = new();
+            foreach (T s in list1) {
+                if (cnt.ContainsKey(s)) {
+                    cnt[s]++;
+                } else {
+                    cnt.Add(s, 1);
+                }
+            }
+            foreach (T s in list2) {
+                if (cnt.ContainsKey(s)) {
+                    cnt[s]--;
+                } else {
+                    return false;
+                }
+            }
+            return cnt.Values.All(c => c == 0);
         }
     }
 }
