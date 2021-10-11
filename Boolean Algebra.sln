@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooleanAlgebra.Display", "B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooleanAlgebra.Tests", "BooleanAlgebra.Tests\BooleanAlgebra.Tests.csproj", "{C358F0F6-E31C-4610-9817-EEF87AC4F089}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooleanAlgebra.WebDisplay", "BooleanAlgebra.WebDisplay\BooleanAlgebra.WebDisplay.csproj", "{702ACC4D-EFCA-453D-B261-D9889FC1EBCB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{C358F0F6-E31C-4610-9817-EEF87AC4F089}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C358F0F6-E31C-4610-9817-EEF87AC4F089}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C358F0F6-E31C-4610-9817-EEF87AC4F089}.Release|Any CPU.Build.0 = Release|Any CPU
+		{702ACC4D-EFCA-453D-B261-D9889FC1EBCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{702ACC4D-EFCA-453D-B261-D9889FC1EBCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{702ACC4D-EFCA-453D-B261-D9889FC1EBCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{702ACC4D-EFCA-453D-B261-D9889FC1EBCB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
