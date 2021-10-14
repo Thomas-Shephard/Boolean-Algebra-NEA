@@ -71,7 +71,10 @@ namespace BooleanAlgebra.Lexer {
         /// <param name="lexemePattern">The pattern that the <paramref name="rawText"/> should be matched against.</param>
         /// <param name="currentPosition">The currentPosition that the lexer is at within <paramref name="rawText"/>.</param>
         /// <returns>The lexemeValue that comes from the <paramref name="currentPosition"/> within the <paramref name="rawText"/> and the <paramref name="lexemePattern"/>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when either <paramref name="rawText"/> or <paramref name="lexemePattern"/> is null.</exception>
         private static string GenerateStringFromPattern(string rawText, LexemePattern lexemePattern, ref uint currentPosition) {
+            if (rawText is null) throw new ArgumentNullException(nameof(rawText));
+            if (lexemePattern is null) throw new ArgumentNullException(nameof(lexemePattern));
             StringBuilder outputString = new();
 
             //Check if a character exists within the rawText string at the currentPosition
@@ -94,7 +97,9 @@ namespace BooleanAlgebra.Lexer {
         /// <param name="currentPosition">The currentPosition that the lexer is at within <paramref name="rawText"/>.</param>
         /// <param name="currentCharacter">The character at the <paramref name="currentPosition"/> when it is within the bounds of <paramref name="rawText"/> else the default character value.</param>
         /// <returns>True when the <paramref name="currentPosition"/> is within the bounds of <paramref name="rawText"/>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="rawText"/> is null.</exception>
         private static bool TryGetCharacterAtPosition(string rawText, uint currentPosition, out char currentCharacter) {
+            if (rawText is null) throw new ArgumentNullException(nameof(rawText));
             if (currentPosition < rawText.Length) {
                 //If the currentPosition is within the bounds of rawText, return true and output the character at the requested position
                 currentCharacter = rawText[(int) currentPosition];
