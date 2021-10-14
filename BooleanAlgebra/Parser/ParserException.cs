@@ -6,9 +6,8 @@ namespace BooleanAlgebra.Parser {
         public LexemePosition LexemePosition { get; }
         
         public ParserException(LexemePosition lexemePosition, string message) : base (message) {
-            if (message is null) 
-                throw new ArgumentNullException(nameof(message));
-            LexemePosition = lexemePosition;
+            if (message is null) throw new ArgumentNullException(nameof(message));
+            LexemePosition = lexemePosition ?? throw new ArgumentNullException(nameof(lexemePosition));
         }
     }
 }
