@@ -13,20 +13,16 @@ namespace BooleanAlgebra.Parser.Syntax {
             List<SyntaxItem> enumerable = syntaxItems.ToList();
             if (enumerable.Count < 2) 
                 throw new ArgumentException("There must be at least two syntax items");
-            Value = lexemeType;
+            Value = lexemeType ?? throw new ArgumentNullException(nameof(lexemeType));
             SyntaxItems = enumerable.ToList();
-            
-            bool hasFoundMatch;
-            do {
-                hasFoundMatch = false;
+
                 for (int i = SyntaxItems.Count - 1; i >= 0; i--) {
                     if (SyntaxItems[i] is not BinaryOperator binaryOperator ||
                         binaryOperator.Value != lexemeType) continue;
                     SyntaxItems.RemoveAt(i);
                     binaryOperator.SyntaxItems.ForEach(syntaxItem => SyntaxItems.Add(syntaxItem));
-                    hasFoundMatch = true;
                 }
-            } while (hasFoundMatch);
+
         }
 
         public override string ToString() {
