@@ -10,14 +10,6 @@ namespace BooleanAlgebra.Parser.Syntax {
             Value = lexemeType ?? throw new ArgumentNullException(nameof(lexemeType));
             SyntaxItem = syntaxItem ?? throw new ArgumentNullException(nameof(syntaxItem));
         }
-        
-        public override SyntaxItem[] GetAllSyntaxItems() {
-            return new[] {this}.Concat(SyntaxItem.GetAllSyntaxItems()).ToArray();
-        }
-        
-        public virtual SyntaxItem[] GetSyntaxItems() {
-            return new []{ SyntaxItem };
-        }
 
         public override string ToString() {
             return $"{Value} {SyntaxItem}";

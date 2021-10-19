@@ -28,14 +28,6 @@ namespace BooleanAlgebra.Parser.Syntax {
                 }
             } while (hasFoundMatch);
         }
-        
-        public override SyntaxItem[] GetAllSyntaxItems() {
-            return new[] {this}.Concat(SyntaxItems).ToArray();
-        }
-
-        public virtual SyntaxItem[] GetSyntaxItems() {
-            return SyntaxItems.ToArray();
-        }
 
         public override string ToString() {
             return SyntaxItems.Aggregate("(", (current, operand) => current + operand + " " + Value + " ")[..^(Value.Length + 2)] + ")";

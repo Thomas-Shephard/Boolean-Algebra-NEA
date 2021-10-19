@@ -8,10 +8,6 @@ namespace BooleanAlgebra.Parser.Syntax {
             Value = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        public override SyntaxItem[] GetAllSyntaxItems() {
-            return new SyntaxItem[] {this};
-        }
-
         public override string ToString() {
             return $"'{Value}'";
         }
