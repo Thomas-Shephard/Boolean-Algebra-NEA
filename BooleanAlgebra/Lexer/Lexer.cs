@@ -68,7 +68,7 @@ namespace BooleanAlgebra.Lexer {
             }
 
             //If any lexeme within the out parameter lexemes is unknown then the function will return false
-            return hasFoundUnknownLexeme;
+            return !hasFoundUnknownLexeme;
         }
 
         /// <summary>
