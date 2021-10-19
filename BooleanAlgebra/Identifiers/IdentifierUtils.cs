@@ -16,8 +16,15 @@ namespace BooleanAlgebra.Identifiers {
             //return Array.Empty<ISyntaxIdentifier>();
         }
 
-        public static LexemeIdentifier GetLexemeIdentifierFromString(string lexemeValue) {
-            return GetLexemeIdentifiers().FirstOrDefault(lexemeIdentifier => lexemeIdentifier.Regex.IsMatch(lexemeValue)) ?? LEXEME_UNKNOWN;
+        public static bool TryGetLexemeIdentifierFromString(string lexemeValue, out LexemeIdentifier lexemeIdentifier) {
+            LexemeIdentifier? tempLexemeIdentifier = GetLexemeIdentifiers().FirstOrDefault(identifier => identifier.Regex.IsMatch(lexemeValue));
+            if (tempLexemeIdentifier is not null) {
+                lexemeIdentifier = tempLexemeIdentifier;
+                return true;
+            }
+                
+            lexemeIdentifier = LEXEME_UNKNOWN;
+            return false;
         }
 
         public static IEnumerable<LexemeIdentifier> GetLexemeIdentifiers() {

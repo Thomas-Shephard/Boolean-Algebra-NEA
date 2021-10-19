@@ -56,10 +56,8 @@ namespace BooleanAlgebra.Lexer {
                 LexemePosition lexemePosition = new(startPosition, currentPosition);
                 
                 //Attempt to find a lexemeIdentifier that matches the lexemeValue, defaults to LEXEME_UNKNOWN if none found
-                LexemeIdentifier lexemeIdentifier = IdentifierUtils.GetLexemeIdentifierFromString(lexemeValue);
-
-                //If the current identifier is of an unknown lexeme then the user has inputted an unknown lexeme
-                if (lexemeIdentifier.Equals(IdentifierUtils.LEXEME_UNKNOWN))
+                //If the lexemeIdentifier is of LEXEME_UNKNOWN then an unknown lexeme has been inputted
+                if(!IdentifierUtils.TryGetLexemeIdentifierFromString(lexemeValue, out LexemeIdentifier lexemeIdentifier))
                     hasFoundUnknownLexeme = true;
                 
                 //Add a lexeme to the out parameter lexemes
