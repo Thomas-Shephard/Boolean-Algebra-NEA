@@ -83,7 +83,7 @@ namespace BooleanAlgebra.Lexer {
             
             //Ensure that a character exists at the specified position
             if (!TryGetCharacterAtPosition(currentPosition, out char currentCharacter))
-                throw new ArgumentException($"The {nameof(RawText)} has no characters at the specified position");
+                throw new ArgumentException($"The property {nameof(RawText)} has no characters at the specified position");
             
             do {
                 outputString.Append(currentCharacter);  //Add the currentCharacter to the output string
