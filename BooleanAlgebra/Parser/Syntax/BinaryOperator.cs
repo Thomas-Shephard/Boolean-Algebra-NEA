@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using BooleanAlgebra.Utils;
 
 namespace BooleanAlgebra.Parser.Syntax {
     public class BinaryOperator : SyntaxItem {
@@ -26,13 +28,20 @@ namespace BooleanAlgebra.Parser.Syntax {
         }
 
         public override string ToString() {
-            return SyntaxItems.Aggregate("(", (current, operand) => current + operand + " " + Value + " ")[..^(Value.Length + 2)] + ")";
+            StringBuilder stringBuilder = new("(");
+            for (int i = 0; i < SyntaxItems.Count; i++) {
+                stringBuilder.Append($" {SyntaxItems[i]}");
+                if (i < SyntaxItems.Count - 1) {
+                    stringBuilder.Append($" {Value}");
+                }
+            }
+            return stringBuilder.Append(')').ToString();
         }
 
         public override bool Equals(SyntaxItem? other) {
             return other is BinaryOperator otherBinaryOperator
                    && Value == otherBinaryOperator.Value
-                   && ScrambledEquals(SyntaxItems, otherBinaryOperator.SyntaxItems);
+                   && SyntaxItems.SequenceEqualsIgnoreOrder(otherBinaryOperator.SyntaxItems);
         }
 
         public override bool Equals(object? other) {
@@ -43,23 +52,6 @@ namespace BooleanAlgebra.Parser.Syntax {
             return HashCode.Combine(Value, SyntaxItems);
         }
         
-        public static bool ScrambledEquals<T>(IEnumerable<T> list1, IEnumerable<T> list2) {
-            Dictionary<T, int>? cnt = new();
-            foreach (T s in list1) {
-                if (cnt.ContainsKey(s)) {
-                    cnt[s]++;
-                } else {
-                    cnt.Add(s, 1);
-                }
-            }
-            foreach (T s in list2) {
-                if (cnt.ContainsKey(s)) {
-                    cnt[s]--;
-                } else {
-                    return false;
-                }
-            }
-            return cnt.Values.All(c => c == 0);
-        }
+        
     }
 }

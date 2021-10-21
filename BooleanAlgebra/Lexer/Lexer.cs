@@ -55,16 +55,16 @@ namespace BooleanAlgebra.Lexer {
                 //The endPosition will be equal to the currentPosition after the lexeme value is generated
                 LexemePosition lexemePosition = new(startPosition, currentPosition);
                 
-                //Attempt to find a lexemeIdentifier that matches the lexemeValue, defaults to LEXEME_UNKNOWN if none found
-                //If the lexemeIdentifier is of LEXEME_UNKNOWN then an unknown lexeme has been inputted
-                if(!IdentifierUtils.TryGetLexemeIdentifierFromString(lexemeValue, out LexemeIdentifier lexemeIdentifier))
+                //Attempt to find an identifier that matches the lexemeValue, defaults to UNKNOWN_IDENTIFIER if no matches are found
+                //If the identifier is equal to UNKNOWN_IDENTIFIER then an unknown lexeme has been inputted to the lexer
+                if(!IdentifierUtils.TryGetIdentifierFromString(lexemeValue, out Identifier identifier))
                     hasFoundUnknownLexeme = true;
                 
                 //Add a lexeme to the out parameter lexemes
-                lexemes.Add(lexemeIdentifier.IsContextRequired 
+                lexemes.Add(identifier.IsContextRequired
                     //Only provide the lexemeValue if context is required
-                    ? new ContextualLexeme(lexemeIdentifier, lexemePosition, lexemeValue)
-                    : new Lexeme(lexemeIdentifier, lexemePosition));
+                    ? new ContextualLexeme(identifier, lexemePosition, lexemeValue)
+                    : new Lexeme(identifier, lexemePosition));
             }
 
             //If any lexeme within the out parameter lexemes is unknown then the function will return false

@@ -9,30 +9,30 @@ namespace BooleanAlgebra.Lexer.Lexemes {
         /// <summary>
         /// The identifier of a lexeme.
         /// </summary>
-        public LexemeIdentifier LexemeIdentifier { get; }
+        public Identifier Identifier { get; }
         /// <summary>
         /// The position of a lexeme.
         /// </summary>
         public LexemePosition LexemePosition { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ContextualLexeme"/> class with a <paramref name="lexemeIdentifier"/> and <paramref name="lexemePosition"/>.
+        /// Initializes a new instance of the <see cref="ContextualLexeme"/> class with an <paramref name="identifier"/> and <paramref name="lexemePosition"/>.
         /// </summary>
-        /// <param name="lexemeIdentifier">The <see cref="LexemeIdentifier"/> of the new <see cref="Lexeme"/>.</param>
+        /// <param name="identifier">The <see cref="Identifier"/> of the new <see cref="Lexeme"/>.</param>
         /// <param name="lexemePosition">The <see cref="LexemePosition"/> of the new <see cref="Lexeme"/>.</param>
-        /// <exception cref="ArgumentNullException">Thrown when either <paramref name="lexemeIdentifier"/> or <paramref name="lexemePosition"/> is null.</exception>
-        public Lexeme(LexemeIdentifier lexemeIdentifier, LexemePosition lexemePosition) {
-            LexemeIdentifier = lexemeIdentifier ?? throw new ArgumentNullException(nameof(lexemeIdentifier));   //Ensure that the lexemeIdentifier is not null
+        /// <exception cref="ArgumentNullException">Thrown when either <paramref name="identifier"/> or <paramref name="lexemePosition"/> is null.</exception>
+        public Lexeme(Identifier identifier, LexemePosition lexemePosition) {
+            Identifier = identifier ?? throw new ArgumentNullException(nameof(identifier));                     //Ensure that the identifier is not null
             LexemePosition = lexemePosition ?? throw new ArgumentNullException(nameof(lexemePosition));         //Ensure that the lexemePosition is not null
         }
 
         public override string ToString() {
-            return $"[{LexemeIdentifier}, {LexemePosition}]";   //Outputs in the format [LexemeIdentifier, LexemePosition]
+            return $"[{Identifier}, {LexemePosition}]";   //Outputs in the format [Identifier, LexemePosition]
         }
 
         public bool Equals(Lexeme? other) {
             return other is not null                                    //Check that the other lexeme is not null
-                   && LexemeIdentifier.Equals(other.LexemeIdentifier)   //Check that the lexemeIdentifiers are equal
+                   && Identifier.Equals(other.Identifier)   //Check that the identifiers are equal
                    && LexemePosition.Equals(other.LexemePosition);      //Check that the lexemePositions are equal
         }
 
@@ -41,7 +41,7 @@ namespace BooleanAlgebra.Lexer.Lexemes {
         }
 
         public override int GetHashCode() {
-            return HashCode.Combine(LexemeIdentifier, LexemePosition);
+            return HashCode.Combine(Identifier, LexemePosition);
         }
     }
 }

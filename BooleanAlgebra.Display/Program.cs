@@ -16,9 +16,9 @@ while (true) {
         Console.WriteLine($"Debug mode has been {(isDebugModeEnabled ? "enabled" : "disabled")}");
         continue;
     }
-    var timer = new Stopwatch();
+    Stopwatch timer = new();
     timer.Start();
-    bool hasLexedSuccessfully = Lexer.Lex(rawText, out List<Lexeme> lexemes);
+    bool hasLexedSuccessfully = new Lexer(rawText).Lex(out List<Lexeme> lexemes);
     timer.Stop();
     Console.WriteLine($"Time taken for lexing: {timer.Elapsed.Milliseconds}ms"); 
     if (!hasLexedSuccessfully) {
@@ -30,10 +30,13 @@ while (true) {
         lexemes.ForEach(Console.WriteLine);
     timer = new Stopwatch();
     timer.Start();
-    SyntaxItem? syntaxItem = Parser.Parse(lexemes, false); 
+    bool hasParsedSuccessfully = new Parser(lexemes).TryParse(out SyntaxItem ast); 
     timer.Stop();
     Console.WriteLine($"Time taken for parsing: {timer.Elapsed.Milliseconds}ms"); 
-    if(isDebugModeEnabled)
+    Console.WriteLine(ast.ToString());
+      
+      
+    /*if(isDebugModeEnabled)
         Console.WriteLine( syntaxItem?.ToString() ?? "");
     if (syntaxItem is not null) {
         timer = new Stopwatch();
@@ -42,5 +45,5 @@ while (true) {
         timer.Stop();
         Console.WriteLine($"Time taken for simplification: {timer.Elapsed.Milliseconds}ms");
         Console.WriteLine(simplification);
-    }
+    }*/
 }

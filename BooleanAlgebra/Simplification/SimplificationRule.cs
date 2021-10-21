@@ -10,7 +10,7 @@ namespace BooleanAlgebra.Simplification {
         public string Message { get; }
 
         public SimplificationRule(string leftHandSide, string rightHandSide, string message) {
-            if (!Lexer.Lexer.Lex(leftHandSide, out List<Lexeme> leftHandSideLexemes))
+          /*  if (!Lexer.Lexer.Lex(leftHandSide, out List<Lexeme> leftHandSideLexemes))
                 throw new ArgumentException(nameof(leftHandSide));
             if (!Lexer.Lexer.Lex(rightHandSide, out List<Lexeme> rightHandSideLexemes))
                 throw new ArgumentException(nameof(rightHandSide));
@@ -18,7 +18,7 @@ namespace BooleanAlgebra.Simplification {
                            ?? throw new ArgumentException(nameof(leftHandSideLexemes));
             RightHandSide = Parser.Parser.Parse(rightHandSideLexemes, true)
                            ?? throw new ArgumentException(nameof(leftHandSideLexemes));
-            Message = message ?? throw new ArgumentNullException(nameof(message));
+            Message = message ?? throw new ArgumentNullException(nameof(message));*/
         }
 
         private static IEnumerable<SimplificationRule>? _simplificationRules;

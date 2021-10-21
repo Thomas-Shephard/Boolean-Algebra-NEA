@@ -1,41 +1,33 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace BooleanAlgebra.Identifiers {
     public static class IdentifierUtils {
-        public static IEnumerable<ISyntaxIdentifier> GetSyntaxIdentifiers() {
-            return new [] {
-                (ISyntaxIdentifier)
-                new SingleSyntaxIdentifier(new LexemeIdentifier("OR", "^((?i)OR|\\|)$", false), SyntaxIdentifierType.BINARY_OPERATOR, 1),
-                new SingleSyntaxIdentifier(new LexemeIdentifier("AND", "^((?i)AND|&)$", false), SyntaxIdentifierType.BINARY_OPERATOR, 2),
-                new SingleSyntaxIdentifier(new LexemeIdentifier("NOT", "^((?i)NOT|!)$", false), SyntaxIdentifierType.UNARY_OPERATOR, 3),
-                new MultipleSyntaxIdentifier(new []{ new LexemeIdentifier("LEFT_PAREN", "^\\($", false), new LexemeIdentifier("RIGHT_PAREN", "^\\)$", false)  }, SyntaxIdentifierType.GROUPING_OPERATOR, 4),
-                new SingleSyntaxIdentifier(new LexemeIdentifier("VARIABLE", "^[A-Za-z]+$", true), SyntaxIdentifierType.OPERAND, 5),
-                new SingleSyntaxIdentifier(new LexemeIdentifier("LITERAL", "^(1|0)$", true), SyntaxIdentifierType.OPERAND, 5),
+        private static IEnumerable<Identifier> GetIdentifiers() {
+            return new[] {
+                new Identifier(IdentifierType.BINARY_OPERATOR, 1, "OR", "^((?i)OR|\\|)$", false),
+                new Identifier(IdentifierType.BINARY_OPERATOR, 2, "AND", "^((?i)AND|\\|)$", false),
+                new Identifier(IdentifierType.UNARY_OPERATOR, 3, "NOT", "^((?i)NOT|\\|)$", false),
+                new Identifier(IdentifierType.GROUPING_OPERATOR_START, 4, "LEFT_PARENTHESIS", "^\\($", false),
+                new Identifier(IdentifierType.GROUPING_OPERATOR_END, 4, "RIGHT_PARENTHESIS", "^\\)$", false),
+                new Identifier(IdentifierType.OPERAND, 5, "VARIABLE", "^[A-Za-z]+$", true),
+                new Identifier(IdentifierType.OPERAND, 5, "LITERAL", "^(1|0)$", true)
             };
-            //return Array.Empty<ISyntaxIdentifier>();
         }
 
-        public static bool TryGetLexemeIdentifierFromString(string lexemeValue, out LexemeIdentifier lexemeIdentifier) {
-            LexemeIdentifier? tempLexemeIdentifier = GetLexemeIdentifiers().FirstOrDefault(identifier => identifier.Regex.IsMatch(lexemeValue));
-            if (tempLexemeIdentifier is not null) {
-                lexemeIdentifier = tempLexemeIdentifier;
+        public static bool TryGetIdentifierFromString(string lexemeValue, [NotNull] out Identifier? matchedIdentifier) {
+            matchedIdentifier = GetIdentifiers().FirstOrDefault(identifier => identifier.Regex.IsMatch(lexemeValue));
+            if (matchedIdentifier is not null)
                 return true;
-            }
-                
-            lexemeIdentifier = LEXEME_UNKNOWN;
+            matchedIdentifier = UnknownIdentifier;
             return false;
         }
 
-        public static IEnumerable<LexemeIdentifier> GetLexemeIdentifiers() {
-            return GetSyntaxIdentifiers().SelectMany(syntaxIdentifier => syntaxIdentifier.GetLexemeIdentifiers()).ToList();
+        public static uint GetMaximumPrecedence() {
+            return GetIdentifiers().DefaultIfEmpty(UnknownIdentifier).Max(syntaxIdentifier => syntaxIdentifier.Precedence);
         }
 
-        public static uint GetMaximumSyntaxIdentifierPrecedence() {
-            return GetSyntaxIdentifiers().DefaultIfEmpty(SYNTAX_UNKNOWN).Max(syntaxIdentifier => syntaxIdentifier.Precedence);
-        }
-
-        public static readonly LexemeIdentifier LEXEME_UNKNOWN = new("UNKNOWN", "^.+$", true);
-        public static readonly SingleSyntaxIdentifier SYNTAX_UNKNOWN = new(LEXEME_UNKNOWN, SyntaxIdentifierType.UNKNOWN, 0);
+        public static readonly Identifier UnknownIdentifier = new(IdentifierType.UNKNOWN, 0, "UNKNOWN", "^.+$", true);
     }
 }
