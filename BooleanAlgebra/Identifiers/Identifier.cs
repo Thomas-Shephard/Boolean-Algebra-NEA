@@ -16,6 +16,10 @@ public class Identifier : IEquatable<Identifier> {
         IsContextRequired = isContextRequired;
     }
 
+    public override string ToString() {
+        return Name;
+    }
+
     public bool Equals(Identifier? other) {
         return other is not null
             && IdentifierType == other.IdentifierType
