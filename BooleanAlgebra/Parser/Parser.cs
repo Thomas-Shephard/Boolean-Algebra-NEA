@@ -73,7 +73,7 @@ public sealed class Parser {
 
     private bool NextSyntaxIdentifierIsOfSameLexemeType(Identifier identifier) {
         return LexemesQueue.Count > 0
-               && LexemesQueue.Peek().Identifier.Equals(identifier)
-               && LexemesQueue.TryDequeue(out _);
+            && LexemesQueue.Peek().Identifier.Equals(identifier)
+            && LexemesQueue.TryDequeue(out _);
     }
 }

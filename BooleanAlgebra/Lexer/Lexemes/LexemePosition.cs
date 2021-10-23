@@ -36,13 +36,13 @@ public class LexemePosition : IEquatable<LexemePosition> {
     public LexemePosition(uint startAndEndPosition) : this(startAndEndPosition, startAndEndPosition) { }
 
     public override string ToString() {
-        return $"[{StartPosition}, {EndPosition}]";      //Outputs in the format [StartPosition, EndPosition]
+        return $"[{StartPosition}, {EndPosition}]"; //Outputs in the format [StartPosition, EndPosition]
     }
 
     public bool Equals(LexemePosition? other) {
-        return other is not null                        //Check that the other lexeme is not null
-               && other.StartPosition == StartPosition  //Check that the startPositions are equal
-               && other.EndPosition == EndPosition;     //Check that the endPositions are equal
+        return other is not null                    //Check that the other lexeme is not null
+            && other.StartPosition == StartPosition //Check that the startPositions are equal
+            && other.EndPosition == EndPosition;    //Check that the endPositions are equal
     }
 
     public override bool Equals(object? obj) {

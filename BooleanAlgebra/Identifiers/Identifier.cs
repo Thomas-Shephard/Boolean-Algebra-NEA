@@ -18,11 +18,11 @@ public class Identifier : IEquatable<Identifier> {
 
     public bool Equals(Identifier? other) {
         return other is not null
-               && IdentifierType == other.IdentifierType
-               && Precedence == other.Precedence
-               && Name == other.Name
-               && RegexPattern == other.RegexPattern
-               && IsContextRequired == other.IsContextRequired;
+            && IdentifierType == other.IdentifierType
+            && Precedence == other.Precedence
+            && Name == other.Name
+            && RegexPattern == other.RegexPattern
+            && IsContextRequired == other.IsContextRequired;
     }
 
     public override bool Equals(object? obj) {

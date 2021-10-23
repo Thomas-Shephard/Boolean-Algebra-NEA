@@ -20,14 +20,14 @@ public class ContextualLexeme : Lexeme, IEquatable<ContextualLexeme> {
     }
 
     public override string ToString() {
-        return $"[{Identifier}, {LexemeValue}, {LexemePosition}]";    //Outputs in the format [Identifier, LexemeValue, LexemePosition]
+        return $"[{Identifier}, {LexemeValue}, {LexemePosition}]";  //Outputs in the format [Identifier, LexemeValue, LexemePosition]
     }
 
     public bool Equals(ContextualLexeme? other) {
-        return other is not null                                    //Check that the other lexeme is not null
-               && Identifier.Equals(other.Identifier)               //Check that the identifiers are equal
-               && LexemePosition.Equals(other.LexemePosition)       //Check that the lexemePositions are equal
-               && LexemeValue == other.LexemeValue;                 //Check that the lexemeValues are equal
+        return other is not null                            //Check that the other lexeme is not null
+            && Identifier.Equals(other.Identifier)          //Check that the identifiers are equal
+            && LexemePosition.Equals(other.LexemePosition)  //Check that the lexemePositions are equal
+            && LexemeValue == other.LexemeValue;            //Check that the lexemeValues are equal
     }
 
     public override bool Equals(object? obj) {

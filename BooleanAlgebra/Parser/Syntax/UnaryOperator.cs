@@ -29,8 +29,8 @@ public class UnaryOperator : SyntaxItem {
 
     public override bool Equals(SyntaxItem? other) {
         return other is UnaryOperator otherUnaryOperator            //Check that the other syntaxItem is of the same type
-               && Value == otherUnaryOperator.Value                 //Check that the values are equal
-               && SyntaxItem.Equals(otherUnaryOperator.SyntaxItem); //Check that the daughter syntaxItems are equal
+            && Value == otherUnaryOperator.Value                    //Check that the values are equal
+            && SyntaxItem.Equals(otherUnaryOperator.SyntaxItem);    //Check that the daughter syntaxItems are equal
     }
 
     public override bool Equals(object? other) {

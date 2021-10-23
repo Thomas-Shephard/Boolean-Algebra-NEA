@@ -16,8 +16,8 @@ public class Operand : SyntaxItem {
 
     public override bool Equals(SyntaxItem? other) {
         return other is Operand otherOperand
-               && Value == otherOperand.Value
-               && IsGeneric == otherOperand.IsGeneric;
+            && Value == otherOperand.Value
+            && IsGeneric == otherOperand.IsGeneric;
     }
 
     public override bool Equals(object? obj) {

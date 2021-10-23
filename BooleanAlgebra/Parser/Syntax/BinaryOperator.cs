@@ -18,7 +18,6 @@ public class BinaryOperator : SyntaxItem {
             SyntaxItems.RemoveAt(i);
             binaryOperator.SyntaxItems.ForEach(syntaxItem => SyntaxItems.Add(syntaxItem));
         }
-
     }
 
     public override string ToString() {
@@ -34,8 +33,8 @@ public class BinaryOperator : SyntaxItem {
 
     public override bool Equals(SyntaxItem? other) {
         return other is BinaryOperator otherBinaryOperator
-               && Value == otherBinaryOperator.Value
-               && SyntaxItems.SequenceEqualsIgnoreOrder(otherBinaryOperator.SyntaxItems);
+            && Value == otherBinaryOperator.Value
+            && SyntaxItems.SequenceEqualsIgnoreOrder(otherBinaryOperator.SyntaxItems);
     }
 
     public override bool Equals(object? other) {
@@ -45,6 +44,4 @@ public class BinaryOperator : SyntaxItem {
     public override int GetHashCode() {
         return HashCode.Combine(Value, SyntaxItems);
     }
-
-
 }
