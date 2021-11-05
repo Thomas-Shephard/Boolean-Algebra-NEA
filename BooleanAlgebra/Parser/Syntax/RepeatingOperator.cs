@@ -2,7 +2,7 @@
 /// <summary>
 /// 
 /// </summary>
-public class UnaryOperator : SyntaxItem {
+public class RepeatingOperator : SyntaxItem {
     /// <summary>
     /// 
     /// </summary>
@@ -12,31 +12,33 @@ public class UnaryOperator : SyntaxItem {
     /// </summary>
     public override List<SyntaxItem> DaughterItems { get; set; }
 
-    public override SyntaxItem Clone() {
-        return new UnaryOperator(Value, DaughterItems.First());
-    }
+    public SyntaxItem DaughterItem => DaughterItems[0];
 
+    public override SyntaxItem Clone() {
+        return new RepeatingOperator(Value, DaughterItem);
+    }
+    
     /// <summary>
     /// 
     /// </summary>
     /// <param name="lexemeType"></param>
     /// <param name="syntaxItem"></param>
     /// <exception cref="ArgumentNullException">Thrown when either <paramref name="lexemeType"/> or <paramref name="syntaxItem"/> is null.</exception>
-    public UnaryOperator(string lexemeType, SyntaxItem syntaxItem) {
+    public RepeatingOperator(string lexemeType, SyntaxItem syntaxItem) {
         Value = lexemeType ?? throw new ArgumentNullException(nameof(lexemeType));      //Ensure that the lexemeType is not null
-        DaughterItems = new List<SyntaxItem> { syntaxItem } ?? throw new ArgumentNullException(nameof(syntaxItem)); //Ensure that the syntaxItem is not null
+        DaughterItems = new List<SyntaxItem>() { syntaxItem } ?? throw new ArgumentNullException(nameof(syntaxItem)); //Ensure that the syntaxItem is not null
     }
 
     
 
     public override string ToString() {
-        return $"({Value} {DaughterItems.First()})";  //Outputs in the format [Value, SyntaxItem]
+        return $"[{DaughterItems.First()}]";  //Outputs in the format [Value, SyntaxItem]
     }
 
     public override bool Equals(SyntaxItem? other) {
-        return other is UnaryOperator otherUnaryOperator            //Check that the other syntaxItem is of the same type
-            && Value == otherUnaryOperator.Value                    //Check that the values are equal
-            && DaughterItems.First().Equals(otherUnaryOperator.DaughterItems.First());    //Check that the daughter syntaxItems are equal
+        return other is RepeatingOperator otherRepeatingOperator            //Check that the other syntaxItem is of the same type
+               && Value == otherRepeatingOperator.Value                    //Check that the values are equal
+               && DaughterItems.First().Equals(otherRepeatingOperator.DaughterItems.First());    //Check that the daughter syntaxItems are equal
     }
 
     public override bool Equals(object? other) {

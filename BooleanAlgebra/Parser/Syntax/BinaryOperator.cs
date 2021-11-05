@@ -1,7 +1,7 @@
 ﻿namespace BooleanAlgebra.Parser.Syntax;
 public class BinaryOperator : SyntaxItem {
     public override string Value { get; }
-    public List<SyntaxItem> SyntaxItems { get; }
+    public sealed override List<SyntaxItem> DaughterItems { get; set; }
 
     public BinaryOperator(string lexemeType, IEnumerable<SyntaxItem> syntaxItems) {
         if (syntaxItems is null)
@@ -10,23 +10,28 @@ public class BinaryOperator : SyntaxItem {
         if (enumerable.Count < 2)
             throw new ArgumentException("There must be at least two syntax items");
         Value = lexemeType ?? throw new ArgumentNullException(nameof(lexemeType));
-        SyntaxItems = enumerable.ToList();
-
-        for (int i = SyntaxItems.Count - 1; i >= 0; i--) {
-            if (SyntaxItems[i] is not BinaryOperator binaryOperator ||
+        DaughterItems = enumerable;
+        
+        for (int i = DaughterItems.Count - 1; i >= 0; i--) {
+            if (DaughterItems[i] is not BinaryOperator binaryOperator ||
                 binaryOperator.Value != lexemeType) continue;
-            SyntaxItems.RemoveAt(i);
-            binaryOperator.SyntaxItems.ForEach(syntaxItem => SyntaxItems.Add(syntaxItem));
+            DaughterItems.RemoveAt(i);
+            binaryOperator.DaughterItems.ForEach(syntaxItem => DaughterItems.Add(syntaxItem));
         }
+    }
+ 
+    public override SyntaxItem Clone() {
+        return new BinaryOperator(Value, DaughterItems);
     }
 
     public override string ToString() {
         StringBuilder stringBuilder = new("(");
-        for (int i = 0; i < SyntaxItems.Count; i++) {
-            stringBuilder.Append($" {SyntaxItems[i]}");
-            if (i < SyntaxItems.Count - 1) {
-                stringBuilder.Append($" {Value}");
-            }
+        for (int i = 0; i < DaughterItems.Count; i++) {
+            if (i != 0) 
+                stringBuilder.Append(' ');
+            stringBuilder.Append($"{DaughterItems[i]}");
+            if (i < DaughterItems.Count - 1)
+                stringBuilder.Append(' ').Append($"{Value}");
         }
         return stringBuilder.Append(')').ToString();
     }
@@ -34,7 +39,7 @@ public class BinaryOperator : SyntaxItem {
     public override bool Equals(SyntaxItem? other) {
         return other is BinaryOperator otherBinaryOperator
             && Value == otherBinaryOperator.Value
-            && SyntaxItems.SequenceEqualsIgnoreOrder(otherBinaryOperator.SyntaxItems);
+            && DaughterItems.SequenceEqualsIgnoreOrder(otherBinaryOperator.DaughterItems);
     }
 
     public override bool Equals(object? other) {
@@ -42,6 +47,6 @@ public class BinaryOperator : SyntaxItem {
     }
 
     public override int GetHashCode() {
-        return HashCode.Combine(Value, SyntaxItems);
+        return HashCode.Combine(Value, DaughterItems);
     }
 }

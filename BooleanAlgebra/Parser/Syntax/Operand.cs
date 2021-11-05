@@ -2,22 +2,28 @@
 public class Operand : SyntaxItem {
     public override string Value { get; }
     public bool IsGeneric { get; }
+    public sealed override List<SyntaxItem> DaughterItems { get; set; }
 
-    public Operand(string value, bool isGeneric) {
+    public override Operand Clone() {
+        return new Operand(Value, IsGeneric);
+    }
+
+    public Operand(string value, bool isGeneric = false) {
         Value = value ?? throw new ArgumentNullException(nameof(value));
         IsGeneric = isGeneric;
+        DaughterItems = new List<SyntaxItem>();
     }
 
     public override string ToString() {
         return IsGeneric
             ? $"Generic '{Value}'"
-            : $"'{Value}'";
+            : $"{Value}";
     }
 
     public override bool Equals(SyntaxItem? other) {
-        return other is Operand otherOperand
-            && Value == otherOperand.Value
-            && IsGeneric == otherOperand.IsGeneric;
+        return other is Operand otherOperand1
+            && Value == otherOperand1.Value
+            && IsGeneric == otherOperand1.IsGeneric;
     }
 
     public override bool Equals(object? obj) {

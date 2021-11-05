@@ -7,6 +7,8 @@ public static class IdentifierUtils {
             new Identifier(IdentifierType.UNARY_OPERATOR, 3, "NOT", "^((?i)NOT|\\!)$", false),
             new Identifier(IdentifierType.GROUPING_OPERATOR_START, 4, "PARENTHESIS", "^\\($", false),
             new Identifier(IdentifierType.GROUPING_OPERATOR_END, 4, "PARENTHESIS", "^\\)$", false),
+            new Identifier(IdentifierType.GROUPING_OPERATOR_START, 4, "REPEATING", "^\\[$", false),
+            new Identifier(IdentifierType.GROUPING_OPERATOR_END, 4, "REPEATING", "^\\]$", false),
             new Identifier(IdentifierType.OPERAND, 5, "VARIABLE", "^[A-Za-z]+$", true),
             new Identifier(IdentifierType.OPERAND, 5, "LITERAL", "^(1|0)$", true)
         };
@@ -16,13 +18,13 @@ public static class IdentifierUtils {
         matchedIdentifier = GetIdentifiers().FirstOrDefault(identifier => identifier.Regex.IsMatch(lexemeValue));
         if (matchedIdentifier is not null)
             return true;
-        matchedIdentifier = UNKNOWN_IDENTIFIER;
+        matchedIdentifier = UnknownIdentifier;
         return false;
     }
 
     public static uint GetMaximumPrecedence() {
-        return GetIdentifiers().DefaultIfEmpty(UNKNOWN_IDENTIFIER).Max(syntaxIdentifier => syntaxIdentifier.Precedence);
+        return GetIdentifiers().DefaultIfEmpty(UnknownIdentifier).Max(syntaxIdentifier => syntaxIdentifier.Precedence);
     }
 
-    public static readonly Identifier UNKNOWN_IDENTIFIER = new(IdentifierType.UNKNOWN, 0, "UNKNOWN", "^.+$", true);
+    public static readonly Identifier UnknownIdentifier = new(IdentifierType.UNKNOWN, 0, "UNKNOWN", "^.+$", true);
 }
