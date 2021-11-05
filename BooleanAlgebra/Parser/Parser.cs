@@ -34,7 +34,11 @@ public sealed class Parser {
             case IdentifierType.OPERAND when currentLexeme is ContextualLexeme contextualLexeme:
                 if (previousSyntaxItem is not null)
                     throw new ParserException(currentLexeme.LexemePosition, "(x00)");
-                nextSyntaxItem = new Operand(contextualLexeme.LexemeValue, UseGenericOperands && currentLexeme.Identifier.Name != "LITERAL");
+                if (UseGenericOperands && currentLexeme.Identifier.Name != "LITERAL") {
+                    nextSyntaxItem = new GenericOperand(contextualLexeme.LexemeValue);
+                } else {
+                    nextSyntaxItem = new Operand(contextualLexeme.LexemeValue);
+                }
                 break;
             case IdentifierType.OPERAND:
                 throw new ParserException(currentLexeme.LexemePosition, "Was not of type contextual lexeme");
