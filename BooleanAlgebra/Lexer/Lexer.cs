@@ -48,10 +48,13 @@ public sealed class Lexer {
             //The endPosition will be equal to the currentPosition after the lexeme value is generated
             LexemePosition lexemePosition = new(startPosition, currentPosition);
 
-            //Attempt to find an identifier that matches the lexemeValue, defaults to UNKNOWN_IDENTIFIER if no matches are found
-            //If the identifier is equal to UNKNOWN_IDENTIFIER then an unknown lexeme has been inputted to the lexer
-            if (!IdentifierUtils.TryGetIdentifierFromString(lexemeValue, out Identifier identifier))
+            //Attempt to find an identifier that matches the lexemeValue, defaults to UnknownIdentifier if no matches are found
+            Identifier identifier = IdentifierUtils.GetIdentifierFromLexemeValue(lexemeValue);
+            
+            //If the identifier is equal to UnknownIdentifier then an unknown lexeme has been inputted to the lexer
+            if(identifier.Equals(IdentifierUtils.UnknownIdentifier))
                 hasFoundUnknownLexeme = true;
+
 
             //Add a lexeme to the out parameter lexemes
             lexemes.Add(identifier.IsContextRequired

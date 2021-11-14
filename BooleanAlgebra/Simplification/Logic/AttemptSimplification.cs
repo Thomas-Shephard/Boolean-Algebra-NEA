@@ -1,18 +1,54 @@
-﻿namespace BooleanAlgebra.Simplification.Logic; 
+﻿namespace BooleanAlgebra.Simplification.Logic;
 
 public static class AttemptSimplification {
-    public static bool TrySimplify(SyntaxItem syntaxTree, [NotNullWhen(true)] out Tuple<SyntaxItem, string>? syntaxTreeSimplification) {
-        foreach (SimplificationRule simplificationRule in SimplificationRule.GetSimplificationRules()) {
-            if (syntaxTree.TryMatchAndSubstitute(simplificationRule, out syntaxTreeSimplification)) {
-                return true;
+    public static bool TrySimplifySyntaxTree(this SyntaxItem syntaxTree, int index, IReadOnlyCollection<SyntaxItem> previousSimplifications, SimplificationPost simplificationPost, [NotNullWhen(true)] out Tuple<SyntaxItem, string>? syntaxTreeSimplification) {
+       IEnumerable<IGrouping<int, SimplificationRule>> groupedByPrecedenceSimplificationRules = SimplificationRule.GetSimplificationRules().ElementAt(index)
+           .Where(simplificationRule => simplificationRule.SimplificationPost == simplificationPost)
+           .OrderBy(simplificationRule => simplificationRule.Precedence)
+           .GroupBy(simplificationRule => simplificationRule.Precedence);
+
+        foreach (IGrouping<int, SimplificationRule> groupedSimplificationRule in groupedByPrecedenceSimplificationRules) {
+            IEnumerable<IGrouping<SimplificationPattern, SimplificationRule>> simplificationRules = groupedSimplificationRule
+                .Select(x => x)
+                .GroupBy(x => x.SimplificationPattern);
+            
+            foreach (IGrouping<SimplificationPattern, SimplificationRule> simplificationRule in simplificationRules) {
+                if(syntaxTree.TrySimplifySyntaxTreeWithSimplificationRule(simplificationRule.Select(x=> x).ToList(), previousSimplifications, out syntaxTreeSimplification))
+                    return true;
             }
         }
 
-        SyntaxItem simplifiedSyntaxItem = syntaxTree.Clone();
-        for (int i = 0; i < simplifiedSyntaxItem.DaughterItems.Count; i++) {
-            if (!TrySimplify(simplifiedSyntaxItem.DaughterItems[i], out Tuple<SyntaxItem, string>? simplifiedDaughterItem)) continue;
-            simplifiedSyntaxItem.DaughterItems[i] = simplifiedDaughterItem.Item1;
-            syntaxTreeSimplification = new Tuple<SyntaxItem, string>(simplifiedSyntaxItem.Clone(), simplifiedDaughterItem.Item2);
+        syntaxTreeSimplification = default;
+        return false;
+    }
+
+    private static bool TrySimplifySyntaxTreeWithSimplificationRule(this SyntaxItem syntaxTree, List<SimplificationRule> simplificationRules, IReadOnlyCollection<SyntaxItem> previousSimplifications, [NotNullWhen(true)] out Tuple<SyntaxItem, string>? syntaxTreeSimplification) {
+        simplificationRules = simplificationRules.ToList();
+        if (simplificationRules.First().SimplificationPattern is SimplificationPattern.INSIDE_OUT) {
+            if (syntaxTree.TrySimplifySyntaxTreeDaughterItemsWithSimplificationRule(simplificationRules, previousSimplifications, out syntaxTreeSimplification))
+                return true;
+            if (syntaxTree.TrySimplifySyntaxTree(simplificationRules, previousSimplifications, out syntaxTreeSimplification))
+                return true;
+        } else {
+            if (syntaxTree.TrySimplifySyntaxTree(simplificationRules, previousSimplifications, out syntaxTreeSimplification))
+                return true;
+            if (syntaxTree.TrySimplifySyntaxTreeDaughterItemsWithSimplificationRule(simplificationRules, previousSimplifications, out syntaxTreeSimplification))
+                return true;
+        }
+        
+        syntaxTreeSimplification = default;
+        return false;
+    }
+
+    private static bool TrySimplifySyntaxTreeDaughterItemsWithSimplificationRule(this SyntaxItem syntaxTree, List<SimplificationRule> simplificationRules, IReadOnlyCollection<SyntaxItem> previousSimplifications, [NotNullWhen(true)] out Tuple<SyntaxItem, string>? syntaxTreeSimplification) {
+        for (int i = 0; i < syntaxTree.DaughterItems.Count; i++) {
+            if(!syntaxTree.DaughterItems[i].TrySimplifySyntaxTreeWithSimplificationRule(simplificationRules, previousSimplifications, out Tuple<SyntaxItem, string>? daughterSyntaxTreeSimplification))
+                continue;
+            SyntaxItem simplifiedSyntaxItem = syntaxTree.Clone();
+            simplifiedSyntaxItem.DaughterItems[i] = daughterSyntaxTreeSimplification.Item1;
+            simplifiedSyntaxItem = simplifiedSyntaxItem.Compress();
+            
+            syntaxTreeSimplification = new Tuple<SyntaxItem, string>(simplifiedSyntaxItem, daughterSyntaxTreeSimplification.Item2);
             return true;
         }
 
@@ -20,20 +56,27 @@ public static class AttemptSimplification {
         return false;
     }
 
-    private static bool TryMatchAndSubstitute(this SyntaxItem syntaxTree, SimplificationRule simplificationRule, [NotNullWhen(true)] out Tuple<SyntaxItem, string>? syntaxTreeSimplification) {
-        Dictionary<string, List<SyntaxItem>> substituteItems = new();
-        Dictionary<string, SyntaxItem> directSubstitutes = new();
-        if (!SyntaxTreeMatch.IsMatch(syntaxTree, simplificationRule.LeftHandSide, ref substituteItems, ref directSubstitutes)) {
-            syntaxTreeSimplification = default;
-            return false;
+    private static bool TrySimplifySyntaxTree(this SyntaxItem syntaxTree, List<SimplificationRule> simplificationRules, IReadOnlyCollection<SyntaxItem> previousSimplifications, [NotNullWhen(true)] out Tuple<SyntaxItem, string>? syntaxTreeSimplification) {
+        foreach (SimplificationRule simplificationRule in simplificationRules) {
+            if (syntaxTree.TryMatchAndSubstitute(simplificationRule, previousSimplifications, out syntaxTreeSimplification))
+                return true;
         }
 
-        if (!SyntaxTreeSubstitution.TrySubstituteSyntaxTree(simplificationRule.RightHandSide, substituteItems, directSubstitutes, out SyntaxItem? substitutedSyntaxTree)) {
-            syntaxTreeSimplification = default;
-            return false;
+        syntaxTreeSimplification = default;
+        return false;
+    }
+
+    private static bool TryMatchAndSubstitute(this SyntaxItem syntaxTree, SimplificationRule simplificationRule, IReadOnlyCollection<SyntaxItem> previousSimplifications, [NotNullWhen(true)] out Tuple<SyntaxItem, string>? syntaxTreeSimplification) {
+        foreach (Matches matches in SyntaxTreeMatch.GetAllMatches(syntaxTree, simplificationRule.LeftHandSide)) {
+            if (!SyntaxTreeSubstitution.TrySubstituteSyntaxTree(simplificationRule.RightHandSide, matches, out SyntaxItem? substitutedSyntaxTree))
+                continue;
+            if(previousSimplifications.Any(x => x.Equals(substitutedSyntaxTree)))
+                continue;
+            syntaxTreeSimplification = new Tuple<SyntaxItem, string>(substitutedSyntaxTree, simplificationRule.Message);
+            return true;
         }
 
-        syntaxTreeSimplification = new Tuple<SyntaxItem, string>(substitutedSyntaxTree, simplificationRule.Message);
-        return true;
+        syntaxTreeSimplification = default;
+        return false;
     }
 }

@@ -1,7 +1,11 @@
 ﻿namespace BooleanAlgebra.Parser.Syntax; 
 
 public class GenericOperand : Operand {
-    public GenericOperand(string value) : base(value) { }
+    public bool IsRepeating { get; }
+
+    public GenericOperand(string value) : base(value) {
+        IsRepeating = value.StartsWith("Items");
+    }
     
     public override string ToString() {
         return $"Generic '{Value}'";
@@ -9,7 +13,8 @@ public class GenericOperand : Operand {
 
     public override bool Equals(SyntaxItem? other) {
         return other is GenericOperand genericOperand 
-               && Value == genericOperand.Value;
+               && Value == genericOperand.Value
+               && IsRepeating == genericOperand.IsRepeating;
     }
 
     public override bool Equals(object? obj) {
@@ -17,6 +22,6 @@ public class GenericOperand : Operand {
     }
 
     public override int GetHashCode() {
-        return HashCode.Combine(Value);
+        return HashCode.Combine(Value, IsRepeating);
     }
 }

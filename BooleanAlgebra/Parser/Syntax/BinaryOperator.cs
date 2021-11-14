@@ -1,5 +1,9 @@
 ﻿namespace BooleanAlgebra.Parser.Syntax;
 public class BinaryOperator : SyntaxItem {
+    public override uint GetCost() {
+        return (uint) (DaughterItems.Count - 1 + DaughterItems.Aggregate<SyntaxItem, uint>(0, (current, daughterItem) => current + daughterItem.GetCost()));
+    }
+
     public override string Value { get; }
     public sealed override List<SyntaxItem> DaughterItems { get; set; }
 

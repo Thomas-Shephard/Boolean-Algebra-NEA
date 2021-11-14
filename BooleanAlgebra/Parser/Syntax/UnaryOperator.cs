@@ -27,7 +27,9 @@ public class UnaryOperator : SyntaxItem {
         DaughterItems = new List<SyntaxItem> { syntaxItem } ?? throw new ArgumentNullException(nameof(syntaxItem)); //Ensure that the syntaxItem is not null
     }
 
-    
+    public override uint GetCost() {
+        return 1 + DaughterItems.Aggregate<SyntaxItem, uint>(0, (current, daughterItem) => current + daughterItem.GetCost());
+    }
 
     public override string ToString() {
         return $"({Value} {DaughterItems.First()})";  //Outputs in the format [Value, SyntaxItem]

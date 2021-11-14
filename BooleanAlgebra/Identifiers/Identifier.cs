@@ -19,21 +19,27 @@ public class Identifier : IEquatable<Identifier> {
     public override string ToString() {
         return Name;
     }
-
+    
     public bool Equals(Identifier? other) {
-        return other is not null
-            && IdentifierType == other.IdentifierType
-            && Precedence == other.Precedence
-            && Name == other.Name
-            && RegexPattern == other.RegexPattern
-            && IsContextRequired == other.IsContextRequired;
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        
+        return IdentifierType == other.IdentifierType 
+               && Precedence == other.Precedence 
+               && Name == other.Name 
+               && RegexPattern == other.RegexPattern 
+               && IsContextRequired == other.IsContextRequired;
     }
 
     public override bool Equals(object? obj) {
-        return Equals(obj as Identifier);
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        
+        return obj.GetType() == GetType() 
+               && Equals((Identifier) obj);
     }
 
     public override int GetHashCode() {
-        return HashCode.Combine((int)IdentifierType, Precedence, Name, RegexPattern, IsContextRequired);
+        return HashCode.Combine((int) IdentifierType, Precedence, Name, RegexPattern, IsContextRequired);
     }
 }

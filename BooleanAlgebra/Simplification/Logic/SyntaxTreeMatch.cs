@@ -1,206 +1,146 @@
 ﻿namespace BooleanAlgebra.Simplification.Logic; 
 
 public static class SyntaxTreeMatch {
-    public static bool IsMatch(SyntaxItem syntaxTree, SyntaxItem patternMatch, ref Dictionary<string, List<SyntaxItem>> substituteItems, ref Dictionary<string, SyntaxItem> directSubstitutes) {
-        if (syntaxTree.Value != patternMatch.Value)
-            return false;
+    public static List<Matches> GetAllMatches(SyntaxItem syntaxTree, SyntaxItem patternMatchTree, Matches? inputMatches = null) {
+        inputMatches ??= new Matches();
 
+        if (!syntaxTree.IsShallowMatch(patternMatchTree)) return new List<Matches>();
         List<SyntaxItem> syntaxTreeDaughterItems = syntaxTree.DaughterItems.ToList();
-        List<SyntaxItem> patternMatchDaughterItems = patternMatch.DaughterItems.ToList();
+        List<SyntaxItem> patternMatchTreeDaughterItems = patternMatchTree.DaughterItems.ToList();
 
-        for (int i = patternMatchDaughterItems.Count - 1; i >= 0; i--) {
-            if (patternMatchDaughterItems[i] is not Operand {IsGeneric: false} explicitOperand)
-                continue;
-            int explicitOperandIndex = syntaxTreeDaughterItems.IndexOf(explicitOperand);
-            if (explicitOperandIndex == -1)
-                return false;
-            syntaxTreeDaughterItems.RemoveAt(explicitOperandIndex);
-            patternMatchDaughterItems.RemoveAt(i);
-        }
+        return GetMatches(syntaxTreeDaughterItems, patternMatchTreeDaughterItems, inputMatches);
+    }
 
-        Dictionary<string, List<SyntaxItem>> genericSyntaxItems = GetGenericSyntaxItems(patternMatchDaughterItems);
-
-        Dictionary<string, List<SyntaxItem>> matches = new();
-        foreach ((string genericSyntaxItemName, List<SyntaxItem> genericSyntaxItem) in genericSyntaxItems.Where(genericSyntaxItem => genericSyntaxItem.Key.StartsWith("Item") && !genericSyntaxItem.Key.StartsWith("Items"))) {
-            matches.Add(genericSyntaxItemName, ValidSyntaxItems(genericSyntaxItem.GetItemCounts(), syntaxTreeDaughterItems));
-        }
-
-        if (matches.Any(match => match.Value.Count == 0))
-            return false;
-
-        //Update ref types
-        directSubstitutes = ProvideGenericItemWithDistinctItem(matches);
+    private static List<Matches> GetMatches(IReadOnlyCollection<SyntaxItem> syntaxTreeDaughterItems, IReadOnlyCollection<SyntaxItem> patternMatchTreeDaughterItems, Matches inputMatches) {
+        List<Matches> returnValue = new();
         
-        foreach (SyntaxItem patternMatchDaughterItem in patternMatchDaughterItems) {
-            if (SyntaxTreeSubstitution.TrySubstituteSyntaxTree(patternMatchDaughterItem, new Dictionary<string, List<SyntaxItem>>(),
-                    directSubstitutes, out SyntaxItem? currentValue)) {
-                syntaxTreeDaughterItems.Remove(currentValue);
-            } else {
-                throw new Exception();
+        Dictionary<SyntaxItem, int> syntaxTreeDaughterItemCounts = syntaxTreeDaughterItems.GetItemCounts();
+        Dictionary<SyntaxItem, int> patternMatchTreeDaughterItemCounts = patternMatchTreeDaughterItems.GetItemCounts();
+
+        foreach (SyntaxItem syntaxTreeDaughterItem in syntaxTreeDaughterItemCounts
+                     .Select(syntaxTreeDaughterItem => syntaxTreeDaughterItem.Key)) {
+            foreach (SyntaxItem patternMatchTreeDaughterItem in patternMatchTreeDaughterItemCounts
+                         .Where(patternMatchTreeDaughterItem => patternMatchTreeDaughterItem.Key is not RepeatingOperator)
+                         .Select(patternMatchTreeDaughterItem => patternMatchTreeDaughterItem.Key)) {
+                switch (patternMatchTreeDaughterItem) {
+                    case GenericOperand genericOperand when inputMatches.DirectSubstitutes.TryGetValue(genericOperand, out SyntaxItem? foundDirectSubstitute): {
+                        if(!foundDirectSubstitute.Equals(syntaxTreeDaughterItem)) {
+                            continue;
+                        }
+                        
+                        List<SyntaxItem> syntaxTreeDaughterItemsCopy = syntaxTreeDaughterItems.ToList();
+                        syntaxTreeDaughterItemsCopy.Remove(syntaxTreeDaughterItem);
+                        List<SyntaxItem> patternMatchTreeDaughterItemsCopy = patternMatchTreeDaughterItems.ToList();
+                        patternMatchTreeDaughterItemsCopy.Remove(patternMatchTreeDaughterItem);
+                        
+                        returnValue.AddRange(GetMatches(syntaxTreeDaughterItemsCopy, patternMatchTreeDaughterItemsCopy, inputMatches));
+                        break;
+                    }
+                    case GenericOperand genericOperand: {
+                        List<SyntaxItem> syntaxTreeDaughterItemsCopy = syntaxTreeDaughterItems.ToList();
+                        syntaxTreeDaughterItemsCopy.Remove(syntaxTreeDaughterItem);
+                        List<SyntaxItem> patternMatchTreeDaughterItemsCopy = patternMatchTreeDaughterItems.ToList();
+                        patternMatchTreeDaughterItemsCopy.Remove(patternMatchTreeDaughterItem);
+                        
+                        Matches inputMatchesClone = inputMatches.Clone();
+                        inputMatchesClone.DirectSubstitutes.Add(genericOperand, syntaxTreeDaughterItem);
+
+                        returnValue.AddRange(GetMatches(syntaxTreeDaughterItemsCopy, patternMatchTreeDaughterItemsCopy, inputMatchesClone));
+                        break;
+                    }
+                    case Operand: {
+                        if (!syntaxTreeDaughterItem.Equals(patternMatchTreeDaughterItem)) {
+                            continue;
+                        }
+                        
+                        List<SyntaxItem> syntaxTreeDaughterItemsCopy = syntaxTreeDaughterItems.ToList();
+                        syntaxTreeDaughterItemsCopy.Remove(patternMatchTreeDaughterItem);
+                        List<SyntaxItem> patternMatchTreeDaughterItemsCopy = patternMatchTreeDaughterItems.ToList();
+                        patternMatchTreeDaughterItemsCopy.Remove(patternMatchTreeDaughterItem);
+                        
+                        returnValue.AddRange(GetMatches(syntaxTreeDaughterItemsCopy, patternMatchTreeDaughterItemsCopy, inputMatches));
+                        break;
+                    }
+                    default: {
+                        List<SyntaxItem> syntaxTreeDaughterItemsCopy = syntaxTreeDaughterItems.ToList();
+                        syntaxTreeDaughterItemsCopy.Remove(syntaxTreeDaughterItem);
+                        List<SyntaxItem> patternMatchTreeDaughterItemsCopy = patternMatchTreeDaughterItems.ToList();
+                        patternMatchTreeDaughterItemsCopy.Remove(patternMatchTreeDaughterItem);
+                        foreach (Matches matches in GetAllMatches(syntaxTreeDaughterItem, patternMatchTreeDaughterItem, inputMatches)) {
+                            returnValue.AddRange(GetMatches(syntaxTreeDaughterItemsCopy, patternMatchTreeDaughterItemsCopy, matches));
+                        }
+                        break;
+                    }
+                }
             }
         }
-
-        if (!syntaxTreeDaughterItems.Any())
-            return true;
         
-        IEnumerable<RepeatingOperator> repeatingOperators = genericSyntaxItems.SelectMany(x => x.Value).OfType<RepeatingOperator>();
-        foreach (RepeatingOperator repeatingOperator in repeatingOperators) {
-            List<SyntaxItem> matchedItems = new();
-
-            
-            substituteItems.Add(repeatingOperator.DaughterItem.Value, syntaxTreeDaughterItems);
-        }
-
-        return syntaxTreeDaughterItems.Any();
-    }
-    
-    
-
-
-    private static List<SyntaxItem> ValidSyntaxItems(IDictionary<SyntaxItem, int> genericItemCounts, IEnumerable<SyntaxItem> remainingSyntaxItems, IDictionary<string, SyntaxItem>? previouslyMatchedItems = null) {
-        remainingSyntaxItems = remainingSyntaxItems.ToList();
-        if (genericItemCounts.Values.All(x => x == 0))
-            return new List<SyntaxItem> { previouslyMatchedItems.First().Value }; 
-        if (!remainingSyntaxItems.Any())
-            return new List<SyntaxItem>();
-
-
-        List<SyntaxItem> returnValue = new();
-        
-        foreach (SyntaxItem remainingSyntaxItem in remainingSyntaxItems) {
-            List<SyntaxItem> newRemainingSyntaxItems = remainingSyntaxItems.ToList();
-            newRemainingSyntaxItems.Remove(remainingSyntaxItem);
-            
-           foreach ((SyntaxItem? key, int value) in genericItemCounts.Where(genericItemCount => genericItemCount.Value > 0)) {
-               if(!TryGetGenericOperandFromSyntaxTree(remainingSyntaxItem, key, out SyntaxItem? foundSyntaxItem, out string? identifiedName))
-                   continue;
-               Dictionary<string, SyntaxItem> newPreviouslyMatchedItems = previouslyMatchedItems is null 
-                   ? new Dictionary<string, SyntaxItem>() 
-                   : new Dictionary<string, SyntaxItem>(previouslyMatchedItems);
+        if (returnValue.Count != 0) return returnValue;
+        if(syntaxTreeDaughterItemCounts.All(x => x.Value == 0) && patternMatchTreeDaughterItemCounts.Where(x => x.Key is not RepeatingOperator).All(x => x.Value == 0)) {
+            returnValue.Add(inputMatches);
+        } else {
+            KeyValuePair<SyntaxItem, int>[] patternMatchTreeDaughterRemainingItems = patternMatchTreeDaughterItemCounts.Where(x => x.Value > 0).ToArray();
+            if (patternMatchTreeDaughterRemainingItems.Any(x => x.Value > 1 || x.Key is not RepeatingOperator))
+                return new List<Matches>();
+            RepeatingOperator[] repeatingOperators = patternMatchTreeDaughterRemainingItems.Select(x => x.Key).OfType<RepeatingOperator>().ToArray();
+            foreach (RepeatingOperator repeatingOperator in repeatingOperators) {
+                int number = TryGetRepeatingGenericOperandFromRepeatingOperator(repeatingOperator, out GenericOperand? foundGenericOperand);
                 
-               Dictionary<SyntaxItem, int> newGenericItemCounts = new(genericItemCounts) {
-                   [key] = value - 1
-               };
-
-               if (newPreviouslyMatchedItems.TryGetValue(identifiedName, out SyntaxItem? previouslyFoundSyntaxItem)) {
-                   if(!foundSyntaxItem.Equals(previouslyFoundSyntaxItem))
-                       continue;
-               } else {
-                   newPreviouslyMatchedItems.Add(identifiedName, foundSyntaxItem);
-               }
-
-               returnValue.AddRange(ValidSyntaxItems(newGenericItemCounts, newRemainingSyntaxItems, newPreviouslyMatchedItems));
-           }
-        }
-
-        return returnValue;
-    }
-
-
-
-
-    private static bool TryGetGenericOperandFromSyntaxTree(SyntaxItem syntaxTree, SyntaxItem genericSyntaxTree, [NotNullWhen(true)] out SyntaxItem? genericItem, [NotNullWhen(true)] out string? genericItemName) {
-        genericItem = default;
-        genericItemName = default;
-        
-        if (genericSyntaxTree is Operand {IsGeneric: true}) {
-            genericItem = syntaxTree;
-            genericItemName = genericSyntaxTree.Value;
-            return true;
-        }
-
-        if (syntaxTree.Value != genericSyntaxTree.Value) {
-            return false;
-        }
-
-        if (syntaxTree.DaughterItems.Count != genericSyntaxTree.DaughterItems.Count) {
-            return false;
-        }
-        
-        for (int i = syntaxTree.DaughterItems.Count - 1; i >= 0; i--) {
-            if (TryGetGenericOperandFromSyntaxTree(syntaxTree.DaughterItems[i], genericSyntaxTree.DaughterItems[i],
-                    out genericItem, out genericItemName)) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-
-    private static bool DoesSyntaxTreeContainOperand(SyntaxItem syntaxTree, Operand operand) {
-        if (syntaxTree.Equals(operand))
-            return true;
-        return syntaxTree.DaughterItems.Any(daughterSyntaxItem => DoesSyntaxTreeContainOperand(daughterSyntaxItem, operand));
-    }
-    
-    private static Dictionary<Operand, int> GetOperandCounts(IEnumerable<SyntaxItem> daughterSyntaxItems) {
-        Dictionary<Operand, int> returnValue = new();
-
-        foreach (SyntaxItem syntaxTreeDaughterItem in daughterSyntaxItems) {
-            if (syntaxTreeDaughterItem is Operand currentOperand) {
-                returnValue.TryGetValue(currentOperand, out int currentCount);
-                returnValue[currentOperand] = currentCount + 1;
-            } else {
-                foreach ((Operand? key, int value) in GetOperandCounts(syntaxTreeDaughterItem.DaughterItems)) {
-                    returnValue.TryGetValue(key, out int currentCount);
-                    returnValue[key] = currentCount + value;
+                if (number == -1) {
+                    throw new Exception();
                 }
-            }
-        }
 
-        return returnValue;
-    }
-
-    private static Dictionary<string, SyntaxItem> ProvideGenericItemWithDistinctItem(Dictionary<string, List<SyntaxItem>> genericItems) {
-        Dictionary<string, SyntaxItem> returnValue = new();
-        List<SyntaxItem> usedSyntaxItems = new();
-        
-        foreach ((string? key, List<SyntaxItem>? value) in genericItems) {
-            bool hasFoundMatch = false;
-    
-            foreach (SyntaxItem syntaxItem in value.Where(syntaxItem => !usedSyntaxItems.Contains(syntaxItem))) {
-                usedSyntaxItems.Add(syntaxItem);
-                returnValue.Add(key, syntaxItem);
-                hasFoundMatch = true;
-                break;
-            }
-
-            if(!hasFoundMatch)
-                throw new Exception();
-        }
-        return returnValue;
-    }
-
-    private static List<SyntaxItem> GetDaughterSynItems(IEnumerable<SyntaxItem> daughterSyntaxItems, string genericItem) {
-        return daughterSyntaxItems.Where(syntaxTreeDaughterItem =>
-            DoesSyntaxTreeContainGenericItemName(syntaxTreeDaughterItem, genericItem)).ToList();
-    }
-
-    private static bool DoesSyntaxTreeContainGenericItemName(SyntaxItem syntaxTree, string genericItemName) {
-        return syntaxTree.Value == genericItemName 
-               || syntaxTree.DaughterItems.Any(syntaxTreeDaughterItem => DoesSyntaxTreeContainGenericItemName(syntaxTreeDaughterItem, genericItemName));
-    }
-
-    private static Dictionary<string, List<SyntaxItem>> GetGenericSyntaxItems(IEnumerable<SyntaxItem> daughterSyntaxItems) {
-        daughterSyntaxItems = daughterSyntaxItems.ToArray();
-        return GetGenericItemNames(daughterSyntaxItems)
-            .ToDictionary(genericItem => genericItem, genericItem => GetDaughterSynItems(daughterSyntaxItems, genericItem));
-    }
-    
-    private static IEnumerable<string> GetGenericItemNames(IEnumerable<SyntaxItem> daughterSyntaxItems, ICollection<string>? previouslyFoundDaughterItems = null) {
-        previouslyFoundDaughterItems ??= new List<string>();
-        List<string> returnValue = new();
-        foreach (SyntaxItem syntaxTreeDaughterItem in daughterSyntaxItems) {
-            if (syntaxTreeDaughterItem.DaughterItems.Count == 0) {
-                if (!returnValue.Contains(syntaxTreeDaughterItem.Value) && !previouslyFoundDaughterItems.Contains(syntaxTreeDaughterItem.Value)){
-                    returnValue.Add(syntaxTreeDaughterItem.Value);
+                List<SyntaxItem> matchedSyntaxItems = new();
+                
+                for (int i = syntaxTreeDaughterItemCounts.Count - 1; i >= 0; i--) {
+                    (SyntaxItem syntaxTreeDaughterItem, int syntaxTreeDaughterCount) = syntaxTreeDaughterItemCounts.ElementAt(i);
+                    List<Matches> possibleMatches = number == 1
+                        ? GetAllMatches(syntaxTreeDaughterItem, repeatingOperator.DaughterItem, inputMatches)
+                        : GetMatches(new[] { syntaxTreeDaughterItem }, new[] { repeatingOperator.DaughterItem }, inputMatches);
+                    if (possibleMatches.Count == 0) continue;
+                    syntaxTreeDaughterItemCounts.Remove(syntaxTreeDaughterItem);
+                    matchedSyntaxItems.AddRange(Enumerable.Repeat(possibleMatches.First().DirectSubstitutes[foundGenericOperand], syntaxTreeDaughterCount));
                 }
-            } else {
-                returnValue.AddRange(GetGenericItemNames(syntaxTreeDaughterItem.DaughterItems, returnValue));
+
+                if(matchedSyntaxItems.Count == 0)
+                    continue;
+                
+                if (inputMatches.RepeatingSubstitutes.TryGetValue(foundGenericOperand, out List<SyntaxItem>? foundSyntaxItems)) {
+                    foundSyntaxItems.AddRange(matchedSyntaxItems);
+                } else {
+                    inputMatches.RepeatingSubstitutes.Add(foundGenericOperand, matchedSyntaxItems);
+                }
+                
+                returnValue.Add(inputMatches);
+            }
+            
+            if (syntaxTreeDaughterItemCounts.Any(x => x.Value > 0)) {
+                return new List<Matches>();
             }
         }
 
         return returnValue;
+    }
+    
+    private static int TryGetRepeatingGenericOperandFromRepeatingOperator(RepeatingOperator repeatingOperator, out GenericOperand foundGenericOperand) {
+        SyntaxItem daughterItem = repeatingOperator.DaughterItem;
+        
+        if(daughterItem is GenericOperand {IsRepeating: true} repeatingGenericOperand) {
+            foundGenericOperand = repeatingGenericOperand;
+            return 0;
+        }
+
+        GenericOperand[] repeatingGenericOperands = daughterItem.DaughterItems
+            .OfType<GenericOperand>()
+            .Where(genericOperand => genericOperand.IsRepeating)
+            .ToArray();
+
+        if (repeatingGenericOperands.Length != 1) {
+            foundGenericOperand = default;
+            return -1;
+        }
+
+        foundGenericOperand = repeatingGenericOperands.First();
+        return 1;
     }
 }

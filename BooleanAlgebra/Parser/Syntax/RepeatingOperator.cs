@@ -3,6 +3,10 @@
 /// 
 /// </summary>
 public class RepeatingOperator : SyntaxItem {
+    public override uint GetCost() {
+        return 0;
+    }
+
     /// <summary>
     /// 
     /// </summary>
