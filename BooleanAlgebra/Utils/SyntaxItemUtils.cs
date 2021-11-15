@@ -15,26 +15,26 @@ public static class SyntaxItemUtils {
             syntaxItem.DaughterItems[i] = syntaxItem.DaughterItems[i].Compress();
         }
 
-        if (syntaxItem is BinaryOperator) {
-            bool hasFoundMatch;
-            do {
-                hasFoundMatch = false;
+        if (syntaxItem is not BinaryOperator) return syntaxItem;
+        
+        bool hasFoundMatch;
+        do {
+            hasFoundMatch = false;
 
-                for (int i = syntaxItem.DaughterItems.Count - 1; i >= 0; i--) {
-                    if(!syntaxItem.IsShallowMatch(syntaxItem.DaughterItems[i]))
-                        continue;
-                    SyntaxItem tempSyntaxItem = syntaxItem.DaughterItems[i];
-                    
-                    syntaxItem.DaughterItems.RemoveAt(i);
-                    foreach (SyntaxItem daughterItem in tempSyntaxItem.DaughterItems) {
-                        syntaxItem.DaughterItems.Add(daughterItem);
-                    }
-                    
-                    hasFoundMatch = true;
+            for (int i = syntaxItem.DaughterItems.Count - 1; i >= 0; i--) {
+                if(!syntaxItem.IsShallowMatch(syntaxItem.DaughterItems[i]))
+                    continue;
+                SyntaxItem tempSyntaxItem = syntaxItem.DaughterItems[i];
+                
+                syntaxItem.DaughterItems.RemoveAt(i);
+                foreach (SyntaxItem daughterItem in tempSyntaxItem.DaughterItems) {
+                    syntaxItem.DaughterItems.Add(daughterItem);
                 }
-            } while (hasFoundMatch);
-        }
-
+                
+                hasFoundMatch = true;
+            }
+        } while (hasFoundMatch);
+            
         return syntaxItem;
     }
 }

@@ -31,9 +31,7 @@ public class SimplificationRule {
     private static SimplificationRule[][]? _simplificationRules;
 
     public static IEnumerable<SimplificationRule[]> GetSimplificationRules() {
-        _simplificationRules ??= GenerateSimplificationRules();
-
-        return _simplificationRules;
+        return _simplificationRules ??= GenerateSimplificationRules();
     }
 
     private static SimplificationRule[][] GenerateSimplificationRules() {
@@ -64,10 +62,10 @@ public class SimplificationRule {
                 new SimplificationRule("!ItemA OR !ItemB OR [!ItemsA] OR [ItemsB]", "!(ItemA AND ItemB AND [ItemsA]) OR [ItemsB]", "De Morgan's Law", 0, SimplificationPattern.OUTSIDE_IN, SimplificationPost.AFTER),
                 new SimplificationRule("!ItemA AND !ItemB AND [!ItemsA] AND [ItemsB]", "!(ItemA OR ItemB OR [ItemsA]) AND [ItemsB]", "De Morgan's Law", 0, SimplificationPattern.OUTSIDE_IN, SimplificationPost.AFTER),
                 //Distributive Laws
-                new SimplificationRule("(ItemA AND ItemB AND [ItemsB]) OR (ItemA AND ItemC AND [ItemsC]) OR [ItemsA]", "[ItemsA] OR (ItemA AND ((ItemB AND [ItemsB]) OR (ItemC AND [ItemsC])))", "Distributive Law", 4, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
-                new SimplificationRule("(ItemA OR ItemB OR [ItemsB]) AND (ItemA OR ItemC OR [ItemsC]) AND [ItemsA]", "[ItemsA] AND (ItemA OR ((ItemB OR [ItemsB]) AND (ItemC OR [ItemsC])))", "Distributive Law", 4, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
-                new SimplificationRule("ItemA AND [ItemsA] AND (ItemB OR ItemC OR [ItemsB])", "(ItemA AND [ItemsA] AND ItemB) OR (ItemA AND [ItemsA] AND ItemC) OR [(ItemA AND [ItemsA] AND ItemsB)]", "Distributive Law", 6, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
-                new SimplificationRule("ItemA OR [ItemsA] OR (ItemB AND ItemC AND [ItemsB])", "(ItemA OR [ItemsA] OR ItemB) AND (ItemA OR [ItemsA] OR ItemC) AND [(ItemA OR [ItemsA] OR ItemsB)]", "Distributive Law", 6, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
+                new SimplificationRule("(ItemA AND ItemB AND [ItemsB]) OR (ItemA AND ItemC AND [ItemsC]) OR [ItemsA]", "[ItemsA] OR (ItemA AND ((ItemB AND [ItemsB]) OR (ItemC AND [ItemsC])))", "Distributive Law", 4, SimplificationPattern.INSIDE_OUT, SimplificationPost.BEFORE),
+                new SimplificationRule("(ItemA OR ItemB OR [ItemsB]) AND (ItemA OR ItemC OR [ItemsC]) AND [ItemsA]", "[ItemsA] AND (ItemA OR ((ItemB OR [ItemsB]) AND (ItemC OR [ItemsC])))", "Distributive Law", 4, SimplificationPattern.INSIDE_OUT, SimplificationPost.BEFORE),
+                new SimplificationRule("ItemA AND [ItemsA] AND (ItemB OR ItemC OR [ItemsB])", "(ItemA AND [ItemsA] AND ItemB) OR (ItemA AND [ItemsA] AND ItemC) OR [(ItemA AND [ItemsA] AND ItemsB)]", "Distributive Law", 6, SimplificationPattern.INSIDE_OUT, SimplificationPost.BEFORE),
+                new SimplificationRule("ItemA OR [ItemsA] OR (ItemB AND ItemC AND [ItemsB])", "(ItemA OR [ItemsA] OR ItemB) AND (ItemA OR [ItemsA] OR ItemC) AND [(ItemA OR [ItemsA] OR ItemsB)]", "Distributive Law", 6, SimplificationPattern.INSIDE_OUT, SimplificationPost.BEFORE),
             },
             new[] {
                 //AND Laws
