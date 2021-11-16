@@ -37,12 +37,14 @@ while (true) {
         continue;
     }
     if(isDebugModeEnabled)
-        Console.WriteLine(syntaxTree.ToString());
+        Console.WriteLine(syntaxTree?.ToString());
 
     timer = new Stopwatch();
     timer.Start();
-    Simplification simplification = new(syntaxTree);
-    timer.Stop();
-    Console.WriteLine($"Time taken for simplification: {timer.Elapsed.Milliseconds}ms");
-    Console.WriteLine(simplification);
+    if (syntaxTree != null) {
+        Simplification simplification = new(syntaxTree);
+        timer.Stop();
+        Console.WriteLine($"Time taken for simplification: {timer.Elapsed.Milliseconds}ms");
+        Console.WriteLine(simplification);
+    }
 }

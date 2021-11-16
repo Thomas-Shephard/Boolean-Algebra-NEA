@@ -42,7 +42,7 @@ public class LexemePattern {
     public static IEnumerable<LexemePattern> GetLexemePatterns() {
         return new[] {
             //A pattern equal to [0-9.]+
-            new LexemePattern(new int[] { '.' }, new[] { new Tuple<int, int>('0', '9') }),
+            new LexemePattern(Array.Empty<int>(),new[] { new Tuple<int, int>('0', '9') }),
             //A pattern equal to [A-Za-z_]+
             new LexemePattern(new int[] { '_' }, new[] { new Tuple<int, int>('A', 'Z'), new Tuple<int, int>('a', 'z') }),
         };

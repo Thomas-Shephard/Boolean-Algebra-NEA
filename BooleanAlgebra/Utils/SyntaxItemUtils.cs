@@ -6,10 +6,6 @@ public static class SyntaxItemUtils {
                && syntaxItem.Value == otherSyntaxItem.Value;
     }
 
-    public static uint GetDaughterItemCount(this SyntaxItem syntaxItem) {
-        return syntaxItem.DaughterItems.Aggregate<SyntaxItem, uint>(0, (current, syntaxItemDaughterItem) => current + (1 + syntaxItemDaughterItem.GetDaughterItemCount()));
-    }
-
     public static SyntaxItem Compress(this SyntaxItem syntaxItem) {
         for (int i = 0; i < syntaxItem.DaughterItems.Count; i++) {
             syntaxItem.DaughterItems[i] = syntaxItem.DaughterItems[i].Compress();

@@ -1,12 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooleanAlgebra", "BooleanAlgebra\BooleanAlgebra.csproj", "{B034AB58-60A8-4E17-B2CA-E099149C7634}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31825.309
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BooleanAlgebra", "BooleanAlgebra\BooleanAlgebra.csproj", "{B034AB58-60A8-4E17-B2CA-E099149C7634}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooleanAlgebra.Display", "BooleanAlgebra.Display\BooleanAlgebra.Display.csproj", "{EE9852DE-82D6-445D-AA43-75ED6D97458D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BooleanAlgebra.Display", "BooleanAlgebra.Display\BooleanAlgebra.Display.csproj", "{EE9852DE-82D6-445D-AA43-75ED6D97458D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooleanAlgebra.Tests", "BooleanAlgebra.Tests\BooleanAlgebra.Tests.csproj", "{C358F0F6-E31C-4610-9817-EEF87AC4F089}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BooleanAlgebra.WebDisplay", "BooleanAlgebra.WebDisplay.Deprecated\BooleanAlgebra.WebDisplay.csproj", "{702ACC4D-EFCA-453D-B261-D9889FC1EBCB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooleanAlgebra.WebDisplay", "BooleanAlgebra.WebDisplay\BooleanAlgebra.WebDisplay.csproj", "{702ACC4D-EFCA-453D-B261-D9889FC1EBCB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooleanAlgebra.Tests", "BooleanAlgebra.Tests\BooleanAlgebra.Tests.csproj", "{955C0C7E-DCAD-49B7-BF6C-40D85DD9F479}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,13 +25,19 @@ Global
 		{EE9852DE-82D6-445D-AA43-75ED6D97458D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE9852DE-82D6-445D-AA43-75ED6D97458D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE9852DE-82D6-445D-AA43-75ED6D97458D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C358F0F6-E31C-4610-9817-EEF87AC4F089}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C358F0F6-E31C-4610-9817-EEF87AC4F089}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C358F0F6-E31C-4610-9817-EEF87AC4F089}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C358F0F6-E31C-4610-9817-EEF87AC4F089}.Release|Any CPU.Build.0 = Release|Any CPU
 		{702ACC4D-EFCA-453D-B261-D9889FC1EBCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{702ACC4D-EFCA-453D-B261-D9889FC1EBCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{702ACC4D-EFCA-453D-B261-D9889FC1EBCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{702ACC4D-EFCA-453D-B261-D9889FC1EBCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{955C0C7E-DCAD-49B7-BF6C-40D85DD9F479}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{955C0C7E-DCAD-49B7-BF6C-40D85DD9F479}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{955C0C7E-DCAD-49B7-BF6C-40D85DD9F479}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{955C0C7E-DCAD-49B7-BF6C-40D85DD9F479}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C6EBFBAE-0C57-4800-B938-7F456C6A190F}
 	EndGlobalSection
 EndGlobal
