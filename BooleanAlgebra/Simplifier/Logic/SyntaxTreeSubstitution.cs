@@ -1,4 +1,6 @@
-﻿namespace BooleanAlgebra.Simplification.Logic;
+﻿using BooleanAlgebra.Simplification;
+
+namespace BooleanAlgebra.Simplifier.Logic;
 
 public static class SyntaxTreeSubstitution {
     public static bool TrySubstituteSyntaxTree(SyntaxItem syntaxTree, Matches matches, [NotNullWhen(true)] out SyntaxItem? substitutedSyntaxTree) {

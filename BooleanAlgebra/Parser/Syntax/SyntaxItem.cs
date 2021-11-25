@@ -6,6 +6,7 @@ public abstract class SyntaxItem : IEquatable<SyntaxItem> {
     public abstract override string ToString();
     public abstract bool Equals(SyntaxItem? other);
     public abstract override bool Equals(object? obj);
+    #warning "This will not return true if the orders are different"
     public abstract override int GetHashCode();
     public abstract SyntaxItem Clone();
 }

@@ -1,0 +1,52 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@namespace BooleanAlgebra.WebDisplay.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="~/" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap-dark.min.css" />
+    <link href="css/site.css" rel="stylesheet" />
+    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+    <title>Boolean Algebra Simplification</title>
+</head>
+<body>
+    <div class="d-flex flex-column overflow-hidden min-vh-100 vh-100">
+        <div id="blazor-error-ui" class="modal show backdrop-blur" role="alertdialog">
+             <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header border-bottom-0">
+                        <h4 class="modal-title">
+                            <environment include="Staging,Production">An error has occurred</environment>
+                            <environment include="Development">An unhandled exception has occurred</environment>
+                        </h4>
+                    </div>
+                    <div class="modal-body py-0">
+                        <environment include="Staging,Production">An error has occurred within the application. Please refresh the page and try again.</environment>
+                        <environment include="Development">An unhandled exception has occurred within the application. Check the browser dev tools for more details.</environment>
+                    </div>
+                    <div class="modal-footer flex-column border-top-0">
+                        <button type="button" class="btn btn-primary w-100 mx-0 mb-2" onClick="window.location.reload();">Refresh Page</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <main role="main" class="flex-grow-1 overflow-auto">
+            @RenderBody()
+        </main>
+        
+        <footer class="container-fluid flex-grow-0 flex-shrink-1">
+            <ul class="border-bottom"></ul>
+            <p class="text-center text-muted">© Thomas Shephard 2021</p>
+      </footer>
+  </div>
+
+    <script src="_framework/blazor.server.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+</body>
+</html>

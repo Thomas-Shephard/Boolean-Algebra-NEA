@@ -28,13 +28,7 @@ public class LexemePosition : IEquatable<LexemePosition> {
         StartPosition = startPosition;
         EndPosition = endPosition;
     }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="LexemePosition"/> class with the same startPosition and endPosition.
-    /// </summary>
-    /// <param name="startAndEndPosition">The startPosition and endPosition of the lexeme.</param>
-    public LexemePosition(uint startAndEndPosition) : this(startAndEndPosition, startAndEndPosition) { }
-
+    
     public override string ToString() {
         return $"[{StartPosition}, {EndPosition}]"; //Outputs in the format [StartPosition, EndPosition]
     }

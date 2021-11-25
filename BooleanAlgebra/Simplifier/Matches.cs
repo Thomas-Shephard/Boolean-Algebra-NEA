@@ -1,4 +1,4 @@
-﻿namespace BooleanAlgebra.Simplification; 
+﻿namespace BooleanAlgebra.Simplifier; 
 
 public class Matches {
     public Dictionary<GenericOperand, SyntaxItem> DirectSubstitutes { get; }

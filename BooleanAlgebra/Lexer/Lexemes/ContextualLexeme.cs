@@ -24,17 +24,23 @@ public class ContextualLexeme : Lexeme, IEquatable<ContextualLexeme> {
     }
 
     public bool Equals(ContextualLexeme? other) {
-        return other is not null                            //Check that the other lexeme is not null
-            && Identifier.Equals(other.Identifier)          //Check that the identifiers are equal
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        
+        return Identifier.Equals(other.Identifier)          //Check that the identifiers are equal
             && LexemePosition.Equals(other.LexemePosition)  //Check that the lexemePositions are equal
             && LexemeValue == other.LexemeValue;            //Check that the lexemeValues are equal
     }
 
     public override bool Equals(object? obj) {
-        return Equals(obj as ContextualLexeme);
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        
+        return obj.GetType() == GetType() 
+            && Equals((ContextualLexeme) obj);
     }
 
     public override int GetHashCode() {
-        return HashCode.Combine(Identifier, LexemePosition, LexemeValue);
+        return  HashCode.Combine(Identifier, LexemePosition, LexemeValue);
     }
 }

@@ -32,7 +32,7 @@ public class UnaryOperator : SyntaxItem {
     }
 
     public override string ToString() {
-        return $"({Value} {DaughterItems.First()})";  //Outputs in the format [Value, SyntaxItem]
+        return $"{Value}{DaughterItems.First()}";  //Outputs in the format [Value, SyntaxItem]
     }
 
     public override bool Equals(SyntaxItem? other) {

@@ -1,4 +1,6 @@
-﻿namespace BooleanAlgebra.Simplification.Logic;
+﻿using BooleanAlgebra.Simplification;
+
+namespace BooleanAlgebra.Simplifier.Logic;
 
 public static class AttemptSimplification {
     public static bool TrySimplifySyntaxTree(this SyntaxItem syntaxTree, int index, IReadOnlyCollection<SyntaxItem> previousSimplifications, SimplificationPost simplificationPost, [NotNullWhen(true)] out Tuple<SyntaxItem, string>? syntaxTreeSimplification) {
@@ -12,8 +14,8 @@ public static class AttemptSimplification {
                 .Select(x => x)
                 .GroupBy(x => x.SimplificationPattern);
             
-            foreach (IGrouping<SimplificationPattern, SimplificationRule> simplificationRule in simplificationRules) {
-                if(syntaxTree.TrySimplifySyntaxTreeWithSimplificationRule(simplificationRule.Select(x=> x).ToList(), previousSimplifications, out syntaxTreeSimplification))
+            foreach (IEnumerable<SimplificationRule> simplificationRule in simplificationRules.Select(x=> x)) {
+                if(syntaxTree.TrySimplifySyntaxTreeWithSimplificationRule(simplificationRule.ToList(), previousSimplifications, out syntaxTreeSimplification))
                     return true;
             }
         }

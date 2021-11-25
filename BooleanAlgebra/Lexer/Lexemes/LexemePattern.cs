@@ -30,18 +30,19 @@ public class LexemePattern {
     /// <param name="character">The character to check against.</param>
     /// <returns>True when the <paramref name="character"/> is a match for the current <see cref="LexemePattern"/>.</returns>
     public bool IsCharacterMatch(char character) {
-        return _acceptedCharacters.Contains(character) //Check if acceptedCharacters array contains the currentCharacter
+        //Check if acceptedCharacters array contains the currentCharacter
+        return _acceptedCharacters.Contains(character)
             //Check if any item in the acceptedCharacterBounds array is in the range of the currentCharacter
             || _acceptedCharacterBounds.Any(acceptedCharBound => character >= acceptedCharBound.Item1 && character <= acceptedCharBound.Item2);
     }
 
     /// <summary>
-    /// Returns a collection of the lexemePatterns that the lexer should compare against.
+    /// Returns an enumerable collection of the lexemePatterns that the lexer should compare against.
     /// </summary>
-    /// <returns>A collection of the lexemePatterns that the lexer should compare against.</returns>
+    /// <returns>An enumerable collection of the lexemePatterns that the lexer should compare against.</returns>
     public static IEnumerable<LexemePattern> GetLexemePatterns() {
         return new[] {
-            //A pattern equal to [0-9.]+
+            //A pattern equal to [0-9]+
             new LexemePattern(Array.Empty<int>(),new[] { new Tuple<int, int>('0', '9') }),
             //A pattern equal to [A-Za-z_]+
             new LexemePattern(new int[] { '_' }, new[] { new Tuple<int, int>('A', 'Z'), new Tuple<int, int>('a', 'z') }),

@@ -1,4 +1,4 @@
-﻿namespace BooleanAlgebra.Simplification; 
+﻿namespace BooleanAlgebra.Simplifier; 
 
 public enum SimplificationPattern {
     INSIDE_OUT,

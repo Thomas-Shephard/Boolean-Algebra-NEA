@@ -1,15 +1,15 @@
-﻿using BooleanAlgebra.Simplifier;
-using BooleanAlgebra.Simplifier.Logic;
+﻿using BooleanAlgebra.Simplifier.Logic;
 
-namespace BooleanAlgebra.Simplification;
-public class Simplification {
+namespace BooleanAlgebra.Simplifier;
+
+public class Simplifier {
     private SyntaxItem StartSyntaxItem { get; }
-    public List<Tuple<SyntaxItem, string>> Simplifications { get; }
 
-    public Simplification(SyntaxItem startSyntaxItem) {
+    public Simplifier(SyntaxItem startSyntaxItem) {
         StartSyntaxItem = startSyntaxItem;
-        Simplifications = new List<Tuple<SyntaxItem, string>>();
-
+    }
+    
+    public List<Tuple<SyntaxItem, string>> Simplify() {
         int currentIndex;
         uint currentCost;
 
@@ -17,7 +17,7 @@ public class Simplification {
 
         for (int i = 0; i < 2; i++) {
             List<Tuple<SyntaxItem, string>> tupleList = new();
-            Tuple<SyntaxItem, string> simplification = new(startSyntaxItem, "Initial boolean expression");
+            Tuple<SyntaxItem, string> simplification = new(StartSyntaxItem, "Initial boolean expression");
 
             bool didSimplify;
             do {
@@ -78,15 +78,6 @@ public class Simplification {
             currentIndex = i;
         }
 
-        Simplifications = simplificationsDictionary.ElementAt(currentIndex).Value;
-    }
-
-    public override string ToString() {
-        StringBuilder returnValue = new($"[Start ----------, {StartSyntaxItem}]");
-        for (int i = 1; i < Simplifications.Count; i++) {
-            returnValue.Append($"{Environment.NewLine}[Simplification {i}, {Simplifications[i].Item1}, {Simplifications[i].Item2}]");
-        }
-
-        return returnValue.ToString();
+        return simplificationsDictionary.ElementAt(currentIndex).Value;
     }
 }

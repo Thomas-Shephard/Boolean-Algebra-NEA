@@ -13,10 +13,9 @@ public sealed class Parser {
         UseGenericOperands = useGenericOperands;
     }
 
-    public bool TryParse([NotNullWhen(true)] out SyntaxItem? abstractSyntaxTree) {
+    public SyntaxItem Parse() {
         LexemesQueue = new Queue<Lexeme>(Lexemes);
-        abstractSyntaxTree = InternalParse();
-        return abstractSyntaxTree is not null;
+        return InternalParse() ?? throw new ParserException(new LexemePosition(0,0), "The input is empty");
     }
 
     private SyntaxItem? InternalParse(uint currentPrecedence = 0, SyntaxItem? previousSyntaxItem = null, IdentifierType endSyntaxIdentifierType = IdentifierType.UNKNOWN) {
@@ -71,6 +70,7 @@ public sealed class Parser {
                 break;
             case IdentifierType.GROUPING_OPERATOR_END:
                 throw new ParserException(currentLexeme.LexemePosition, "Unexpected right parenthesis.");
+            case IdentifierType.UNKNOWN:
             default:
                 throw new ParserException(currentLexeme.LexemePosition, "An unknown syntax identifier was mistakenly lexed");
         }

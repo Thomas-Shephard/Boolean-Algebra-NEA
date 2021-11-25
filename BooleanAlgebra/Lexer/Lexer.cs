@@ -17,16 +17,21 @@ public sealed class Lexer {
         RawText = rawText ?? throw new ArgumentNullException(nameof(rawText));  //Ensure that rawText is not null
     }
 
+    public bool TryLex(out List<Lexeme> lexemes, [NotNullWhen(false)] out LexerException? lexerException) {
+        lexemes = InternalLex();
+        lexerException = default;
+        return true;
+    }
+
     /// <summary>
     /// Indicates whether the input text has been entirely lexed into known lexemes.
     /// Provides the list of lexemes that the input text has been lexed into regardless of the return value.
     /// </summary>
     /// <param name="lexemes">The list of lexemes produced from the input text.</param>
     /// <returns>True when the input text has been entirely lexed into known lexemes.</returns>
-    public bool Lex(out List<Lexeme> lexemes) {
-        lexemes = new List<Lexeme>();   //Initialize out parameter lexemes to an empty list
+    public List<Lexeme> InternalLex() {
+        List<Lexeme> lexemes = new();   //Initialize out parameter lexemes to an empty list
         uint currentPosition = 0;       //Set the currentPosition equal to the startPosition (i.e. 0)
-        bool hasFoundUnknownLexeme = false;
 
         //Check if a character exists at the currentPosition
         while (TryGetCharacterAtPosition(currentPosition, out char currentCharacter)) {
@@ -53,7 +58,7 @@ public sealed class Lexer {
             
             //If the identifier is equal to UnknownIdentifier then an unknown lexeme has been inputted to the lexer
             if(identifier.Equals(IdentifierUtils.UnknownIdentifier))
-                hasFoundUnknownLexeme = true;
+                throw new LexerException(lexemePosition, "Unknown lexeme found");
 
 
             //Add a lexeme to the out parameter lexemes
@@ -64,7 +69,7 @@ public sealed class Lexer {
         }
 
         //If any lexeme within the out parameter lexemes is unknown then the function will return false
-        return !hasFoundUnknownLexeme;
+        return lexemes;
     }
 
     /// <summary>

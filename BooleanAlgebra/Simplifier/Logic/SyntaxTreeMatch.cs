@@ -1,4 +1,6 @@
-﻿namespace BooleanAlgebra.Simplification.Logic; 
+﻿using BooleanAlgebra.Simplification;
+
+namespace BooleanAlgebra.Simplifier.Logic; 
 
 public static class SyntaxTreeMatch {
     public static List<Matches> GetAllMatches(SyntaxItem syntaxTree, SyntaxItem patternMatchTree, Matches? inputMatches = null) {

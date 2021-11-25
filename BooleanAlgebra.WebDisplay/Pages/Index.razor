@@ -1,0 +1,132 @@
+﻿@page "/"
+@using BooleanAlgebra.WebDisplay.Components
+@using BooleanAlgebra.Parser.Syntax
+
+<!-- Title layout -->
+<div class="p-3 mb-3 bg-black rounded-3">
+    <div class="container-fluid">
+        <!-- Title message -->
+        <h1 class="align-content-center">Boolean Algebra Simplification</h1>
+    </div>
+</div>
+
+<!-- Textfield and button layout -->
+<div class="p-3 mb-3 bg-black rounded-3">
+    <div class="container-fluid">
+        <!-- Return false to prevent page reload on form submit -->
+        <form class="row gap-y-2" onsubmit="return false">
+            <div class="col-12 col-md-10 has-validation">
+                <input type="text" class="form-control@(_isUserInputError ? " is-invalid" : "")" @oninput="@(e => CurrentBooleanAlgebraExpression = e.Value?.ToString() ?? string.Empty)" placeholder="Boolean expression" maxlength="250">
+                @if (_isInErrorState || _isUserInputError) {
+                    <div class="invalid-feedback">
+                        <!-- Display error message -->
+                        @GetErrorMessage()
+                    </div>
+                }
+            </div>
+            <div class="col-12 col-md-2">
+                <button class="w-100 align-content-center btn btn-primary@(_isUserInputError ? " disabled" : "")" type="submit" @onclick="SimplifyBooleanExpression">Simplify</button>
+            </div>
+            
+           <!-- <div class="has-validation">
+                 Boolean expression textfield 
+                
+                 Submit button 
+                <button class="btn btn-primary disabled" type="submit">Simplify</button>
+                 Only show invalid-feedback response if in error state 
+                
+            </div>-->
+        </form>
+    </div>
+</div>
+
+<!-- Simplification layout -->
+@if (!_isInErrorState && (_isSimplifying || _simplifiedBooleanExpression?.IsSuccess == true)) {
+    <div class="p-3 mb-3 bg-black rounded-3">
+        <div class="container-fluid">
+            @if (_isSimplifying) {
+                <div class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only"></span>
+                    </div>
+                </div>
+            } else if (_simplifiedBooleanExpression?.IsSuccess == true) {
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <div style="max-width: calc(100% - 50px);word-break: break-all;">
+                                    @_simplifiedBooleanExpression.Simplifications.Last().Item1.ToString()
+                                    <p class="small m-0 mt-2">@FormatNumberOfSimplifications()</p>
+                                </div>
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <ul class="list-group">
+                                    @foreach ((SyntaxItem item1, string item2) in _simplifiedBooleanExpression.Simplifications) {
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            @item1
+                                            <span class="badge bg-muted">@item2</span>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+
+<div class="p-3 mb-3 bg-black rounded-3">
+    <div class="container-fluid">
+        <table class="table caption-top">
+            <thead>
+            <tr>
+                <th scope="col">Operator</th>
+                <th scope="col">Symbol</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>And</td>
+                <td>
+                    <kbd>AND</kbd> <kbd>.</kbd>
+                </td>
+            </tr>
+            <tr>
+                <td>Or</td>
+                <td>
+                    <kbd>OR</kbd> <kbd>+</kbd>
+                </td>
+            </tr>
+            <tr>
+                <td>Not</td>
+                <td>
+                    <kbd>NOT</kbd> <kbd>!</kbd>
+                </td>
+            </tr>
+            <tr>
+                <td>Parentheses</td>
+                <td>
+                    <kbd>(</kbd> <kbd>)</kbd>
+                </td>
+            </tr>
+            <tr>
+                <td>Boolean Constants</td>
+                <td>
+                    <kbd>0</kbd> <kbd>1</kbd>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!--  -->
+
+@code {
+    //The boolean expression cannot be more than 100 characters long
+}
