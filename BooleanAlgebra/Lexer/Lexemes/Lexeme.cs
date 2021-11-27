@@ -28,13 +28,19 @@ public class Lexeme : IEquatable<Lexeme> {
     }
 
     public bool Equals(Lexeme? other) {
-        return other is not null                            //Check that the other lexeme is not null
-            && Identifier.Equals(other.Identifier)          //Check that the identifiers are equal
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        
+        return Identifier.Equals(other.Identifier)          //Check that the identifiers are equal
             && LexemePosition.Equals(other.LexemePosition); //Check that the lexemePositions are equal
     }
 
     public override bool Equals(object? obj) {
-        return Equals(obj as Lexeme);
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        
+        return obj.GetType() == GetType() 
+            && Equals(obj as Lexeme);
     }
 
     public override int GetHashCode() {

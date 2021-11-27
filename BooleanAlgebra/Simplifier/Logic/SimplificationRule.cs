@@ -1,7 +1,4 @@
-﻿using BooleanAlgebra.Lexer;
-using BooleanAlgebra.Simplifier;
-
-namespace BooleanAlgebra.Simplification;
+﻿namespace BooleanAlgebra.Simplifier.Logic;
 
 public class SimplificationRule {
     public SyntaxItem LeftHandSide { get; }
@@ -12,31 +9,11 @@ public class SimplificationRule {
     public SimplificationPost SimplificationPost { get; }
 
     private SimplificationRule(string leftHandSide, string rightHandSide, string message, int precedence, SimplificationPattern simplificationPattern, SimplificationPost simplificationPost) {
-        //Lexing the left and right hand sides
-        bool leftHandSideResult = new Lexer.Lexer(leftHandSide).TryLex(out List<Lexeme> leftHandSideLexemes, out LexerException? leftHandSideLexerException);
-        bool rightHandSideResult = new Lexer.Lexer(rightHandSide).TryLex(out List<Lexeme> rightHandSideLexemes, out LexerException? rightHandSideLexerException);
+        List<Lexeme> leftHandSideLexemes = new Lexer.Lexer(leftHandSide, true).InternalLex();
+        List<Lexeme> rightHandSideLexemes = new Lexer.Lexer(rightHandSide, true).InternalLex();
         
-        if (!leftHandSideResult)
-            throw new ArgumentException(nameof(leftHandSide));
-        if (!rightHandSideResult)
-            throw new ArgumentException(nameof(rightHandSide));
-        //Parsing the left and right hand sides
-
-
-
-
-        Parser.Parser leftHandSideParser = new(leftHandSideLexemes, true);
-        Parser.Parser rightHandSideParser = new(rightHandSideLexemes, true);
-
-        SyntaxItem leftHandSideSyntaxTree;
-        SyntaxItem rightHandSideSyntaxTree;
-
-            leftHandSideSyntaxTree = leftHandSideParser.Parse();
-        rightHandSideSyntaxTree = rightHandSideParser.Parse();
-
-
-        LeftHandSide = leftHandSideSyntaxTree;
-        RightHandSide = rightHandSideSyntaxTree;
+        LeftHandSide = new Parser.Parser(leftHandSideLexemes, true).Parse();
+        RightHandSide = new Parser.Parser(rightHandSideLexemes, true).Parse();
         Message = message;
         Precedence = precedence;
         SimplificationPattern = simplificationPattern;
@@ -63,8 +40,8 @@ public class SimplificationRule {
                 new SimplificationRule("ItemA OR 0 OR [ItemsA]", "ItemA OR [ItemsA]", "Identity law", 3, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
                 new SimplificationRule("ItemA OR 1 OR [ItemsA]", "1", "Annulment law", 0, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
                 //NOT Laws
-                new SimplificationRule("!0", "1", "!0 is 1", 1, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
-                new SimplificationRule("!1", "0", "!1 is 0", 1, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
+                new SimplificationRule("!0", "1", "Negation law", 1, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
+                new SimplificationRule("!1", "0", "Negation law", 1, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
                 new SimplificationRule("!!ItemA", "ItemA", "Involution law", 0, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
                 //Absorption Laws
                 new SimplificationRule("ItemA AND (ItemA OR [ItemsA]) AND [ItemsB]", "ItemA AND [ItemsB]", "Absorption law", 2, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
@@ -94,8 +71,8 @@ public class SimplificationRule {
                 new SimplificationRule("ItemA OR 0 OR [ItemsA]", "ItemA OR [ItemsA]", "Identity law", 3, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
                 new SimplificationRule("ItemA OR 1 OR [ItemsA]", "1", "Annulment Law", 0, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
                 //NOT Laws
-                new SimplificationRule("!0", "1", "!0 is 1", 1, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
-                new SimplificationRule("!1", "0", "!1 is 0", 1, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
+                new SimplificationRule("!0", "1", "Negation law", 1, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
+                new SimplificationRule("!1", "0", "Negation law", 1, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
                 new SimplificationRule("!!ItemA", "ItemA", "Involution law", 0, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),
                 //Absorption Laws
                 new SimplificationRule("ItemA AND (ItemA OR [ItemsA]) AND [ItemsB]", "ItemA AND [ItemsB]", "Absorption law", 2, SimplificationPattern.OUTSIDE_IN, SimplificationPost.BEFORE),

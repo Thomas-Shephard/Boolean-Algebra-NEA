@@ -1,26 +1,34 @@
 ﻿namespace BooleanAlgebra.Identifiers;
 public static class IdentifierUtils {
-    public static readonly Identifier UnknownIdentifier = new(IdentifierType.UNKNOWN, 0, "UNKNOWN", "^.+$", true);
-    
+    private static Identifier[]? _identifiers;
+
     private static IEnumerable<Identifier> GetIdentifiers() {
+        return _identifiers ??= GenerateIdentifiers();
+    }
+    
+    private static Identifier[] GenerateIdentifiers() {
         return new[] {
-            new Identifier(IdentifierType.BINARY_OPERATOR, 1, "+", "^((?i)OR|\\+)$", false),
-            new Identifier(IdentifierType.BINARY_OPERATOR, 2, ".", "^((?i)AND|\\.)$", false),
-            new Identifier(IdentifierType.UNARY_OPERATOR, 3, "!", "^((?i)NOT|\\!)$", false),
-            new Identifier(IdentifierType.GROUPING_OPERATOR_START, 4, "PARENTHESIS", "^\\($", false),
-            new Identifier(IdentifierType.GROUPING_OPERATOR_END, 4, "PARENTHESIS", "^\\)$", false),
-            new Identifier(IdentifierType.GROUPING_OPERATOR_START, 4, "REPEATING", "^\\[$", false),
-            new Identifier(IdentifierType.GROUPING_OPERATOR_END, 4, "REPEATING", "^\\]$", false),
-            new Identifier(IdentifierType.OPERAND, 5, "VARIABLE", "^[A-Za-z]+$", true),
-            new Identifier(IdentifierType.OPERAND, 5, "LITERAL", "^(1|0)$", true)
+            new Identifier(IdentifierType.BINARY_OPERATOR, 1, "+", "^((?i)OR|\\+)$", false, false),
+            new Identifier(IdentifierType.BINARY_OPERATOR, 2, ".", "^((?i)AND|\\.)$", false, false),
+            new Identifier(IdentifierType.UNARY_OPERATOR, 3, "!", "^((?i)NOT|\\!)$", false, false),
+            new Identifier(IdentifierType.GROUPING_OPERATOR_START, 4, "PARENTHESIS", "^\\($", false, false),
+            new Identifier(IdentifierType.GROUPING_OPERATOR_END, 4, "PARENTHESIS", "^\\)$", false, false),
+            new Identifier(IdentifierType.GROUPING_OPERATOR_START, 4, "REPEATING", "^\\[$", false, true),
+            new Identifier(IdentifierType.GROUPING_OPERATOR_END, 4, "REPEATING", "^\\]$", false, true),
+            new Identifier(IdentifierType.OPERAND, 5, "VARIABLE", "^[A-Za-z]+$", true, false),
+            new Identifier(IdentifierType.OPERAND, 5, "LITERAL", "^(1|0)$", true, false)
         };
     }
-
-    public static Identifier GetIdentifierFromLexemeValue(string lexemeValue) {
-        return GetIdentifiers().FirstOrDefault(identifier => identifier.Regex.IsMatch(lexemeValue)) ?? UnknownIdentifier;
+    
+    public static bool TryGetIdentifierFromLexemeValue(string lexemeValue, bool useGenericOperands, [NotNullWhen(true)] out Identifier? matchedIdentifier) {
+        return GetIdentifiers().TryFirst(identifier => {
+            if (useGenericOperands)
+                return identifier.Regex.IsMatch(lexemeValue);
+            return !identifier.IsGenericOperand && identifier.Regex.IsMatch(lexemeValue);
+        }, out matchedIdentifier);
     }
 
-    public static uint GetMaximumPrecedence() {
-        return GetIdentifiers().DefaultIfEmpty(UnknownIdentifier).Max(syntaxIdentifier => syntaxIdentifier.Precedence);
+    public static int GetMaximumPrecedence() {
+        return GetIdentifiers().Max(syntaxIdentifier => syntaxIdentifier.Precedence);
     }
 }

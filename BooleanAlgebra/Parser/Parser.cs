@@ -5,20 +5,17 @@ public sealed class Parser {
     private bool UseGenericOperands { get; }
 
     public Parser(IEnumerable<Lexeme> lexemes, bool useGenericOperands = false) {
-        lexemes = lexemes.ToArray();
-        Lexemes = lexemes ?? throw new ArgumentNullException(nameof(lexemes));
-        if (lexemes.Any(lexeme => lexeme.Identifier.Equals(IdentifierUtils.UnknownIdentifier)))
-            throw new ArgumentException($"The parameter {nameof(lexemes)} must not contain an unknown lexeme");
-        LexemesQueue = new Queue<Lexeme>(lexemes);
+        Lexemes = lexemes.ToArray() ?? throw new ArgumentNullException(nameof(lexemes));
+        LexemesQueue = new Queue<Lexeme>(Lexemes);
         UseGenericOperands = useGenericOperands;
     }
 
     public SyntaxItem Parse() {
         LexemesQueue = new Queue<Lexeme>(Lexemes);
-        return InternalParse() ?? throw new ParserException(new LexemePosition(0,0), "The input is empty");
+        return InternalParse() ?? throw new ParserException(new LexemePosition(0,0), "The boolean expression must not be empty");
     }
 
-    private SyntaxItem? InternalParse(uint currentPrecedence = 0, SyntaxItem? previousSyntaxItem = null, IdentifierType endSyntaxIdentifierType = IdentifierType.UNKNOWN) {
+    private SyntaxItem? InternalParse(int currentPrecedence = 0, SyntaxItem? previousSyntaxItem = null, IdentifierType endSyntaxIdentifierType = IdentifierType.UNKNOWN) {
         if (currentPrecedence < IdentifierUtils.GetMaximumPrecedence())
             previousSyntaxItem = InternalParse(currentPrecedence + 1, previousSyntaxItem, endSyntaxIdentifierType);
         while (LexemesQueue.TryPeek(out Lexeme? currentLexeme) && currentLexeme.Identifier.IdentifierType != endSyntaxIdentifierType && currentLexeme.Identifier.Precedence == currentPrecedence) {
@@ -32,47 +29,47 @@ public sealed class Parser {
         switch (currentLexeme.Identifier.IdentifierType) {
             case IdentifierType.OPERAND when currentLexeme is ContextualLexeme contextualLexeme:
                 if (previousSyntaxItem is not null)
-                    throw new ParserException(currentLexeme.LexemePosition, "(x00)");
+                    throw new ParserException(currentLexeme.LexemePosition, "The parser expected an operator before the operand");
                 nextSyntaxItem = UseGenericOperands && currentLexeme.Identifier.Name != "LITERAL"
                     ? new GenericOperand(contextualLexeme.LexemeValue)
                     : new Operand(contextualLexeme.LexemeValue);
                 break;
             case IdentifierType.OPERAND:
-                throw new ParserException(currentLexeme.LexemePosition, "Was not of type contextual lexeme");
+                throw new InvalidOperationException("The lexeme was not a contextual lexeme");
             case IdentifierType.UNARY_OPERATOR:
                 if (previousSyntaxItem is not null)
-                    throw new ParserException(currentLexeme.LexemePosition, "Expected null before (x01)");
+                    throw new ParserException(currentLexeme.LexemePosition, "The parser expected an operator before the unary operator");
                 nextSyntaxItem = InternalParse(currentLexeme.Identifier.Precedence, endSyntaxIdentifierType: endSyntaxIdentifierType)
-                                 ?? throw new ParserException(currentLexeme.LexemePosition, "Expression expected after unary operator");
+                                 ?? throw new ParserException(currentLexeme.LexemePosition, "The parser expected an expression after the unary operator");
                 nextSyntaxItem = new UnaryOperator(currentLexeme.Identifier.Name, nextSyntaxItem);
                 break;
             case IdentifierType.BINARY_OPERATOR:
                 if (previousSyntaxItem is null)
-                    throw new ParserException(currentLexeme.LexemePosition, "Expected not null before (x03)");
+                    throw new ParserException(currentLexeme.LexemePosition, "The parser expected an expression before the binary operator");
                 List<SyntaxItem> daughterSyntaxItems = new() { previousSyntaxItem };
                 do {
                     daughterSyntaxItems.Add(InternalParse(currentLexeme.Identifier.Precedence + 1, endSyntaxIdentifierType: endSyntaxIdentifierType)
-                        ?? throw new ParserException(currentLexeme.LexemePosition, "Expected not null after (x04)"));
+                        ?? throw new ParserException(currentLexeme.LexemePosition, "The parser expected an expression after the binary operator"));
                 } while (NextSyntaxIdentifierIsOfSameLexemeType(currentLexeme.Identifier));
                 nextSyntaxItem = new BinaryOperator(currentLexeme.Identifier.Name, daughterSyntaxItems);
                 break;
             case IdentifierType.GROUPING_OPERATOR_START:
                 string initialGroupingOperatorName = currentLexeme.Identifier.Name;
                 if (previousSyntaxItem is not null && initialGroupingOperatorName == "PARENTHESIS")
-                    throw new ParserException(currentLexeme.LexemePosition, "Expected null before (x05)");
+                    throw new ParserException(currentLexeme.LexemePosition, "The parser expected an operator before the opening parenthesis");
                 nextSyntaxItem = InternalParse(endSyntaxIdentifierType: IdentifierType.GROUPING_OPERATOR_END)
-                    ?? throw new ParserException(currentLexeme.LexemePosition, "Expected not null after (x06)");
+                    ?? throw new ParserException(currentLexeme.LexemePosition, "The parser expected an expression after the opening parenthesis");
                 if(!IsNextIdentifierOfIdentifierTypeAndName(IdentifierType.GROUPING_OPERATOR_END, initialGroupingOperatorName))
-                    throw new ParserException(currentLexeme.LexemePosition, $"Expected closing {initialGroupingOperatorName} (x07)");
+                    throw new ParserException(currentLexeme.LexemePosition, $"The parser expected a closing parenthesis");
                 if (initialGroupingOperatorName == "REPEATING") {
                     nextSyntaxItem = new RepeatingOperator("", nextSyntaxItem);
                 }
                 break;
             case IdentifierType.GROUPING_OPERATOR_END:
-                throw new ParserException(currentLexeme.LexemePosition, "Unexpected right parenthesis.");
+                throw new ParserException(currentLexeme.LexemePosition, "The parser did not expect a closing parenthesis");
             case IdentifierType.UNKNOWN:
             default:
-                throw new ParserException(currentLexeme.LexemePosition, "An unknown syntax identifier was mistakenly lexed");
+                throw new InvalidOperationException("An unknown syntax identifier was mistakenly lexed");
         }
 
         return nextSyntaxItem;

@@ -2,22 +2,26 @@
 
 namespace BooleanAlgebra.WebDisplay.Pages;
 public partial class Index {
+    private SimplifiedBooleanExpression? _simplifiedBooleanExpression;
+    private bool _isSimplifying;
+    private bool _isInErrorState;
+    private string _errorMessage = string.Empty;
     private string _currentBooleanAlgebraExpression = string.Empty;
     private string CurrentBooleanAlgebraExpression {
         get => _currentBooleanAlgebraExpression;
         set {
             switch (value.Length) {
                 case > 100:
-                    errorMessage = "The boolean expression cannot exceed 100 characters";
-                    _isUserInputError = true;
+                    _errorMessage = "The boolean expression must not exceed 100 characters in length";
+                    _isInErrorState = true;
                     break;
                 case 0:
-                    errorMessage = "The boolean expression must not be empty";
-                    _isUserInputError = true;
+                    _errorMessage = "The boolean expression must not be empty";
+                    _isInErrorState = true;
                     break;
                 default:
-                    errorMessage = string.Empty;
-                    _isUserInputError = false;
+                    _errorMessage = string.Empty;
+                    _isInErrorState = false;
                     break;
             }
 
@@ -25,27 +29,22 @@ public partial class Index {
         }
     }
 
-    private bool _isUserInputError;
-    
-    private string errorMessage = string.Empty;
-    private SimplifiedBooleanExpression? _simplifiedBooleanExpression;
-    private bool _showFullExpansion;
-    private bool _isSimplifying;
-    private bool _isInErrorState;
-    
     private async Task SimplifyBooleanExpression() {
-        if (_isUserInputError)
+        if (_isInErrorState)
             return;
+
         _isSimplifying = true;
         _simplifiedBooleanExpression = await BooleanExpressionSimplificationService.SimplifyBooleanExpressionAsync(CurrentBooleanAlgebraExpression);
+
+        if (!_simplifiedBooleanExpression.IsSuccess) {
+            _errorMessage = _simplifiedBooleanExpression.ErrorMessage;
+            _isInErrorState = true;
+        }
+        
         _isSimplifying = false;
     }
 
     private string FormatNumberOfSimplifications() {
         return _simplifiedBooleanExpression?.FormatNumberOfSimplifications() ?? throw new NullReferenceException(nameof(_simplifiedBooleanExpression));
-    }
-
-    private string GetErrorMessage() {
-        return errorMessage;
     }
 }

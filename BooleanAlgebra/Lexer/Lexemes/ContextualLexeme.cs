@@ -2,7 +2,7 @@
 /// <summary>
 /// Holds the value of a contextualLexeme.
 /// </summary>
-public class ContextualLexeme : Lexeme, IEquatable<ContextualLexeme> {
+public sealed class ContextualLexeme : Lexeme, IEquatable<ContextualLexeme> {
     /// <summary>
     /// The string representation of a contextualLexeme.
     /// </summary>

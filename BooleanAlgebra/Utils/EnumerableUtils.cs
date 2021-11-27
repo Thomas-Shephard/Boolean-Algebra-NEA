@@ -1,6 +1,19 @@
 ﻿namespace BooleanAlgebra.Utils;
 
 public static class EnumerableUtils {
+    public static bool TryFirst<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, [NotNullWhen(true)] out TSource? result) {
+        foreach (TSource item in source) {
+            if (!predicate(item))
+                continue;
+            result = item;
+            return true;
+        }
+
+        result = default;
+        return false;
+    }
+    
+    
     //Wanted to do this https://stackoverflow.com/a/3670089/14619583
     public static bool SequenceEqualsIgnoreOrder<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second) where TSource : IEquatable<TSource> {
         if (first is null) throw new ArgumentNullException(nameof(first));

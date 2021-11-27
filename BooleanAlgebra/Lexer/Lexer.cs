@@ -6,32 +6,27 @@ public sealed class Lexer {
     /// <summary>
     /// The input string to be lexed by the lexer.
     /// </summary>
-    private string RawText { get; }
+    private string BooleanExpression { get; }
+    public bool UseGenericOperands { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Lexer"/> class with a given input string.
     /// </summary>
-    /// <param name="rawText">The input string to be lexed by the lexer.</param>
+    /// <param name="booleanExpression">The input string to be lexed by the lexer.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="rawText"/> is null.</exception>
-    public Lexer(string rawText) {
-        RawText = rawText ?? throw new ArgumentNullException(nameof(rawText));  //Ensure that rawText is not null
-    }
-
-    public bool TryLex(out List<Lexeme> lexemes, [NotNullWhen(false)] out LexerException? lexerException) {
-        lexemes = InternalLex();
-        lexerException = default;
-        return true;
+    public Lexer(string booleanExpression, bool useGenericOperands = false) {
+        BooleanExpression = booleanExpression ?? throw new ArgumentNullException(nameof(booleanExpression));  //Ensure that rawText is not null
+        UseGenericOperands = useGenericOperands;
     }
 
     /// <summary>
     /// Indicates whether the input text has been entirely lexed into known lexemes.
     /// Provides the list of lexemes that the input text has been lexed into regardless of the return value.
     /// </summary>
-    /// <param name="lexemes">The list of lexemes produced from the input text.</param>
     /// <returns>True when the input text has been entirely lexed into known lexemes.</returns>
     public List<Lexeme> InternalLex() {
         List<Lexeme> lexemes = new();   //Initialize out parameter lexemes to an empty list
-        uint currentPosition = 0;       //Set the currentPosition equal to the startPosition (i.e. 0)
+        int currentPosition = 0;       //Set the currentPosition equal to the startPosition (i.e. 0)
 
         //Check if a character exists at the currentPosition
         while (TryGetCharacterAtPosition(currentPosition, out char currentCharacter)) {
@@ -45,7 +40,7 @@ public sealed class Lexer {
             LexemePattern? lexemePattern = LexemePattern.GetLexemePatterns().FirstOrDefault(pattern => pattern.IsCharacterMatch(currentCharacter));
 
             //The startPosition will be equal to the currentPosition before the lexeme value is generated
-            uint startPosition = currentPosition;
+            int startPosition = currentPosition;
 
             //Generate the lexeme value from the first pattern that matches the currentCharacter
             string lexemeValue = GenerateLexemeValueFromPattern(lexemePattern, ref currentPosition);
@@ -53,19 +48,15 @@ public sealed class Lexer {
             //The endPosition will be equal to the currentPosition after the lexeme value is generated
             LexemePosition lexemePosition = new(startPosition, currentPosition);
 
-            //Attempt to find an identifier that matches the lexemeValue, defaults to UnknownIdentifier if no matches are found
-            Identifier identifier = IdentifierUtils.GetIdentifierFromLexemeValue(lexemeValue);
-            
-            //If the identifier is equal to UnknownIdentifier then an unknown lexeme has been inputted to the lexer
-            if(identifier.Equals(IdentifierUtils.UnknownIdentifier))
-                throw new LexerException(lexemePosition, "Unknown lexeme found");
-
+            //Attempt to find an identifier that matches the lexemeValue
+            if(!IdentifierUtils.TryGetIdentifierFromLexemeValue(lexemeValue, UseGenericOperands, out Identifier? matchedIdentifier))
+                throw new UnknownLexemeException(lexemePosition, BooleanExpression);
 
             //Add a lexeme to the out parameter lexemes
-            lexemes.Add(identifier.IsContextRequired
+            lexemes.Add(matchedIdentifier.IsContextRequired
                 //Only provide the lexemeValue if context is required
-                ? new ContextualLexeme(identifier, lexemePosition, lexemeValue)
-                : new Lexeme(identifier, lexemePosition));
+                ? new ContextualLexeme(matchedIdentifier, lexemePosition, lexemeValue)
+                : new Lexeme(matchedIdentifier, lexemePosition));
         }
 
         //If any lexeme within the out parameter lexemes is unknown then the function will return false
@@ -79,12 +70,12 @@ public sealed class Lexer {
     /// <param name="currentPosition">The position that the lexer is at within the input text.</param>
     /// <returns>The lexemeValue that comes from the <paramref name="currentPosition"/> within the input text and the <paramref name="lexemePattern"/>.</returns>
     /// <exception cref="ArgumentException">Thrown when there are no characters in the input string after the <paramref name="currentPosition"/>.</exception>
-    private string GenerateLexemeValueFromPattern(LexemePattern? lexemePattern, ref uint currentPosition) {
+    private string GenerateLexemeValueFromPattern(LexemePattern? lexemePattern, ref int currentPosition) {
         StringBuilder outputString = new();
 
         //Ensure that a character exists at the specified position
         if (!TryGetCharacterAtPosition(currentPosition, out char currentCharacter))
-            throw new ArgumentException($"The property {nameof(RawText)} has no characters at the specified position");
+            throw new ArgumentException($"The property {nameof(BooleanExpression)} has no characters at the specified position");
 
         do {
             outputString.Append(currentCharacter);  //Add the currentCharacter to the output string
@@ -103,10 +94,10 @@ public sealed class Lexer {
     /// <param name="currentPosition">The position that the lexer is at within the input text.</param>
     /// <param name="currentCharacter">The character at the specified position when it is within the bounds of the input text.</param>
     /// <returns>True when the specified position is within the bounds of the input text.</returns>
-    private bool TryGetCharacterAtPosition(uint currentPosition, out char currentCharacter) {
-        if (currentPosition < RawText.Length) {
+    private bool TryGetCharacterAtPosition(int currentPosition, out char currentCharacter) {
+        if (currentPosition < BooleanExpression.Length) {
             //If the currentPosition is within the bounds of rawText, return true and output the character at the requested position
-            currentCharacter = RawText[(int)currentPosition];
+            currentCharacter = BooleanExpression[currentPosition];
             return true;
         }
 

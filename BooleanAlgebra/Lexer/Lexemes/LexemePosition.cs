@@ -2,19 +2,19 @@
 /// <summary>
 /// Holds the startPosition and endPosition of a lexeme.
 /// </summary>
-public class LexemePosition : IEquatable<LexemePosition> {
+public sealed class LexemePosition : IEquatable<LexemePosition> {
     /// <summary>
     /// The startPosition of the lexeme.
     /// </summary>
-    public uint StartPosition { get; }
+    public int StartPosition { get; }
     /// <summary>
     /// The endPosition of the lexeme.
     /// </summary>
-    public uint EndPosition { get; }
+    public int EndPosition { get; }
     /// <summary>
     /// The length of the lexeme.
     /// </summary>
-    public uint Length => EndPosition - StartPosition;
+    public int Length => EndPosition - StartPosition;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LexemePosition"/> class with a <paramref name="startPosition"/> and <paramref name="endPosition"/>.
@@ -22,9 +22,11 @@ public class LexemePosition : IEquatable<LexemePosition> {
     /// <param name="startPosition">The startPosition of the lexeme.</param>
     /// <param name="endPosition">The endPosition of the lexeme.</param>
     /// <exception cref="ArgumentException">Thrown when <paramref name="startPosition"/> is greater than <paramref name="endPosition"/>.</exception>
-    public LexemePosition(uint startPosition, uint endPosition) {
+    public LexemePosition(int startPosition, int endPosition) {
+        if(startPosition < 0)
+            throw new ArgumentException($"The parameter {nameof(startPosition)} must be greater than or equal to 0.", nameof(startPosition));
         if (endPosition < startPosition)    //Ensure that the startPosition is not greater than the endPosition
-            throw new ArgumentException($"The parameter {nameof(startPosition)} cannot be greater than the parameter {nameof(endPosition)}.");
+            throw new ArgumentException($"The parameter {nameof(endPosition)} cannot be less than the parameter {nameof(startPosition)}.", nameof(endPosition));
         StartPosition = startPosition;
         EndPosition = endPosition;
     }
@@ -34,13 +36,19 @@ public class LexemePosition : IEquatable<LexemePosition> {
     }
 
     public bool Equals(LexemePosition? other) {
-        return other is not null                    //Check that the other lexeme is not null
-            && other.StartPosition == StartPosition //Check that the startPositions are equal
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        
+        return other.StartPosition == StartPosition //Check that the startPositions are equal
             && other.EndPosition == EndPosition;    //Check that the endPositions are equal
     }
 
     public override bool Equals(object? obj) {
-        return Equals(obj as LexemePosition);
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        
+        return obj.GetType() == GetType() 
+            && Equals((LexemePosition) obj);
     }
 
     public override int GetHashCode() {

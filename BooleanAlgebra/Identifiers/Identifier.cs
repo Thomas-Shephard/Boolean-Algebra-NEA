@@ -1,19 +1,21 @@
 ﻿namespace BooleanAlgebra.Identifiers;
 public class Identifier : IEquatable<Identifier> {
     public IdentifierType IdentifierType { get; }
-    public uint Precedence { get; }
+    public int Precedence { get; }
     public string Name { get; }
-    public Regex Regex { get; }
     private string RegexPattern { get; }
+    public Regex Regex { get; }
     public bool IsContextRequired { get; }
+    public bool IsGenericOperand { get; }
 
-    public Identifier(IdentifierType identifierType, uint precedence, string name, string regexPattern, bool isContextRequired) {
+    public Identifier(IdentifierType identifierType, int precedence, string name, string regexPattern, bool isContextRequired, bool isGenericOperand) {
         IdentifierType = identifierType;
         Precedence = precedence;
-        Name = name;
-        RegexPattern = regexPattern;
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+        RegexPattern = regexPattern ?? throw new ArgumentNullException(nameof(regexPattern));
         Regex = new Regex(regexPattern);
         IsContextRequired = isContextRequired;
+        IsGenericOperand = isGenericOperand;
     }
 
     public override string ToString() {
@@ -28,7 +30,8 @@ public class Identifier : IEquatable<Identifier> {
                && Precedence == other.Precedence 
                && Name == other.Name 
                && RegexPattern == other.RegexPattern 
-               && IsContextRequired == other.IsContextRequired;
+               && IsContextRequired == other.IsContextRequired
+               && IsGenericOperand == other.IsGenericOperand;
     }
 
     public override bool Equals(object? obj) {
@@ -40,6 +43,6 @@ public class Identifier : IEquatable<Identifier> {
     }
 
     public override int GetHashCode() {
-        return HashCode.Combine((int) IdentifierType, Precedence, Name, RegexPattern, IsContextRequired);
+        return HashCode.Combine((int) IdentifierType, Precedence, Name, RegexPattern, IsContextRequired, IsGenericOperand);
     }
 }

@@ -3,7 +3,7 @@
 /// Holds the accepted characters and the bounds of the accepted characters corresponding values.
 /// Contains the lexemePatterns that the lexer should compare against.
 /// </summary>
-public class LexemePattern {
+public sealed class LexemePattern {
     /// <summary>
     /// An array of the accepted characters corresponding unicode values.
     /// </summary>
