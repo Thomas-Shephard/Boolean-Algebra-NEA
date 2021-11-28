@@ -22,9 +22,9 @@ public static class IdentifierUtils {
     
     public static bool TryGetIdentifierFromLexemeValue(string lexemeValue, bool useGenericOperands, [NotNullWhen(true)] out Identifier? matchedIdentifier) {
         return GetIdentifiers().TryFirst(identifier => {
-            if (useGenericOperands)
-                return identifier.Regex.IsMatch(lexemeValue);
-            return !identifier.IsGenericOperand && identifier.Regex.IsMatch(lexemeValue);
+            if (!identifier.Regex.IsMatch(lexemeValue))
+                return false;
+            return useGenericOperands || !identifier.IsGenericOperand;
         }, out matchedIdentifier);
     }
 

@@ -1,83 +1,90 @@
 ﻿using BooleanAlgebra.Simplifier.Logic;
-
 namespace BooleanAlgebra.Simplifier;
+public class SimplifierItem {
+    public SimplifierItem? ParentItem { get; }
+    public ISyntaxItem SyntaxTree { get; }
+    public string SimplificationReason { get; }
+    public bool IsInAfterStage { get; }
+    public SimplifierItem? RootNode { get; }
+    public List<SimplifierItem> Children { get; }
+    public SimplifierItem(ISyntaxItem syntaxTree, string simplificationReason, SimplifierItem? parentItem = null, bool isInAfterStage = false, SimplifierItem? rootNode = null) {
+        SyntaxTree = syntaxTree;
+        SimplificationReason = simplificationReason;
+        ParentItem = parentItem;
+        IsInAfterStage = isInAfterStage;
+        RootNode = rootNode;
+        Children = new List<SimplifierItem>();
+    }
 
-public class Simplifier {
-    private SyntaxItem StartSyntaxItem { get; }
+    public void Simplify(SimplifierItem? startItem = null) {
+        startItem ??= this;
+        if (!IsInAfterStage) {
+            IEnumerable<Tuple<ISyntaxItem, string>> lowestCostNextItem = SyntaxTree.SimplifySyntaxTree(SimplificationPost.BEFORE)
+                .Where(x => startItem.PreviousSyntaxItems().All(y => !y.Equals(x.Item1)));
+            foreach ((ISyntaxItem? item1, string? item2) in lowestCostNextItem) {
+                if(item1.GetCost() > Math.Max(startItem.SyntaxTree.GetCost() * 2.5, startItem.SyntaxTree.GetCost() + 50))
+                    continue;
+                Children.Add(new SimplifierItem(item1, item2, this, rootNode: RootNode ?? this));
+                Children.Last().Simplify(startItem);
+            }
+        }
+        
+        foreach ((ISyntaxItem? item1, string? item2) in SyntaxTree.SimplifySyntaxTree(SimplificationPost.AFTER).Where(x => startItem.PreviousSyntaxItems().All(y => !y.Equals(x.Item1)))) {
+            if(item1.GetCost() > Math.Max(startItem.SyntaxTree.GetCost() * 2.5, startItem.SyntaxTree.GetCost() + 50))
+                continue;
+            Children.Add(new SimplifierItem(item1, item2, this, true, RootNode ?? this));
+            Children.Last().Simplify(startItem);
+        }
+    }
 
-    public Simplifier(SyntaxItem startSyntaxItem) {
-        StartSyntaxItem = startSyntaxItem;
+    private List<ISyntaxItem> PreviousSyntaxItems() {
+        List<ISyntaxItem> returnValue = new() {SyntaxTree};
+        foreach(SimplifierItem child in Children) {
+            returnValue.AddRange(child.PreviousSyntaxItems());
+        }
+        return returnValue;
     }
     
-    public List<Tuple<SyntaxItem, string>> Simplify() {
-        int currentIndex;
-        uint currentCost;
-
-        Dictionary<int, List<Tuple<SyntaxItem, string>>> simplificationsDictionary = new();
-
-        for (int i = 0; i < 2; i++) {
-            List<Tuple<SyntaxItem, string>> tupleList = new();
-            Tuple<SyntaxItem, string> simplification = new(StartSyntaxItem, "Initial boolean expression");
-
-            bool didSimplify;
-            do {
-                if (tupleList.Any(singleSimplification => singleSimplification.Item1.Equals(simplification.Item1)))
-                    break;
-                if (simplification.Item1.GetCost() > Math.Max(StartSyntaxItem.GetCost() * 2.5, StartSyntaxItem.GetCost() + 50))
-                    break;
-
-                tupleList.Add(simplification);
-                didSimplify = simplification.Item1.TrySimplifySyntaxTree(i, tupleList.Select(x => x.Item1).ToList(), SimplificationPost.BEFORE, out simplification);
-            } while (didSimplify);
-
-            List<List<Tuple<SyntaxItem, string>>> listOfSimplifications = new();
-            for (int i1 = 0; i1 < tupleList.Count; i1++) {
-                List<Tuple<SyntaxItem, string>> list = tupleList.Take(i1 + 1).ToList();
-                bool isFirst = true;
-                do {
-                    if (!isFirst && tupleList.Any(singleSimplification => singleSimplification.Item1.Equals(simplification.Item1)))
-                        break;
-
-                    if (!isFirst)
-                        list.Add(simplification);
-
-                    didSimplify = list.Last().Item1.TrySimplifySyntaxTree(i, list.Select(x => x.Item1).ToList(), SimplificationPost.AFTER, out simplification);
-                    isFirst = false;
-                } while (didSimplify);
-
-                int currentIndexJ = -1;
-                uint currentCostJ = uint.MaxValue;
-                for (int j = 0; j < list.Count; j++) {
-                    uint tempCost = list.ElementAt(j).Item1.GetCost();
-                    if (tempCost >= currentCostJ) continue;
-                    currentCostJ = tempCost;
-                    currentIndexJ = j;
-                }
-
-                listOfSimplifications.Add(list.Take(currentIndexJ + 1).ToList());
+    public static SimplifierItem GetSmallestCostSyntaxItem(SimplifierItem rootNode) {
+        SimplifierItem lowestCostItem = rootNode;
+        
+        Queue<SimplifierItem> queue = new();
+        queue.Enqueue(rootNode);
+        while (queue.Count > 0) {
+            SimplifierItem currentItem = queue.Dequeue();
+            if (currentItem.SyntaxTree.GetCost() < lowestCostItem.SyntaxTree.GetCost()) {
+                lowestCostItem = currentItem;
             }
-
-            currentIndex = -1;
-            currentCost = uint.MaxValue;
-            for (int i1 = 0; i1 < listOfSimplifications.Count; i1++) {
-                uint tempCost = listOfSimplifications[i1].Last().Item1.GetCost();
-                if (tempCost >= currentCost) continue;
-                currentCost = tempCost;
-                currentIndex = i1;
+            foreach (SimplifierItem child in currentItem.Children) {
+                queue.Enqueue(child);
             }
-
-            simplificationsDictionary.Add(i, listOfSimplifications[currentIndex]);
         }
 
-        currentIndex = -1;
-        currentCost = uint.MaxValue;
-        for (int i = 0; i < simplificationsDictionary.Count; i++) {
-            uint tempCost = simplificationsDictionary.ElementAt(i).Value.Last().Item1.GetCost();
-            if (tempCost >= currentCost) continue;
-            currentCost = tempCost;
-            currentIndex = i;
-        }
+        return lowestCostItem;
+    }
+    
+    public List<Tuple<ISyntaxItem, string>> GetSimplifiedSyntaxTree() {
+        List<Tuple<ISyntaxItem, string>> returnValue = new();
+        if(ParentItem is not null)
+            returnValue.AddRange(ParentItem.GetSimplifiedSyntaxTree());
+        returnValue.Add(new Tuple<ISyntaxItem, string>(SyntaxTree, SimplificationReason));
+        return returnValue;
+    }
+}
 
-        return simplificationsDictionary.ElementAt(currentIndex).Value;
+public class Simplifier {
+    private ISyntaxItem StartSyntaxItem { get; }
+    private string SimplificationReason { get; }
+
+    public Simplifier(ISyntaxItem startSyntaxItem, string simplificationReason = "Initial boolean expression") {
+        StartSyntaxItem = startSyntaxItem;
+        SimplificationReason = simplificationReason;
+    }
+
+    public List<Tuple<ISyntaxItem, string>> Simplify() {
+        SimplifierItem simplifierTree = new(StartSyntaxItem, SimplificationReason);
+        simplifierTree.Simplify();
+        
+        return SimplifierItem.GetSmallestCostSyntaxItem(simplifierTree).GetSimplifiedSyntaxTree();
     }
 }

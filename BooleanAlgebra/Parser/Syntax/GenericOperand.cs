@@ -1,27 +1,29 @@
 ﻿namespace BooleanAlgebra.Parser.Syntax; 
-
 public class GenericOperand : Operand {
     public bool IsRepeating { get; }
 
-    public GenericOperand(string value) : base(value) {
+    public GenericOperand(string value, Identifier identifier) : base(value, identifier) {
         IsRepeating = value.StartsWith("Items");
     }
-    
-    public override string ToString() {
-        return $"Generic '{Value}'";
-    }
 
-    public override bool Equals(SyntaxItem? other) {
-        return other is GenericOperand genericOperand 
-               && Value == genericOperand.Value
-               && IsRepeating == genericOperand.IsRepeating;
+    public override bool Equals(ISyntaxItem? other) {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+
+        return other is GenericOperand otherGenericOperand
+            && Value == otherGenericOperand.Value
+            && IsRepeating == otherGenericOperand.IsRepeating
+            && Identifier.Equals(otherGenericOperand.Identifier);
     }
 
     public override bool Equals(object? obj) {
-        return Equals(obj as SyntaxItem);
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        
+        return Equals(obj as GenericOperand);
     }
-
+    
     public override int GetHashCode() {
-        return HashCode.Combine(Value, IsRepeating);
+        return HashCode.Combine(Value, Identifier, IsRepeating);
     }
 }

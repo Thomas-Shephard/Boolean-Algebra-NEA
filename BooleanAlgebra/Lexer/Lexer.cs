@@ -7,7 +7,7 @@ public sealed class Lexer {
     /// The input string to be lexed by the lexer.
     /// </summary>
     private string BooleanExpression { get; }
-    public bool UseGenericOperands { get; }
+    private bool UseGenericOperands { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Lexer"/> class with a given input string.
@@ -24,7 +24,7 @@ public sealed class Lexer {
     /// Provides the list of lexemes that the input text has been lexed into regardless of the return value.
     /// </summary>
     /// <returns>True when the input text has been entirely lexed into known lexemes.</returns>
-    public List<Lexeme> InternalLex() {
+    public List<Lexeme> Lex() {
         List<Lexeme> lexemes = new();   //Initialize out parameter lexemes to an empty list
         int currentPosition = 0;       //Set the currentPosition equal to the startPosition (i.e. 0)
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BooleanAlgebra.Lexer;
 using BooleanAlgebra.Lexer.Lexemes;
 using BooleanAlgebra.Parser.Syntax;
 
@@ -10,15 +9,15 @@ namespace BooleanAlgebra.Tests;
 public static class SimplificationUtils {
     public static bool Compare(string input, string expected) {
         //Lexing the input and expected
-        List<Lexeme> inputLexemes = new Lexer.Lexer(input).InternalLex();
-        List<Lexeme> expectedLexemes = new Lexer.Lexer(expected).InternalLex();
-
-        SyntaxItem parsedInput = new Parser.Parser(inputLexemes).Parse();
-        SyntaxItem parsedExpected = new Parser.Parser(expectedLexemes).Parse();
-
+        List<Lexeme> inputLexemes = new Lexer.Lexer(input).Lex();
+        List<Lexeme> expectedLexemes = new Lexer.Lexer(expected).Lex();
+        //Parsing the input and expected
+        ISyntaxItem parsedInput = new Parser.Parser(inputLexemes).Parse();
+        ISyntaxItem parsedExpected = new Parser.Parser(expectedLexemes).Parse();
+        //Simplifying the input
         Simplifier.Simplifier simplifier = new(parsedInput);
-        List<Tuple<SyntaxItem, string>> simplificationSteps = simplifier.Simplify();
-        
+        List<Tuple<ISyntaxItem, string>> simplificationSteps = simplifier.Simplify();
+        //Comparing the simplified input to the expected
         return simplificationSteps.Last().Item1.Equals(parsedExpected);
     }
 }

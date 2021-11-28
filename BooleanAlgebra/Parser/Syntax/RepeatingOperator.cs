@@ -1,55 +1,38 @@
-﻿namespace BooleanAlgebra.Parser.Syntax;
-/// <summary>
-/// 
-/// </summary>
-public class RepeatingOperator : SyntaxItem {
-    public override uint GetCost() {
-        return 0;
-    }
+﻿namespace BooleanAlgebra.Parser.Syntax; 
+public class RepeatingOperator : ISingleDaughterSyntaxItem {
+    public Identifier Identifier { get; }
+    public ISyntaxItem Daughter { get; }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public override string Value { get; }
-    /// <summary>
-    /// 
-    /// </summary>
-    public override List<SyntaxItem> DaughterItems { get; set; }
-
-    public SyntaxItem DaughterItem => DaughterItems[0];
-
-    public override SyntaxItem Clone() {
-        return new RepeatingOperator(Value, DaughterItem);
+    public RepeatingOperator(Identifier identifier, ISyntaxItem daughter) {
+        Identifier = identifier;
+        Daughter = daughter;
     }
     
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="lexemeType"></param>
-    /// <param name="syntaxItem"></param>
-    /// <exception cref="ArgumentNullException">Thrown when either <paramref name="lexemeType"/> or <paramref name="syntaxItem"/> is null.</exception>
-    public RepeatingOperator(string lexemeType, SyntaxItem syntaxItem) {
-        Value = lexemeType ?? throw new ArgumentNullException(nameof(lexemeType));      //Ensure that the lexemeType is not null
-        DaughterItems = new List<SyntaxItem>() { syntaxItem } ?? throw new ArgumentNullException(nameof(syntaxItem)); //Ensure that the syntaxItem is not null
+    public int GetCost() {
+        return 1 + Daughter.GetCost();
     }
-
     
-
-    public override string ToString() {
-        return $"[{DaughterItems.First()}]";  //Outputs in the format [Value, SyntaxItem]
+    public string ToString(int higherLevelPrecedence) {
+        return string.Empty;
     }
 
-    public override bool Equals(SyntaxItem? other) {
-        return other is RepeatingOperator otherRepeatingOperator            //Check that the other syntaxItem is of the same type
-               && Value == otherRepeatingOperator.Value                    //Check that the values are equal
-               && DaughterItems.First().Equals(otherRepeatingOperator.DaughterItems.First());    //Check that the daughter syntaxItems are equal
+    public bool Equals(ISyntaxItem? other) {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        
+        return other is RepeatingOperator otherRepeatingOperator
+            && Identifier.Equals(otherRepeatingOperator.Identifier) 
+            && Daughter.Equals(otherRepeatingOperator.Daughter);
     }
 
-    public override bool Equals(object? other) {
-        return Equals(other as SyntaxItem);
+    public override bool Equals(object? obj) {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        
+        return Equals(obj as RepeatingOperator);
     }
-
+    
     public override int GetHashCode() {
-        return HashCode.Combine(Value, DaughterItems);
+        return HashCode.Combine(Identifier, Daughter);
     }
 }

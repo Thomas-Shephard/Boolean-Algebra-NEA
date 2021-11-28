@@ -47,8 +47,7 @@ public sealed class LexemePosition : IEquatable<LexemePosition> {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         
-        return obj.GetType() == GetType() 
-            && Equals((LexemePosition) obj);
+        return Equals(obj as LexemePosition);
     }
 
     public override int GetHashCode() {

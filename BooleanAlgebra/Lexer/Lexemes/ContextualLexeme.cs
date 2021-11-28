@@ -36,8 +36,7 @@ public sealed class ContextualLexeme : Lexeme, IEquatable<ContextualLexeme> {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         
-        return obj.GetType() == GetType() 
-            && Equals((ContextualLexeme) obj);
+        return Equals(obj as ContextualLexeme);
     }
 
     public override int GetHashCode() {

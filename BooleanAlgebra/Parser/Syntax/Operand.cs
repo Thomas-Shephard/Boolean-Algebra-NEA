@@ -1,35 +1,42 @@
-﻿namespace BooleanAlgebra.Parser.Syntax;
-public class Operand : SyntaxItem {
-    public override uint GetCost() {
+﻿namespace BooleanAlgebra.Parser.Syntax; 
+public class Operand : ISyntaxItem {
+    public string Value { get; }
+    public Identifier Identifier { get; }
+
+    public Operand(string value, Identifier identifier) {
+        Value = value;
+        Identifier = identifier;
+    }
+    
+    public int GetCost() {
         return 1;
     }
-
-    public override string Value { get; }
-    public sealed override List<SyntaxItem> DaughterItems { get; set; }
-
-    public override Operand Clone() {
-        return new Operand(Value);
-    }
-
-    public Operand(string value) {
-        Value = value ?? throw new ArgumentNullException(nameof(value));
-        DaughterItems = new List<SyntaxItem>();
+    
+    public string ToString(int higherLevelPrecedence) {
+        return Value;
     }
 
     public override string ToString() {
         return Value;
     }
 
-    public override bool Equals(SyntaxItem? other) {
-        return other is Operand otherOperand1
-               && Value == otherOperand1.Value;
+    public virtual bool Equals(ISyntaxItem? other) {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+
+        return other is Operand operand and not GenericOperand
+            && Value == operand.Value
+            && Identifier.Equals(operand.Identifier);
     }
 
     public override bool Equals(object? obj) {
-        return Equals(obj as SyntaxItem);
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        
+        return Equals(obj as Operand);
     }
-
+    
     public override int GetHashCode() {
-        return HashCode.Combine(Value);
+        return HashCode.Combine(Value, Identifier);
     }
 }

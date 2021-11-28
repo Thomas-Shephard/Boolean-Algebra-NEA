@@ -39,8 +39,7 @@ public class Lexeme : IEquatable<Lexeme> {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         
-        return obj.GetType() == GetType() 
-            && Equals(obj as Lexeme);
+        return Equals(obj as Lexeme);
     }
 
     public override int GetHashCode() {

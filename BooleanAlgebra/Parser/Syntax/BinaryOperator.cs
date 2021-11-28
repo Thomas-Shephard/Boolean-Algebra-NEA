@@ -1,56 +1,67 @@
-﻿namespace BooleanAlgebra.Parser.Syntax;
-public class BinaryOperator : SyntaxItem {
-    public override uint GetCost() {
-        return (uint) (DaughterItems.Count - 1 + DaughterItems.Aggregate<SyntaxItem, uint>(0, (current, daughterItem) => current + daughterItem.GetCost()));
-    }
+﻿namespace BooleanAlgebra.Parser.Syntax; 
+public class BinaryOperator : IMultipleDaughterSyntaxItem {
+    public Identifier Identifier { get; }
+    public ISyntaxItem[] Daughters { get; }
 
-    public override string Value { get; }
-    public sealed override List<SyntaxItem> DaughterItems { get; set; }
+    public BinaryOperator(Identifier identifier, IEnumerable<ISyntaxItem> daughters) {
+        Identifier = identifier;
 
-    public BinaryOperator(string lexemeType, IEnumerable<SyntaxItem> syntaxItems) {
-        if (syntaxItems is null)
-            throw new ArgumentNullException(nameof(syntaxItems));
-        List<SyntaxItem> enumerable = syntaxItems.ToList();
-        if (enumerable.Count < 2)
-            throw new ArgumentException("There must be at least two syntax items");
-        Value = lexemeType ?? throw new ArgumentNullException(nameof(lexemeType));
-        DaughterItems = enumerable;
-        
-        for (int i = DaughterItems.Count - 1; i >= 0; i--) {
-            if (DaughterItems[i] is not BinaryOperator binaryOperator ||
-                binaryOperator.Value != lexemeType) continue;
-            DaughterItems.RemoveAt(i);
-            binaryOperator.DaughterItems.ForEach(syntaxItem => DaughterItems.Add(syntaxItem));
+        List<ISyntaxItem> modifiableSyntaxItems = daughters.ToList();
+        for (int i = modifiableSyntaxItems.Count - 1; i >= 0; i--) {
+            if (modifiableSyntaxItems[i] is not BinaryOperator binaryOperator ||
+                !binaryOperator.Identifier.Equals(Identifier)) continue;
+            modifiableSyntaxItems.RemoveAt(i);
+            modifiableSyntaxItems.AddRange(binaryOperator.GetDaughterItems());
         }
+        
+        Daughters = modifiableSyntaxItems.ToArray();
     }
- 
-    public override SyntaxItem Clone() {
-        return new BinaryOperator(Value, DaughterItems);
+    
+    public int GetCost() {
+        return (Daughters.Length - 1) + Daughters.Sum(daughter => daughter.GetCost());
+    }
+
+    public string ToString(int higherLevelPrecedence) {
+        StringBuilder stringBuilder = new();
+        if (higherLevelPrecedence > Identifier.Precedence) {
+            stringBuilder.Append('(');
+        }
+
+        for (int i = 0; i < Daughters.Length; i++) {
+            if (i > 0) {
+                stringBuilder.Append(' ').Append(Identifier.Name).Append(' ');
+            }
+            stringBuilder.Append(Daughters[i].ToString(Identifier.Precedence));
+        }
+        
+        if (higherLevelPrecedence > Identifier.Precedence) {
+            stringBuilder.Append(')');
+        }
+        
+        return stringBuilder.ToString();
     }
 
     public override string ToString() {
-        StringBuilder stringBuilder = new("(");
-        for (int i = 0; i < DaughterItems.Count; i++) {
-            if (i != 0) 
-                stringBuilder.Append(' ');
-            stringBuilder.Append($"{DaughterItems[i]}");
-            if (i < DaughterItems.Count - 1)
-                stringBuilder.Append(' ').Append($"{Value}");
-        }
-        return stringBuilder.Append(')').ToString();
+        return ToString(0);
     }
 
-    public override bool Equals(SyntaxItem? other) {
+    public bool Equals(ISyntaxItem? other) {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        
         return other is BinaryOperator otherBinaryOperator
-            && Value == otherBinaryOperator.Value
-            && DaughterItems.SequenceEqualsIgnoreOrder(otherBinaryOperator.DaughterItems);
+            && Identifier.Equals(otherBinaryOperator.Identifier)
+            && Daughters.SequenceEqualsIgnoreOrder(otherBinaryOperator.Daughters);
     }
 
-    public override bool Equals(object? other) {
-        return Equals(other as SyntaxItem);
+    public override bool Equals(object? obj) {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        
+        return Equals(obj as BinaryOperator);
     }
-
+    
     public override int GetHashCode() {
-        return HashCode.Combine(Value, DaughterItems);
+        return HashCode.Combine(Identifier, Daughters);
     }
 }

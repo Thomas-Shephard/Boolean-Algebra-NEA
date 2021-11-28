@@ -1,36 +1,47 @@
-﻿namespace BooleanAlgebra.Utils; 
+﻿using BooleanAlgebra.Parser.Syntax;
+
+namespace BooleanAlgebra.Utils; 
 
 public static class SyntaxItemUtils {
-    public static bool IsShallowMatch(this SyntaxItem syntaxItem, SyntaxItem otherSyntaxItem) {
+    public static bool IsShallowMatch(this ISyntaxItem syntaxItem, ISyntaxItem otherSyntaxItem) {
         return syntaxItem.GetType() == otherSyntaxItem.GetType()
-               && syntaxItem.Value == otherSyntaxItem.Value;
+               && syntaxItem.Identifier.Equals(otherSyntaxItem.Identifier);
+    }
+    
+    public static ISyntaxItem[] GetDaughterItems(this ISyntaxItem syntaxItem) {
+        return syntaxItem switch {
+            IMultipleDaughterSyntaxItem multipleDaughterSyntaxItem => multipleDaughterSyntaxItem.Daughters,
+            ISingleDaughterSyntaxItem singleDaughterSyntaxItem => new[] { singleDaughterSyntaxItem.Daughter },
+            _ => Array.Empty<ISyntaxItem>()
+        };
     }
 
-    public static SyntaxItem Compress(this SyntaxItem syntaxItem) {
-        for (int i = 0; i < syntaxItem.DaughterItems.Count; i++) {
-            syntaxItem.DaughterItems[i] = syntaxItem.DaughterItems[i].Compress();
-        }
-
-        if (syntaxItem is not BinaryOperator) return syntaxItem;
-        
-        bool hasFoundMatch;
-        do {
-            hasFoundMatch = false;
-
-            for (int i = syntaxItem.DaughterItems.Count - 1; i >= 0; i--) {
-                if(!syntaxItem.IsShallowMatch(syntaxItem.DaughterItems[i]))
-                    continue;
-                SyntaxItem tempSyntaxItem = syntaxItem.DaughterItems[i];
+    public static ISyntaxItem Compress(this ISyntaxItem syntaxItem) {
+        switch (syntaxItem) {
+            case IMultipleDaughterSyntaxItem multipleDaughterSyntaxItem:
+                List<ISyntaxItem> compressedDaughterSyntaxItems = multipleDaughterSyntaxItem.Daughters.Select(daughter => daughter.Compress()).ToList();
                 
-                syntaxItem.DaughterItems.RemoveAt(i);
-                foreach (SyntaxItem daughterItem in tempSyntaxItem.DaughterItems) {
-                    syntaxItem.DaughterItems.Add(daughterItem);
+                for (int i = compressedDaughterSyntaxItems.Count - 1; i >= 0; i--) {
+                    ISyntaxItem currentCompressedDaughterSyntaxItem = compressedDaughterSyntaxItems[i];
+                    if (currentCompressedDaughterSyntaxItem is not IMultipleDaughterSyntaxItem compressedMultipleDaughterSyntaxItem || !syntaxItem.IsShallowMatch(currentCompressedDaughterSyntaxItem))
+                        continue;
+                    compressedDaughterSyntaxItems.AddRange(compressedMultipleDaughterSyntaxItem.Daughters);
+                    compressedDaughterSyntaxItems.RemoveAt(i);
                 }
-                
-                hasFoundMatch = true;
-            }
-        } while (hasFoundMatch);
-            
-        return syntaxItem;
+
+                return multipleDaughterSyntaxItem switch {
+                    BinaryOperator => new BinaryOperator(syntaxItem.Identifier, compressedDaughterSyntaxItems.ToArray()),
+                    _ => throw new ArgumentException()
+                };
+            case ISingleDaughterSyntaxItem singleDaughterSyntaxItem:
+                ISyntaxItem compressedDaughterSyntaxItem = singleDaughterSyntaxItem.Daughter.Compress();
+                return singleDaughterSyntaxItem switch {
+                    RepeatingOperator => new RepeatingOperator(syntaxItem.Identifier, compressedDaughterSyntaxItem),
+                    UnaryOperator => new UnaryOperator(syntaxItem.Identifier, compressedDaughterSyntaxItem),
+                    _ => throw new ArgumentException()
+                };
+            default:
+                return syntaxItem;
+        }
     }
 }

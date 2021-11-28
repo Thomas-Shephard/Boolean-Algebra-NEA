@@ -1,51 +1,42 @@
-﻿namespace BooleanAlgebra.Parser.Syntax;
-/// <summary>
-/// 
-/// </summary>
-public class UnaryOperator : SyntaxItem {
-    /// <summary>
-    /// 
-    /// </summary>
-    public override string Value { get; }
-    /// <summary>
-    /// 
-    /// </summary>
-    public override List<SyntaxItem> DaughterItems { get; set; }
+﻿namespace BooleanAlgebra.Parser.Syntax; 
+public class UnaryOperator : ISingleDaughterSyntaxItem {
+    public Identifier Identifier { get; }
+    public ISyntaxItem Daughter { get; }
 
-    public override SyntaxItem Clone() {
-        return new UnaryOperator(Value, DaughterItems.First());
+    public UnaryOperator(Identifier identifier, ISyntaxItem daughter) {
+        Identifier = identifier;
+        Daughter = daughter;
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="lexemeType"></param>
-    /// <param name="syntaxItem"></param>
-    /// <exception cref="ArgumentNullException">Thrown when either <paramref name="lexemeType"/> or <paramref name="syntaxItem"/> is null.</exception>
-    public UnaryOperator(string lexemeType, SyntaxItem syntaxItem) {
-        Value = lexemeType ?? throw new ArgumentNullException(nameof(lexemeType));      //Ensure that the lexemeType is not null
-        DaughterItems = new List<SyntaxItem> { syntaxItem } ?? throw new ArgumentNullException(nameof(syntaxItem)); //Ensure that the syntaxItem is not null
+    
+    public int GetCost() {
+        return 1 + Daughter.GetCost();
     }
-
-    public override uint GetCost() {
-        return 1 + DaughterItems.Aggregate<SyntaxItem, uint>(0, (current, daughterItem) => current + daughterItem.GetCost());
+    
+    public string ToString(int higherLevelPrecedence) {
+        return $"{Identifier.Name}{Daughter.ToString(Identifier.Precedence)}";
     }
-
+    
     public override string ToString() {
-        return $"{Value}{DaughterItems.First()}";  //Outputs in the format [Value, SyntaxItem]
+        return ToString(0);
     }
 
-    public override bool Equals(SyntaxItem? other) {
-        return other is UnaryOperator otherUnaryOperator            //Check that the other syntaxItem is of the same type
-            && Value == otherUnaryOperator.Value                    //Check that the values are equal
-            && DaughterItems.First().Equals(otherUnaryOperator.DaughterItems.First());    //Check that the daughter syntaxItems are equal
+    public bool Equals(ISyntaxItem? other) {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        
+        return other is UnaryOperator otherUnaryOperator
+            && Identifier.Equals(otherUnaryOperator.Identifier) 
+            && Daughter.Equals(otherUnaryOperator.Daughter);
     }
 
-    public override bool Equals(object? other) {
-        return Equals(other as SyntaxItem);
+    public override bool Equals(object? obj) {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        
+        return Equals(obj as UnaryOperator);
     }
-
+    
     public override int GetHashCode() {
-        return HashCode.Combine(Value, DaughterItems);
+        return HashCode.Combine(Identifier, Daughter);
     }
 }

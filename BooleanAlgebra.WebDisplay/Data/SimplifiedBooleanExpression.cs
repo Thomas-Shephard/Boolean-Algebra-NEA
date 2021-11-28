@@ -1,7 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Serialization;
-using BooleanAlgebra.Lexer;
-using BooleanAlgebra.Parser;
 using BooleanAlgebra.Parser.Syntax;
 
 namespace BooleanAlgebra.WebDisplay.Data; 
@@ -10,13 +7,13 @@ public class SimplifiedBooleanExpression {
     [MemberNotNullWhen(false, nameof(IsSuccess))]
     public string? ErrorMessage { get; }
     [MemberNotNullWhen(true, nameof(IsSuccess))]
-    public SyntaxItem? StartSyntaxTree { get; }
+    public ISyntaxItem? StartSyntaxTree { get; }
     [MemberNotNullWhen(true, nameof(IsSuccess))]
-    public SyntaxItem? EndSyntaxTree { get; }
+    public ISyntaxItem? EndSyntaxTree { get; }
     [MemberNotNullWhen(true, nameof(IsSuccess))]
-    public Tuple<SyntaxItem, string>[]? Simplifications { get; }
+    public Tuple<ISyntaxItem, string>[]? Simplifications { get; }
 
-    public SimplifiedBooleanExpression(IEnumerable<Tuple<SyntaxItem, string>> simplifications, SyntaxItem startSyntaxTree, SyntaxItem endSyntaxTree) {
+    public SimplifiedBooleanExpression(IEnumerable<Tuple<ISyntaxItem, string>> simplifications, ISyntaxItem startSyntaxTree, ISyntaxItem endSyntaxTree) {
         Simplifications = simplifications.ToArray();
         StartSyntaxTree = startSyntaxTree;
         EndSyntaxTree = endSyntaxTree;

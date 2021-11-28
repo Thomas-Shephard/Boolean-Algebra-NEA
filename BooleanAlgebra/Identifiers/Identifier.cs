@@ -38,8 +38,7 @@ public class Identifier : IEquatable<Identifier> {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         
-        return obj.GetType() == GetType() 
-               && Equals((Identifier) obj);
+        return Equals(obj as Identifier);
     }
 
     public override int GetHashCode() {

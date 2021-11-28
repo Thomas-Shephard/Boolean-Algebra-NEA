@@ -14,4 +14,8 @@
     <ProjectReference Include="..\BooleanAlgebra\BooleanAlgebra.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\BooleanSimplificationAccordion.razor" />
+  </ItemGroup>
+
 </Project>
