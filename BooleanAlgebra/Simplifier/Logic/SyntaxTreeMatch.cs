@@ -4,7 +4,7 @@ public static class SyntaxTreeMatch {
         inputMatches ??= new Matches();
 
         if (!syntaxTree.IsShallowMatch(patternMatchTree)) return new List<Matches>();
-         ISyntaxItem[] syntaxTreeDaughterItems = syntaxTree.GetDaughterItems();
+        ISyntaxItem[] syntaxTreeDaughterItems = syntaxTree.GetDaughterItems();
         ISyntaxItem[] patternMatchTreeDaughterItems = patternMatchTree.GetDaughterItems();
 
         return GetNonRepeatingMatches(syntaxTreeDaughterItems, patternMatchTreeDaughterItems, inputMatches);
@@ -59,7 +59,7 @@ public static class SyntaxTreeMatch {
             : GetRepeatingMatches(syntaxTreeDaughterItemCounts, patternMatchTreeDaughterItemCounts, inputMatches);
     }
 
-    private static List<Matches> GetRepeatingMatches(Dictionary<ISyntaxItem, int> syntaxTreeDaughterItemCounts, Dictionary<ISyntaxItem, int> patternMatchTreeDaughterItemCounts, Matches inputMatches) {
+    private static List<Matches> GetRepeatingMatches(IDictionary<ISyntaxItem, int> syntaxTreeDaughterItemCounts, Dictionary<ISyntaxItem, int> patternMatchTreeDaughterItemCounts, Matches inputMatches) {
         List<Matches> returnValue = new();
         KeyValuePair<ISyntaxItem, int>[] patternMatchTreeDaughterRemainingItems = patternMatchTreeDaughterItemCounts.Where(x => x.Value > 0).ToArray();
         if (patternMatchTreeDaughterRemainingItems.Any(x => x.Value > 1 || x.Key is not RepeatingOperator))

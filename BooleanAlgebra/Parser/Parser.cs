@@ -15,7 +15,7 @@ public sealed class Parser {
         return InternalParse() ?? throw new ParserException(new LexemePosition(0,0), "The boolean expression must not be empty");
     }
 
-    private ISyntaxItem? InternalParse(int currentPrecedence = 0, ISyntaxItem? previousSyntaxItem = null, IdentifierType endSyntaxIdentifierType = IdentifierType.UNKNOWN) {
+    private ISyntaxItem? InternalParse(int currentPrecedence = 0, ISyntaxItem? previousSyntaxItem = null, IdentifierType? endSyntaxIdentifierType = null) {
         if (currentPrecedence < IdentifierUtils.GetMaximumPrecedence())
             previousSyntaxItem = InternalParse(currentPrecedence + 1, previousSyntaxItem, endSyntaxIdentifierType);
         while (LexemesQueue.TryPeek(out Lexeme? currentLexeme) && currentLexeme.Identifier.IdentifierType != endSyntaxIdentifierType && currentLexeme.Identifier.Precedence == currentPrecedence) {
@@ -24,7 +24,7 @@ public sealed class Parser {
         return previousSyntaxItem;
     }
 
-    private ISyntaxItem GenerateSyntaxItemFromSyntaxIdentifier(Lexeme currentLexeme, ISyntaxItem? previousSyntaxItem, IdentifierType endSyntaxIdentifierType) {
+    private ISyntaxItem GenerateSyntaxItemFromSyntaxIdentifier(Lexeme currentLexeme, ISyntaxItem? previousSyntaxItem, IdentifierType? endSyntaxIdentifierType = null) {
         ISyntaxItem nextSyntaxItem;
         switch (currentLexeme.Identifier.IdentifierType) {
             case IdentifierType.OPERAND when currentLexeme is ContextualLexeme contextualLexeme:
@@ -67,7 +67,6 @@ public sealed class Parser {
                 break;
             case IdentifierType.GROUPING_OPERATOR_END:
                 throw new ParserException(currentLexeme.LexemePosition, "The parser did not expect a closing parenthesis");
-            case IdentifierType.UNKNOWN:
             default:
                 throw new InvalidOperationException("An unknown syntax identifier was mistakenly lexed");
         }

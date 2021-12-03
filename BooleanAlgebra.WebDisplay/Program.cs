@@ -1,5 +1,3 @@
-using BooleanAlgebra.WebDisplay.Data;
-
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

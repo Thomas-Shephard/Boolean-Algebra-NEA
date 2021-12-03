@@ -1,6 +1,4 @@
-﻿using BooleanAlgebra.Parser.Syntax;
-
-namespace BooleanAlgebra.Utils; 
+﻿namespace BooleanAlgebra.Utils; 
 
 public static class SyntaxItemUtils {
     public static bool IsShallowMatch(this ISyntaxItem syntaxItem, ISyntaxItem otherSyntaxItem) {

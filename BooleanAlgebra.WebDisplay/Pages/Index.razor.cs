@@ -1,4 +1,5 @@
-﻿using BooleanAlgebra.WebDisplay.Data;
+﻿using System.Diagnostics.CodeAnalysis;
+using BooleanAlgebra.WebDisplay.Data;
 
 namespace BooleanAlgebra.WebDisplay.Pages;
 public partial class Index {
@@ -37,7 +38,7 @@ public partial class Index {
         _simplifiedBooleanExpression = await BooleanExpressionSimplificationService.SimplifyBooleanExpressionAsync(CurrentBooleanAlgebraExpression);
 
         if (!_simplifiedBooleanExpression.IsSuccess) {
-            _errorMessage = _simplifiedBooleanExpression.ErrorMessage;
+            _errorMessage = _simplifiedBooleanExpression.ErrorMessage ?? throw new NullReferenceException(nameof(_simplifiedBooleanExpression));;
             _isInErrorState = true;
         }
         
