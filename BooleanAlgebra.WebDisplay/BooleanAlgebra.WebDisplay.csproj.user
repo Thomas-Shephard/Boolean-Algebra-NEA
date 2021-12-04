@@ -2,5 +2,9 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <NameOfLastUsedPublishProfile>E:\VS\!NEA\Boolean Algebra\BooleanAlgebra.WebDisplay\Properties\PublishProfiles\BooleanAlgebraWebDisplay20211123124043 - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
+    <GoogleCloudPublishConfiguration>Release</GoogleCloudPublishConfiguration>
+    <GoogleComputeEnginePublishOpenWebsite>True</GoogleComputeEnginePublishOpenWebsite>
+    <GoogleComputeEnginePublishLaunchRemoteDebugger>False</GoogleComputeEnginePublishLaunchRemoteDebugger>
+    <GoogleComputeEnginePublishSiteName>Default Web Site</GoogleComputeEnginePublishSiteName>
   </PropertyGroup>
 </Project>
