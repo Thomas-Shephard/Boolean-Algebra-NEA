@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2021-12-04T11:51:38.993Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36" etag="Z9gptYe21SGnJn2xSxeS" version="15.9.1" type="github" pages="4">
+<mxfile host="app.diagrams.net" modified="2021-12-04T11:59:00.938Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36" etag="Zo9BVYjmJ3EFDziTaxFE" version="15.9.1" type="github" pages="4">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Constructor">
     <mxGraphModel dx="1422" dy="786" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -116,7 +116,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="48X5q0guN01pR31MfIVo-2" value="Add 1 to &lt;b&gt;currentPosition&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;glass=0;sketch=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
-          <mxGeometry x="340" y="350" width="120" height="60" as="geometry" />
+          <mxGeometry x="350" y="350" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="3arUvsG-HVkvK__TOIYL-0" value="End" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
           <mxGeometry x="110" y="710" width="120" height="30" as="geometry" />
@@ -134,7 +134,7 @@
           <mxGeometry x="315" y="610" width="190" height="60" as="geometry" />
         </mxCell>
         <mxCell id="luAT1w5k1t-pI_WyU5_8-0" value="If no lexemePattern is found, the variable &lt;b&gt;lexemePattern&lt;br&gt;&lt;/b&gt;&amp;nbsp;should be null." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
-          <mxGeometry x="540" y="625" width="165" height="30" as="geometry" />
+          <mxGeometry x="582.5" y="625" width="165" height="30" as="geometry" />
         </mxCell>
         <mxCell id="T7_xrvEb9pv-beW-urpW-4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="T7_xrvEb9pv-beW-urpW-0" target="T7_xrvEb9pv-beW-urpW-2">
           <mxGeometry relative="1" as="geometry" />
@@ -142,8 +142,29 @@
         <mxCell id="T7_xrvEb9pv-beW-urpW-0" value="Set &lt;b&gt;startPosition&lt;/b&gt;&amp;nbsp;equal to the &lt;b&gt;currentPosition&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;glass=0;sketch=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
           <mxGeometry x="335" y="710" width="150" height="60" as="geometry" />
         </mxCell>
+        <mxCell id="tYynYmxP2GGe1xd6Roy9-1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="T7_xrvEb9pv-beW-urpW-2" target="tYynYmxP2GGe1xd6Roy9-0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="T7_xrvEb9pv-beW-urpW-2" value="GenerateValueFromLexemePattern()&lt;br&gt;&lt;i&gt;LexemePattern &amp;lt;-- &lt;/i&gt;&lt;b&gt;lexemePattern&lt;/b&gt;&lt;br&gt;&lt;b&gt;ref&lt;/b&gt;&amp;nbsp;&lt;i&gt;integer&lt;/i&gt;&amp;nbsp; &amp;lt;--&amp;gt;&amp;nbsp;&lt;b&gt;currentPosition&lt;/b&gt;&lt;br&gt;&lt;b&gt;return&lt;/b&gt;&amp;nbsp;&lt;i&gt;string&lt;/i&gt;&amp;nbsp;--&amp;gt; &lt;b&gt;lexemeValue&lt;/b&gt;" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;rounded=0;shadow=0;glass=0;sketch=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
-          <mxGeometry x="275" y="810" width="270" height="60" as="geometry" />
+          <mxGeometry x="530" y="710" width="270" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="tYynYmxP2GGe1xd6Roy9-4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="tYynYmxP2GGe1xd6Roy9-0" target="tYynYmxP2GGe1xd6Roy9-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tYynYmxP2GGe1xd6Roy9-0" value="Set &lt;b&gt;lexemePosition&lt;/b&gt;&amp;nbsp;equal to a new &lt;i&gt;LexemePosition&lt;/i&gt;&lt;br&gt;StartPosition &amp;lt;-- &lt;b&gt;startPosition&lt;br&gt;&lt;/b&gt;EndPosition &amp;lt;-- &lt;b&gt;currentPosition&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;glass=0;sketch=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="572.5" y="810" width="185" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="tYynYmxP2GGe1xd6Roy9-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="tYynYmxP2GGe1xd6Roy9-3" target="oFs9WQqB0Al6ubF11xaZ-0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tYynYmxP2GGe1xd6Roy9-3" value="Add the new &lt;b&gt;lexeme &lt;/b&gt;with the made properties to the &lt;i&gt;list of lexemes&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;glass=0;sketch=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="330" y="810" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="tYynYmxP2GGe1xd6Roy9-6" value="Try to match the &lt;b&gt;lexemeValue&lt;/b&gt;&amp;nbsp;to a known &lt;i&gt;LexemeIdentifier&lt;/i&gt;. If one is not found, return an error." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="320.5" y="910" width="179" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tYynYmxP2GGe1xd6Roy9-7" value="If the matching &lt;i&gt;LexemeIdentifier&lt;/i&gt;&amp;nbsp;requires context, provide the &lt;b&gt;lexemeValue&lt;/b&gt;&amp;nbsp;to the constructor." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="295.5" y="980" width="229" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
