@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2021-12-09T11:05:41.093Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36" etag="KlYEpeaeFQoArqqmCoEy" version="15.9.1" type="github">
+<mxfile host="app.diagrams.net" modified="2021-12-09T12:49:22.971Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36" etag="5XHO7wKFDbJxIflSQCtY" version="15.9.1" type="github">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
     <mxGraphModel dx="1422" dy="786" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -8,36 +8,91 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-3" value="Start" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
-          <mxGeometry x="160" y="80" width="120" height="30" as="geometry" />
+          <mxGeometry x="180" y="80" width="120" height="30" as="geometry" />
         </mxCell>
         <mxCell id="iKI5hIBGvAcLRAQzq58i-6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="iKI5hIBGvAcLRAQzq58i-0" target="iKI5hIBGvAcLRAQzq58i-5">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="iKI5hIBGvAcLRAQzq58i-0" value="User inputs a&amp;nbsp;&lt;br&gt;boolean expression&lt;br&gt;into a textfield on the&amp;nbsp;&lt;br&gt;website" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="145" y="150" width="150" height="60" as="geometry" />
+          <mxGeometry x="165" y="150" width="150" height="60" as="geometry" />
         </mxCell>
         <mxCell id="iKI5hIBGvAcLRAQzq58i-2" value="" style="swimlane;startSize=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="120" y="250" width="290" height="310" as="geometry" />
+          <mxGeometry x="120" y="240" width="480" height="720" as="geometry" />
         </mxCell>
         <mxCell id="iKI5hIBGvAcLRAQzq58i-8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="iKI5hIBGvAcLRAQzq58i-2" source="iKI5hIBGvAcLRAQzq58i-5" target="iKI5hIBGvAcLRAQzq58i-7">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="iKI5hIBGvAcLRAQzq58i-5" value="Lex the input into a collection of lexemes" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="iKI5hIBGvAcLRAQzq58i-2">
-          <mxGeometry x="40" y="30" width="120" height="60" as="geometry" />
+          <mxGeometry x="60" y="30" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="iKI5hIBGvAcLRAQzq58i-7" value="If lexed correctly" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="iKI5hIBGvAcLRAQzq58i-2">
-          <mxGeometry x="60" y="120" width="80" height="80" as="geometry" />
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-13" value="yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="iKI5hIBGvAcLRAQzq58i-2" source="iKI5hIBGvAcLRAQzq58i-7" target="iKI5hIBGvAcLRAQzq58i-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-7" value="Is lexed correctly" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="iKI5hIBGvAcLRAQzq58i-2">
+          <mxGeometry x="80" y="120" width="80" height="80" as="geometry" />
         </mxCell>
         <mxCell id="iKI5hIBGvAcLRAQzq58i-3" value="Backend" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="iKI5hIBGvAcLRAQzq58i-2">
-          <mxGeometry x="220" width="60" height="30" as="geometry" />
+          <mxGeometry x="410" y="10" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-15" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="iKI5hIBGvAcLRAQzq58i-2" source="iKI5hIBGvAcLRAQzq58i-12" target="iKI5hIBGvAcLRAQzq58i-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-12" value="Parse the collection of lexemes into a tree" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="iKI5hIBGvAcLRAQzq58i-2">
+          <mxGeometry x="60" y="230" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-25" value="yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="iKI5hIBGvAcLRAQzq58i-2" source="iKI5hIBGvAcLRAQzq58i-14" target="iKI5hIBGvAcLRAQzq58i-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-14" value="Is parsed correctly" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="iKI5hIBGvAcLRAQzq58i-2">
+          <mxGeometry x="80" y="310" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-22" value="" style="swimlane;startSize=0;" vertex="1" parent="iKI5hIBGvAcLRAQzq58i-2">
+          <mxGeometry x="40" y="430" width="400" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-23" value="Simplifier" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="iKI5hIBGvAcLRAQzq58i-22">
+          <mxGeometry x="330" y="20" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-27" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="iKI5hIBGvAcLRAQzq58i-22" source="iKI5hIBGvAcLRAQzq58i-24" target="iKI5hIBGvAcLRAQzq58i-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-24" value="Find simplification rules that match the current tree" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="iKI5hIBGvAcLRAQzq58i-22">
+          <mxGeometry x="20" y="30" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-31" value="yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="iKI5hIBGvAcLRAQzq58i-22" source="iKI5hIBGvAcLRAQzq58i-26" target="iKI5hIBGvAcLRAQzq58i-30">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-26" value="Are&lt;br&gt;simplification rules found" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="iKI5hIBGvAcLRAQzq58i-22">
+          <mxGeometry x="30" y="120" width="100" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="iKI5hIBGvAcLRAQzq58i-22" source="iKI5hIBGvAcLRAQzq58i-30" target="iKI5hIBGvAcLRAQzq58i-24">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="60" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-30" value="Apply the simplification rules" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="iKI5hIBGvAcLRAQzq58i-22">
+          <mxGeometry x="220" y="130" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="iKI5hIBGvAcLRAQzq58i-4" value="Frontend" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="340" y="150" width="60" height="30" as="geometry" />
+          <mxGeometry x="540" y="80" width="60" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="iKI5hIBGvAcLRAQzq58i-10" value="Display an error message to the user" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="460" y="380" width="120" height="60" as="geometry" />
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-18" value="&lt;span&gt;Display an error message to the&lt;br&gt;user&lt;/span&gt;" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="630" y="370" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="iKI5hIBGvAcLRAQzq58i-11" value="no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="iKI5hIBGvAcLRAQzq58i-7" target="iKI5hIBGvAcLRAQzq58i-10">
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-19" value="no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="iKI5hIBGvAcLRAQzq58i-7" target="iKI5hIBGvAcLRAQzq58i-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-20" value="&lt;span&gt;Display an error message to the&lt;br&gt;user&lt;/span&gt;" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="630" y="560" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-21" value="no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="iKI5hIBGvAcLRAQzq58i-14" target="iKI5hIBGvAcLRAQzq58i-20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-28" value="Display the simplification to the user" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="180" y="1000" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="iKI5hIBGvAcLRAQzq58i-29" value="no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="iKI5hIBGvAcLRAQzq58i-26" target="iKI5hIBGvAcLRAQzq58i-28">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
