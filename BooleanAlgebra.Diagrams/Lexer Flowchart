@@ -1,0 +1,227 @@
+<mxfile host="app.diagrams.net" modified="2021-12-04T11:59:00.938Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36" etag="Zo9BVYjmJ3EFDziTaxFE" version="15.9.1" type="github" pages="4">
+  <diagram id="C5RBs43oDa-KdzZeNtuy" name="Constructor">
+    <mxGraphModel dx="1422" dy="786" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="10Mmc6oAw_Ad9oEwLnQm-20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="10Mmc6oAw_Ad9oEwLnQm-15" target="10Mmc6oAw_Ad9oEwLnQm-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="10Mmc6oAw_Ad9oEwLnQm-15" value="Constructor()&lt;br&gt;&lt;i&gt;string &lt;/i&gt;&lt;b&gt;booleanExpression&lt;/b&gt;&lt;br&gt;&lt;i&gt;boolean &lt;/i&gt;&lt;b&gt;useGenericOperands&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="50" y="50" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="10Mmc6oAw_Ad9oEwLnQm-25" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="135" y="330" as="sourcePoint" />
+            <mxPoint x="135" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="10Mmc6oAw_Ad9oEwLnQm-21" value="no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="10Mmc6oAw_Ad9oEwLnQm-18">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="135" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="10Mmc6oAw_Ad9oEwLnQm-23" value="yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="10Mmc6oAw_Ad9oEwLnQm-18">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="260" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="10Mmc6oAw_Ad9oEwLnQm-18" value="Is the&lt;br&gt;&lt;b&gt;booleanExpression &lt;/b&gt;&lt;br&gt;null?" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="66.25" y="150" width="138.75" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="10Mmc6oAw_Ad9oEwLnQm-60" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" target="10Mmc6oAw_Ad9oEwLnQm-59">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="135" y="430" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="10Mmc6oAw_Ad9oEwLnQm-26" value="There is no need to check if a boolean is null as it is a value type." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="250" y="285" width="135" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="10Mmc6oAw_Ad9oEwLnQm-59" value="End" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="75" y="470" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="NIZZfkHwdHKGzdlp3swl-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="NIZZfkHwdHKGzdlp3swl-0" target="10Mmc6oAw_Ad9oEwLnQm-59">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="460" y="190" />
+              <mxPoint x="460" y="493" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NIZZfkHwdHKGzdlp3swl-0" value="&lt;span&gt;Throw a new &lt;br&gt;exception as the&amp;nbsp;&lt;br&gt;&lt;/span&gt;&lt;b&gt;booleanExpression&lt;br&gt;&lt;/b&gt;&lt;span&gt;cannot be null&lt;/span&gt;" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;rounded=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="260" y="160" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NIZZfkHwdHKGzdlp3swl-3" value="&lt;span&gt;Store whether&amp;nbsp;&lt;/span&gt;&lt;span&gt;to&lt;/span&gt;&lt;br&gt;&lt;b&gt;useGenericOperands&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;glass=0;sketch=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="70.63" y="370" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="NIZZfkHwdHKGzdlp3swl-4" value="&lt;span&gt;Store the&lt;br&gt;&lt;/span&gt;&lt;b&gt;booleanExpression&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;glass=0;sketch=0;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="75" y="270" width="120" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="rRKnq-ZVDK5YCtB6ExUj" name="Lex">
+    <mxGraphModel dx="1422" dy="786" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="TjEA8RR2pqelZR8UkDUJ-0" />
+        <mxCell id="TjEA8RR2pqelZR8UkDUJ-1" parent="TjEA8RR2pqelZR8UkDUJ-0" />
+        <mxCell id="IY6nVBTkFAph_xxYLEDo-4" value="yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="hbQJmoxA5f1BrkYfa2hP-0" target="IY6nVBTkFAph_xxYLEDo-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DC2yx8ThFsW6jqp5tIS_-1" value="no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="hbQJmoxA5f1BrkYfa2hP-0" target="DC2yx8ThFsW6jqp5tIS_-0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hbQJmoxA5f1BrkYfa2hP-0" value="Is&lt;br&gt;&lt;b&gt;wasCharFound&lt;br&gt;&lt;/b&gt;true?" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="110" y="450" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="hbQJmoxA5f1BrkYfa2hP-1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="hbQJmoxA5f1BrkYfa2hP-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="170" y="150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hbQJmoxA5f1BrkYfa2hP-2" value="Lex()&lt;br&gt;&lt;b&gt;returns &lt;/b&gt;&lt;i&gt;list of lexemes&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="85" y="50" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="hbQJmoxA5f1BrkYfa2hP-3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="170" y="210" as="sourcePoint" />
+            <mxPoint x="170" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IY6nVBTkFAph_xxYLEDo-2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="oFs9WQqB0Al6ubF11xaZ-0" target="hbQJmoxA5f1BrkYfa2hP-0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="oFs9WQqB0Al6ubF11xaZ-0" value="TryGetCharacterAtPosition()&lt;br&gt;&lt;i&gt;integer &amp;lt;--&amp;nbsp;&lt;/i&gt;&lt;b&gt;currentPosition&lt;br&gt;&lt;/b&gt;&lt;b&gt;out&amp;nbsp;&lt;/b&gt;&lt;i&gt;char --&amp;gt;&amp;nbsp;&lt;/i&gt;&lt;b&gt;currentCharacter&lt;/b&gt;&lt;br&gt;&lt;b&gt;return&amp;nbsp;&lt;/b&gt;&lt;i&gt;boolean --&amp;gt;&lt;/i&gt;&lt;b&gt;&amp;nbsp;wasCharFound&lt;/b&gt;" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;rounded=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="50" y="350" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="48X5q0guN01pR31MfIVo-3" value="yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="IY6nVBTkFAph_xxYLEDo-3" target="48X5q0guN01pR31MfIVo-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="syNp-pmCOhEPg3Q4RHeZ-3" value="no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="IY6nVBTkFAph_xxYLEDo-3" target="syNp-pmCOhEPg3Q4RHeZ-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="IY6nVBTkFAph_xxYLEDo-3" value="Is&lt;br&gt;&lt;b&gt;currentCharacter&lt;/b&gt;&lt;br&gt;a whitespace&lt;br&gt;character?" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="350" y="450" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="48X5q0guN01pR31MfIVo-0" value="&lt;span&gt;Instantiate the&lt;/span&gt;&lt;br&gt;&lt;span&gt;&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;b&gt;returnValue&amp;nbsp;&lt;/b&gt;&lt;span&gt;with an&lt;/span&gt;&lt;br&gt;&lt;span&gt;&amp;nbsp;empty list of lexemes&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;glass=0;sketch=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="105" y="150" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="T7_xrvEb9pv-beW-urpW-3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="48X5q0guN01pR31MfIVo-1" target="oFs9WQqB0Al6ubF11xaZ-0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="48X5q0guN01pR31MfIVo-1" value="&lt;span&gt;Initialize the&lt;br&gt;&lt;/span&gt;&lt;b&gt;currentPosition&lt;/b&gt;&lt;span&gt;&amp;nbsp;with&lt;/span&gt;&lt;br&gt;&lt;span&gt;&amp;nbsp;the integer zero&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;glass=0;sketch=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="105" y="250" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="48X5q0guN01pR31MfIVo-5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="48X5q0guN01pR31MfIVo-2" target="oFs9WQqB0Al6ubF11xaZ-0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="48X5q0guN01pR31MfIVo-2" value="Add 1 to &lt;b&gt;currentPosition&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;glass=0;sketch=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="350" y="350" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="3arUvsG-HVkvK__TOIYL-0" value="End" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="110" y="710" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="syNp-pmCOhEPg3Q4RHeZ-0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="DC2yx8ThFsW6jqp5tIS_-0" target="3arUvsG-HVkvK__TOIYL-0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DC2yx8ThFsW6jqp5tIS_-0" value="Return the&lt;br&gt;&lt;i&gt;list of lexemes&lt;/i&gt;" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;rounded=0;shadow=0;glass=0;sketch=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="110" y="610" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="T7_xrvEb9pv-beW-urpW-1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="syNp-pmCOhEPg3Q4RHeZ-2" target="T7_xrvEb9pv-beW-urpW-0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="syNp-pmCOhEPg3Q4RHeZ-2" value="Set &lt;b&gt;lexemePattern&lt;/b&gt;&amp;nbsp;equal to the&lt;br&gt;&amp;nbsp;first lexemePattern where the &lt;b&gt;currentCharacter &lt;/b&gt;matches the regular expression" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;glass=0;sketch=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="315" y="610" width="190" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="luAT1w5k1t-pI_WyU5_8-0" value="If no lexemePattern is found, the variable &lt;b&gt;lexemePattern&lt;br&gt;&lt;/b&gt;&amp;nbsp;should be null." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="582.5" y="625" width="165" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="T7_xrvEb9pv-beW-urpW-4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="T7_xrvEb9pv-beW-urpW-0" target="T7_xrvEb9pv-beW-urpW-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="T7_xrvEb9pv-beW-urpW-0" value="Set &lt;b&gt;startPosition&lt;/b&gt;&amp;nbsp;equal to the &lt;b&gt;currentPosition&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;glass=0;sketch=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="335" y="710" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="tYynYmxP2GGe1xd6Roy9-1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="T7_xrvEb9pv-beW-urpW-2" target="tYynYmxP2GGe1xd6Roy9-0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="T7_xrvEb9pv-beW-urpW-2" value="GenerateValueFromLexemePattern()&lt;br&gt;&lt;i&gt;LexemePattern &amp;lt;-- &lt;/i&gt;&lt;b&gt;lexemePattern&lt;/b&gt;&lt;br&gt;&lt;b&gt;ref&lt;/b&gt;&amp;nbsp;&lt;i&gt;integer&lt;/i&gt;&amp;nbsp; &amp;lt;--&amp;gt;&amp;nbsp;&lt;b&gt;currentPosition&lt;/b&gt;&lt;br&gt;&lt;b&gt;return&lt;/b&gt;&amp;nbsp;&lt;i&gt;string&lt;/i&gt;&amp;nbsp;--&amp;gt; &lt;b&gt;lexemeValue&lt;/b&gt;" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;rounded=0;shadow=0;glass=0;sketch=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="530" y="710" width="270" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="tYynYmxP2GGe1xd6Roy9-4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="tYynYmxP2GGe1xd6Roy9-0" target="tYynYmxP2GGe1xd6Roy9-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tYynYmxP2GGe1xd6Roy9-0" value="Set &lt;b&gt;lexemePosition&lt;/b&gt;&amp;nbsp;equal to a new &lt;i&gt;LexemePosition&lt;/i&gt;&lt;br&gt;StartPosition &amp;lt;-- &lt;b&gt;startPosition&lt;br&gt;&lt;/b&gt;EndPosition &amp;lt;-- &lt;b&gt;currentPosition&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;glass=0;sketch=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="572.5" y="810" width="185" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="tYynYmxP2GGe1xd6Roy9-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="TjEA8RR2pqelZR8UkDUJ-1" source="tYynYmxP2GGe1xd6Roy9-3" target="oFs9WQqB0Al6ubF11xaZ-0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tYynYmxP2GGe1xd6Roy9-3" value="Add the new &lt;b&gt;lexeme &lt;/b&gt;with the made properties to the &lt;i&gt;list of lexemes&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;glass=0;sketch=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="330" y="810" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="tYynYmxP2GGe1xd6Roy9-6" value="Try to match the &lt;b&gt;lexemeValue&lt;/b&gt;&amp;nbsp;to a known &lt;i&gt;LexemeIdentifier&lt;/i&gt;. If one is not found, return an error." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="320.5" y="910" width="179" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tYynYmxP2GGe1xd6Roy9-7" value="If the matching &lt;i&gt;LexemeIdentifier&lt;/i&gt;&amp;nbsp;requires context, provide the &lt;b&gt;lexemeValue&lt;/b&gt;&amp;nbsp;to the constructor." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="TjEA8RR2pqelZR8UkDUJ-1">
+          <mxGeometry x="295.5" y="980" width="229" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="gj4a9eT2vQ8efb2d82Im" name="Generate Lexeme Value From Lexeme Pattern">
+    <mxGraphModel dx="1422" dy="786" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="huaHc860yphsDmEvdb_b-0" />
+        <mxCell id="huaHc860yphsDmEvdb_b-1" parent="huaHc860yphsDmEvdb_b-0" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="hQ7yjxeyy6kWRnv7owc1" name="Try Get Character At Position">
+    <mxGraphModel dx="1422" dy="786" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="RTuLgk0K3VLs-kGlehgE-0" />
+        <mxCell id="RTuLgk0K3VLs-kGlehgE-1" parent="RTuLgk0K3VLs-kGlehgE-0" />
+        <mxCell id="VSIbN2GkBTu83xhDbAPa-0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="RTuLgk0K3VLs-kGlehgE-1" source="VSIbN2GkBTu83xhDbAPa-1" target="VSIbN2GkBTu83xhDbAPa-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="VSIbN2GkBTu83xhDbAPa-1" value="TryGetCharacterAtPosition()&lt;br&gt;&lt;i&gt;integer&amp;nbsp;&lt;/i&gt;&lt;b&gt;currentPosition&lt;/b&gt;&lt;br&gt;&lt;b&gt;out&amp;nbsp;&lt;/b&gt;&lt;i&gt;char&amp;nbsp;&lt;/i&gt;&lt;b&gt;characterAtPosition&lt;br&gt;return&lt;/b&gt;&amp;nbsp;&lt;i&gt;bool&lt;/i&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="RTuLgk0K3VLs-kGlehgE-1">
+          <mxGeometry x="50.629999999999995" y="65" width="170" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="VSIbN2GkBTu83xhDbAPa-2" value="Returns true if a character exists at the requested position, otherwise returns false." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="RTuLgk0K3VLs-kGlehgE-1">
+          <mxGeometry x="259" y="50" width="175" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="VSIbN2GkBTu83xhDbAPa-3" value="If a character does exist at the requested position, it is also outputted from the function." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="RTuLgk0K3VLs-kGlehgE-1">
+          <mxGeometry x="260" y="120" width="165" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="VSIbN2GkBTu83xhDbAPa-4" value="no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="RTuLgk0K3VLs-kGlehgE-1" source="VSIbN2GkBTu83xhDbAPa-6" target="VSIbN2GkBTu83xhDbAPa-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="VSIbN2GkBTu83xhDbAPa-5" value="yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="RTuLgk0K3VLs-kGlehgE-1" source="VSIbN2GkBTu83xhDbAPa-6" target="VSIbN2GkBTu83xhDbAPa-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="VSIbN2GkBTu83xhDbAPa-6" value="Is the &lt;b&gt;currentPosition&lt;/b&gt;&amp;nbsp;&lt;br&gt;less than the length of the &lt;b&gt;booleanExpression&lt;/b&gt;?" style="rhombus;rounded=0;spacing=2;spacingLeft=8;spacingRight=8;whiteSpace=wrap;html=1;" vertex="1" parent="RTuLgk0K3VLs-kGlehgE-1">
+          <mxGeometry x="40" y="170" width="190" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="VSIbN2GkBTu83xhDbAPa-7" value="Return true" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="RTuLgk0K3VLs-kGlehgE-1">
+          <mxGeometry x="75.63" y="410" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="VSIbN2GkBTu83xhDbAPa-8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="RTuLgk0K3VLs-kGlehgE-1" source="VSIbN2GkBTu83xhDbAPa-9" target="VSIbN2GkBTu83xhDbAPa-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="VSIbN2GkBTu83xhDbAPa-9" value="set&amp;nbsp;&lt;br&gt;&lt;b&gt;characterAtPosition&lt;/b&gt;&amp;nbsp;&lt;br&gt;to null" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="RTuLgk0K3VLs-kGlehgE-1">
+          <mxGeometry x="275" y="190" width="135" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="VSIbN2GkBTu83xhDbAPa-10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="RTuLgk0K3VLs-kGlehgE-1" source="VSIbN2GkBTu83xhDbAPa-11" target="VSIbN2GkBTu83xhDbAPa-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="VSIbN2GkBTu83xhDbAPa-11" value="set &lt;b&gt;characterAtPosition&lt;/b&gt;&amp;nbsp;&lt;br&gt;equal to the requested &lt;br&gt;position within the string." style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;rounded=0;" vertex="1" parent="RTuLgk0K3VLs-kGlehgE-1">
+          <mxGeometry x="49.379999999999995" y="310" width="172.5" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="VSIbN2GkBTu83xhDbAPa-12" value="Return false" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="RTuLgk0K3VLs-kGlehgE-1">
+          <mxGeometry x="282.5" y="310" width="120" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
