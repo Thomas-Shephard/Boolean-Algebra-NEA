@@ -26,11 +26,11 @@ public class Identifier : IEquatable<Identifier> {
     /// </summary>
     public Regex Regex { get; }
     /// <summary>
-    /// Determines whether the lexer will provide context to the lexeme.
+    /// Determines whether the lexer will provide contextual information about the lexeme.
     /// </summary>
     public bool IsContextRequired { get; }
     /// <summary>
-    /// An identifier with this property set to true should only be matched when the lexer is assembling a syntax tree for the simplification algorithm.
+    /// Determines whether the identifier can only be used while generating simplification rules.
     /// </summary>
     public bool IsSimplificationRuleSpecific { get; }
     
@@ -41,11 +41,10 @@ public class Identifier : IEquatable<Identifier> {
     /// <param name="precedence">The precedence at which lexemes that match to the identifier will be parsed into the abstract syntax tree.</param>
     /// <param name="name">The name of the identifier.</param>
     /// <param name="regexPattern">The regular expression pattern that a given lexeme value will be matched against.</param>
-    /// <param name="isContextRequired">Determines whether the lexer will provide context to the lexeme.</param>
-    /// <param name="isSimplificationRuleSpecific">Determines whether the lexer and parser will only recognise the identifier when assembling a syntax tree for the simplification algorithm.</param>
+    /// <param name="isContextRequired">Determines whether the lexer will provide contextual information about the lexeme.</param>
+    /// <param name="isSimplificationRuleSpecific">Determines whether identifier can only be used while generating simplification rules.</param>
     /// <exception cref="ArgumentNullException">Thrown when either <paramref name="name"/> or <paramref name="regexPattern"/> is null.</exception>
     public Identifier(IdentifierType identifierType, int precedence, string name, string regexPattern, bool isContextRequired, bool isSimplificationRuleSpecific) {
-        //Initializes the properties of the identifier based on the parameters from the constructor.
         IdentifierType = identifierType;
         Precedence = precedence;
         Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -61,7 +60,7 @@ public class Identifier : IEquatable<Identifier> {
         if (ReferenceEquals(this, other)) return true;  //If the other identifier is this identifier, it is equal to this identifier.
         
         //The identifiers are only equal if their properties are equal to each other.
-        //The string representation of the regular expression is used instead of the regular expression itself as Regex objects do not implement the Equals method.
+        //The string representation of the regular expression is used instead of the regular expression itself as Regex objects do not implement the IEquatable interface.
         return IdentifierType == other.IdentifierType 
                && Precedence == other.Precedence 
                && Name == other.Name 
