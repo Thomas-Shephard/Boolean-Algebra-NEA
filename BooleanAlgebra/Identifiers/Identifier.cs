@@ -4,8 +4,7 @@
 /// </summary>
 public class Identifier : IEquatable<Identifier> {
     /// <summary>
-    /// The type that an identifier is.
-    /// Used to determine how to build the abstract syntax tree.
+    /// The type of an identifier. Used to determine how to build the abstract syntax tree.
     /// </summary>
     public IdentifierType IdentifierType { get; }
     /// <summary>
