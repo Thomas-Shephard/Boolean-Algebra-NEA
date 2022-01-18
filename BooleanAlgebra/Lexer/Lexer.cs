@@ -1,22 +1,26 @@
 ﻿namespace BooleanAlgebra.Lexer;
 /// <summary>
-/// Provides a method to lex a given input string.
+/// Provides a method to convert an input string into a collection of lexemes.
 /// </summary>
 public sealed class Lexer {
     /// <summary>
-    /// The input string to be lexed by the lexer.
+    /// The input string that the lexer will turn into a collection of lexemes.
     /// </summary>
     private string BooleanExpression { get; }
-    private bool UseGenericOperands { get; }
+    /// <summary>
+    /// Indicates whether or not the lexer should recognise reserved identifiers that are used in the production of the simplification rules.
+    /// </summary>
+    private bool IsBuildingSimplificationRule { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Lexer"/> class with a given input string.
+    /// Instantiates a new lexer that will be able to convert a given input string into a collection of lexemes.
     /// </summary>
-    /// <param name="booleanExpression">The input string to be lexed by the lexer.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="rawText"/> is null.</exception>
-    public Lexer(string booleanExpression, bool useGenericOperands = false) {
-        BooleanExpression = booleanExpression ?? throw new ArgumentNullException(nameof(booleanExpression));  //Ensure that rawText is not null
-        UseGenericOperands = useGenericOperands;
+    /// <param name="booleanExpression">The input string that the lexer will convert into a collection of lexemes.</param>
+    /// <param name="useGenericOperands">Determines whether or not the lexer should recognise symbols </param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="booleanExpression"/> is null.</exception>
+    public Lexer(string booleanExpression, bool isBuildingSimplificationRule = false) {
+        BooleanExpression = booleanExpression ?? throw new ArgumentNullException(nameof(booleanExpression));
+        IsBuildingSimplificationRule = isBuildingSimplificationRule;
     }
 
     /// <summary>
@@ -36,12 +40,12 @@ public sealed class Lexer {
                 continue;
             }
 
-            //Attempt to find the first lexemePattern that matches the currentCharacter, defaults to null if none found
-            LexemePattern? lexemePattern = LexemePattern.GetLexemePatterns().FirstOrDefault(pattern => pattern.IsCharacterMatch(currentCharacter));
-
             //The startPosition will be equal to the currentPosition before the lexeme value is generated
             int startPosition = currentPosition;
-
+            
+            //Attempt to find the first lexemePattern that matches the currentCharacter, defaults to null if none found
+            LexemePattern? lexemePattern = LexemePattern.GetLexemePatternFromCharacterLexemePattern(currentCharacter);
+            
             //Generate the lexeme value from the first pattern that matches the currentCharacter
             string lexemeValue = GenerateLexemeValueFromPattern(lexemePattern, ref currentPosition);
 
@@ -49,7 +53,7 @@ public sealed class Lexer {
             LexemePosition lexemePosition = new(startPosition, currentPosition);
 
             //Attempt to find an identifier that matches the lexemeValue
-            if(!IdentifierUtils.TryGetIdentifierFromLexemeValue(lexemeValue, UseGenericOperands, out Identifier? matchedIdentifier))
+            if(!IdentifierUtils.TryGetIdentifierFromLexemeValue(lexemeValue, IsBuildingSimplificationRule, out Identifier? matchedIdentifier))
                 throw new UnknownLexemeException(lexemePosition, BooleanExpression);
 
             //Add a lexeme to the out parameter lexemes
@@ -95,7 +99,7 @@ public sealed class Lexer {
     /// <param name="currentCharacter">The character at the specified position when it is within the bounds of the input text.</param>
     /// <returns>True when the specified position is within the bounds of the input text.</returns>
     private bool TryGetCharacterAtPosition(int currentPosition, out char currentCharacter) {
-        if (currentPosition < BooleanExpression.Length) {
+        if (currentPosition >= 0 && currentPosition < BooleanExpression.Length) {
             //If the currentPosition is within the bounds of rawText, return true and output the character at the requested position
             currentCharacter = BooleanExpression[currentPosition];
             return true;

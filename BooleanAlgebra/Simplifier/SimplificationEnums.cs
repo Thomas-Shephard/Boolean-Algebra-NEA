@@ -5,7 +5,7 @@ public enum SimplificationPattern {
     OUTSIDE_IN
 }
 
-public enum SimplificationPost {
-    BEFORE,
-    AFTER
+public enum SimplificationOrder {
+    PRE,
+    POST
 }

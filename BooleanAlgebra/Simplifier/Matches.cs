@@ -1,6 +1,6 @@
 ﻿namespace BooleanAlgebra.Simplifier; 
 
-public class Matches {
+public class Matches : ICloneable {
     public Dictionary<GenericOperand, ISyntaxItem> DirectSubstitutes { get; }
     public Dictionary<GenericOperand, List<ISyntaxItem>> RepeatingSubstitutes { get; }
 
@@ -20,5 +20,9 @@ public class Matches {
         Dictionary<GenericOperand, List<ISyntaxItem>> repeatingSubstitutesCopy =
             RepeatingSubstitutes.ToDictionary(x => x.Key, x => x.Value);
         return new Matches(directSubstitutesCopy, repeatingSubstitutesCopy);
+    }
+    
+    object ICloneable.Clone() {
+        return Clone();
     }
 }

@@ -1,8 +1,8 @@
 ﻿namespace BooleanAlgebra.Simplifier.Logic;
 public static class AttemptSimplification {
-    public static List<Tuple<ISyntaxItem, string>> SimplifySyntaxTree(this ISyntaxItem syntaxTree, SimplificationPost simplificationPost) {
+    public static IEnumerable<Tuple<ISyntaxItem, string>> SimplifySyntaxTree(this ISyntaxItem syntaxTree, SimplificationOrder simplificationOrder) {
        IEnumerable<IGrouping<int, SimplificationRule>> groupedByPrecedenceSimplificationRules = SimplificationRule.GetSimplificationRules()
-           .Where(simplificationRule => simplificationRule.SimplificationPost == simplificationPost)
+           .Where(simplificationRule => simplificationRule.SimplificationOrder == simplificationOrder)
            .OrderBy(simplificationRule => simplificationRule.Precedence)
            .GroupBy(simplificationRule => simplificationRule.Precedence);
 

@@ -2,15 +2,10 @@ using BooleanAlgebra.Lexer;
 using BooleanAlgebra.Lexer.Lexemes;
 using BooleanAlgebra.Parser;
 using BooleanAlgebra.Parser.Syntax;
-using BooleanAlgebra.Simplifier.Logic;
 
 namespace BooleanAlgebra.WebDisplay.Data;
 
-public class BooleanExpressionSimplificationService {
-    public BooleanExpressionSimplificationService() {
-        _ = SimplificationRule.GetSimplificationRules();
-    }
-    
+public static class BooleanExpressionSimplificationService {
     public static async Task<SimplifiedBooleanExpression> SimplifyBooleanExpressionAsync(string booleanExpression) {
         Lexer.Lexer lexer = new(booleanExpression);
         List<Lexeme> lexemes;
@@ -30,6 +25,6 @@ public class BooleanExpressionSimplificationService {
         
         Simplifier.Simplifier simplifier = new(parsedSyntaxTree);
         List<Tuple<ISyntaxItem, string>> simplificationOrder = await Task.Run(() => simplifier.Simplify());
-        return new SimplifiedBooleanExpression(simplificationOrder, simplificationOrder.First().Item1, simplificationOrder.Last().Item1);
+        return new SimplifiedBooleanExpression(simplificationOrder);
     }
 }

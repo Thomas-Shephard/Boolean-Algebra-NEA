@@ -22,8 +22,10 @@ public class BinaryOperator : IMultipleDaughterSyntaxItem {
     }
 
     public string ToString(int higherLevelPrecedence) {
+        bool parenthesesRequired = higherLevelPrecedence > Identifier.Precedence;
+        
         StringBuilder stringBuilder = new();
-        if (higherLevelPrecedence > Identifier.Precedence) {
+        if (parenthesesRequired) {
             stringBuilder.Append('(');
         }
 
@@ -34,7 +36,7 @@ public class BinaryOperator : IMultipleDaughterSyntaxItem {
             stringBuilder.Append(Daughters[i].ToString(Identifier.Precedence));
         }
         
-        if (higherLevelPrecedence > Identifier.Precedence) {
+        if (parenthesesRequired) {
             stringBuilder.Append(')');
         }
         
