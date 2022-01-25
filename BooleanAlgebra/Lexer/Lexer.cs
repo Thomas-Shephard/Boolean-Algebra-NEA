@@ -1,22 +1,22 @@
 ﻿namespace BooleanAlgebra.Lexer;
 /// <summary>
-/// Provides a method to convert an input string into a collection of lexemes.
+/// Provides a method to produce a collection of lexemes from a given string.
 /// </summary>
 public sealed class Lexer {
     /// <summary>
-    /// The input string that the lexer will turn into a collection of lexemes.
+    /// The input string that the lexer will produce a collection of lexemes from.
     /// </summary>
     private string BooleanExpression { get; }
     /// <summary>
-    /// Indicates whether or not the lexer should recognise reserved identifiers that are used in the production of the simplification rules.
+    /// Determines whether the lexer should recognise identifiers that can only be used while generating simplification rules.
     /// </summary>
     private bool IsBuildingSimplificationRule { get; }
 
     /// <summary>
-    /// Instantiates a new lexer that will be able to convert a given input string into a collection of lexemes.
+    /// Instantiates a new lexer that will be able to produce a collection of lexemes from a given input string.
     /// </summary>
-    /// <param name="booleanExpression">The input string that the lexer will convert into a collection of lexemes.</param>
-    /// <param name="useGenericOperands">Determines whether or not the lexer should recognise symbols </param>
+    /// <param name="booleanExpression">The input string that the lexer will produce a collection of lexemes from.</param>
+    /// <param name="isBuildingSimplificationRule">Determines whether the lexer should recognise identifiers that can only be used while generating simplification rules.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="booleanExpression"/> is null.</exception>
     public Lexer(string booleanExpression, bool isBuildingSimplificationRule = false) {
         BooleanExpression = booleanExpression ?? throw new ArgumentNullException(nameof(booleanExpression));
@@ -24,88 +24,93 @@ public sealed class Lexer {
     }
 
     /// <summary>
-    /// Indicates whether the input text has been entirely lexed into known lexemes.
-    /// Provides the list of lexemes that the input text has been lexed into regardless of the return value.
+    /// Produces a collection of lexemes from the input string.
     /// </summary>
-    /// <returns>True when the input text has been entirely lexed into known lexemes.</returns>
+    /// <returns>A collection of lexemes produced from the input string.</returns>
     public List<Lexeme> Lex() {
-        List<Lexeme> lexemes = new();   //Initialize out parameter lexemes to an empty list
-        int currentPosition = 0;       //Set the currentPosition equal to the startPosition (i.e. 0)
+        List<Lexeme> lexemes = new();
+        //The start position in the input string is the zeroth index.
+        int currentPosition = 0;
 
-        //Check if a character exists at the currentPosition
+        //While a character exists at the current position in the input string, attempt to produce a lexeme from it.
         while (TryGetCharacterAtPosition(currentPosition, out char currentCharacter)) {
-            //Skip over whitespace characters as they provide no information to the lexer
+            //Skip over whitespace characters as they are not the constituents of any lexemes.
             if (char.IsWhiteSpace(currentCharacter)) {
                 currentPosition++;
                 continue;
             }
 
-            //The startPosition will be equal to the currentPosition before the lexeme value is generated
-            int startPosition = currentPosition;
+            //The start position of a lexeme will be equal to the position within the string before the symbol is generated.
+            int lexemeStartPosition = currentPosition;
             
-            //Attempt to find the first lexemePattern that matches the currentCharacter, defaults to null if none found
+            //Finds the first lexeme pattern that matches the current character, defaults to null if none found.
             LexemePattern? lexemePattern = LexemePattern.GetLexemePatternFromCharacterLexemePattern(currentCharacter);
             
-            //Generate the lexeme value from the first pattern that matches the currentCharacter
-            string lexemeValue = GenerateLexemeValueFromPattern(lexemePattern, ref currentPosition);
+            //Generates a symbol from the found lexeme pattern.
+            //If no lexeme pattern was found, the generated symbol will be the current character.
+            string symbol = GenerateSymbolFromLexemePattern(lexemePattern, ref currentPosition);
 
-            //The endPosition will be equal to the currentPosition after the lexeme value is generated
-            LexemePosition lexemePosition = new(startPosition, currentPosition);
-
-            //Attempt to find an identifier that matches the lexemeValue
-            if(!IdentifierUtils.TryGetIdentifierFromLexemeValue(lexemeValue, IsBuildingSimplificationRule, out Identifier? matchedIdentifier))
+            //The end position of the lexeme will be equal to the position within the string after the symbol is generated.
+            LexemePosition lexemePosition = new(lexemeStartPosition, currentPosition);
+            
+            //Attempt to find an identifier that matches the generated symbol.
+            //If no identifier is found, an exception will be thrown as an unrecognised symbol was entered by the user.
+            if(!IdentifierUtils.TryGetIdentifierFromSymbol(symbol, IsBuildingSimplificationRule, out Identifier? matchedIdentifier))
                 throw new UnknownLexemeException(lexemePosition, BooleanExpression);
 
-            //Add a lexeme to the out parameter lexemes
+            //Add a new lexeme to the collection of lexemes.
             lexemes.Add(matchedIdentifier.IsContextRequired
-                //Only provide the lexemeValue if context is required
-                ? new ContextualLexeme(matchedIdentifier, lexemePosition, lexemeValue)
+                //Only provide contextual information if the identifier requires it.
+                ? new ContextualLexeme(matchedIdentifier, lexemePosition, symbol)
                 : new Lexeme(matchedIdentifier, lexemePosition));
         }
-
-        //If any lexeme within the out parameter lexemes is unknown then the function will return false
+        
         return lexemes;
     }
 
     /// <summary>
-    /// Produces a lexemeValue from the <paramref name="currentPosition"/> within the <paramref name="rawText"/> and the <paramref name="lexemePattern"/>.
+    /// Generates a symbol from the characters after the given position that match the given lexeme pattern.
     /// </summary>
     /// <param name="lexemePattern">The pattern that the input text should be matched against.</param>
     /// <param name="currentPosition">The position that the lexer is at within the input text.</param>
-    /// <returns>The lexemeValue that comes from the <paramref name="currentPosition"/> within the input text and the <paramref name="lexemePattern"/>.</returns>
-    /// <exception cref="ArgumentException">Thrown when there are no characters in the input string after the <paramref name="currentPosition"/>.</exception>
-    private string GenerateLexemeValueFromPattern(LexemePattern? lexemePattern, ref int currentPosition) {
-        StringBuilder outputString = new();
+    /// <returns>The symbol generated from the characters after the given position that match the given lexeme pattern.</returns>
+    /// <exception cref="ArgumentException">Thrown when the <paramref name="currentPosition"/> is outside of the range of the input text.</exception>
+    private string GenerateSymbolFromLexemePattern(LexemePattern? lexemePattern, ref int currentPosition) {
+        StringBuilder generatedSymbol = new();
 
-        //Ensure that a character exists at the specified position
+        //Ensure that a character exists at the specified position within the input text.
         if (!TryGetCharacterAtPosition(currentPosition, out char currentCharacter))
-            throw new ArgumentException($"The property {nameof(BooleanExpression)} has no characters at the specified position");
+            throw new ArgumentException($"The input string has no characters at the specified position", nameof(currentPosition));
 
-        do {
-            outputString.Append(currentCharacter);  //Add the currentCharacter to the output string
-            currentPosition++;                      //Increment the currentPosition
-            if (lexemePattern is null) break;       //If the lexemePattern is null only return the first character
-        } while (TryGetCharacterAtPosition(currentPosition, out currentCharacter)   //Ensure that a character exists at the specified position
-                 && lexemePattern.IsCharacterMatch(currentCharacter));              //Ensure that the currentCharacter matches the desired pattern
-
-        return outputString.ToString();
+        //Even if the lexeme pattern is null, the initial character is still added to the generated symbol.
+        generatedSymbol.Append(currentCharacter);
+        currentPosition++;
+        if (lexemePattern is null)
+            return generatedSymbol.ToString();
+        //If the lexeme pattern is not null, continue to add characters to the generated symbol
+        //until either the end of the input text is reached or the next character no longer matches the lexeme pattern.
+        while (TryGetCharacterAtPosition(currentPosition, out currentCharacter) && lexemePattern.IsCharacterMatch(currentCharacter)) {
+            generatedSymbol.Append(currentCharacter);
+            currentPosition++;
+        }
+        return generatedSymbol.ToString();
     }
 
     /// <summary>
-    /// Indicates whether the <paramref name="currentPosition"/> exists within the input text.
-    /// Provides the character at the <paramref name="currentPosition"/> within the input text.
+    /// Indicates whether the a given character exists at a given position.
+    /// Provides the character at the given position if a character does exist at the position.
     /// </summary>
-    /// <param name="currentPosition">The position that the lexer is at within the input text.</param>
-    /// <param name="currentCharacter">The character at the specified position when it is within the bounds of the input text.</param>
+    /// <param name="currentPosition">The position within the input string that should be checked.</param>
+    /// <param name="currentCharacter">The character at the specified position, '\0' when no character exists at the position.</param>
     /// <returns>True when the specified position is within the bounds of the input text.</returns>
     private bool TryGetCharacterAtPosition(int currentPosition, out char currentCharacter) {
         if (currentPosition >= 0 && currentPosition < BooleanExpression.Length) {
-            //If the currentPosition is within the bounds of rawText, return true and output the character at the requested position
+            //If the currentPosition is within the bounds of rawText, return true and output the character at the requested position.
             currentCharacter = BooleanExpression[currentPosition];
             return true;
         }
 
-        //If the currentPosition is not within the bounds of rawText, return false and output the default character value
+        //If the currentPosition is not within the bounds of rawText, return false and output the default character value.
         currentCharacter = default;
         return false;
     }

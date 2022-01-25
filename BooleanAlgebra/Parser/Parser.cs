@@ -31,7 +31,7 @@ public sealed class Parser {
                 if (previousSyntaxItem is not null)
                     throw new ParserException(currentLexeme.LexemePosition, "The parser expected an operator before the operand");
                 nextSyntaxItem = UseGenericOperands && currentLexeme.Identifier.Name != "LITERAL"
-                    ? new GenericOperand(contextualLexeme.LexemeValue, currentLexeme.Identifier)
+                    ? new GenericOperand(contextualLexeme.LexemeValue, currentLexeme.Identifier, contextualLexeme.LexemeValue.StartsWith("Items"))
                     : new Operand(contextualLexeme.LexemeValue, currentLexeme.Identifier);
                 break;
             case IdentifierType.OPERAND:
@@ -51,7 +51,7 @@ public sealed class Parser {
                     daughterSyntaxItems.Add(InternalParse(currentLexeme.Identifier.Precedence + 1, endSyntaxIdentifierType: endSyntaxIdentifierType)
                         ?? throw new ParserException(currentLexeme.LexemePosition, "The parser expected an expression after the binary operator"));
                 } while (IsNextSyntaxIdentifierOfSameLexemeType(currentLexeme.Identifier));
-                nextSyntaxItem = new BinaryOperator(currentLexeme.Identifier, daughterSyntaxItems.ToArray());
+                nextSyntaxItem = new BinaryOperator(currentLexeme.Identifier, daughterSyntaxItems.ToArray()).Compress();
                 break;
             case IdentifierType.GROUPING_OPERATOR_START:
                 string initialGroupingOperatorName = currentLexeme.Identifier.Name;

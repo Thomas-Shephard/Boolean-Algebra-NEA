@@ -1,14 +1,18 @@
 ﻿namespace BooleanAlgebra.Utils;
-
+/// <summary>
+/// Provides a set of extension methods for working with <see cref="System.Collections.Generic.IEnumerable{T}"/>.
+/// </summary>
 public static class EnumerableUtils {
     /// <summary>
-    /// 
+    /// Finds the first element in a collection that satisfied a given predicate.
+    /// If an element is found, returns true and the matching element is provided by the result parameter.
+    /// If no such element is found, returns false and the default value is provided by the result parameter.
     /// </summary>
     /// <param name="source"></param>
-    /// <param name="predicate"></param>
-    /// <param name="result"></param>
-    /// <typeparam name="TSource"></typeparam>
-    /// <returns></returns>
+    /// <param name="predicate">The condition that must be met by the item within the collection.</param>
+    /// <param name="result">The first item within the collection that met the predicate or the default value if no item within the collection met the predicate.</param>
+    /// <typeparam name="TSource">The type that the collection is of.</typeparam>
+    /// <returns>True when an item in the collection met the predicate.</returns>
     public static bool TryFirst<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, [NotNullWhen(true)] out TSource? result) {
         if (source is null) throw new ArgumentNullException(nameof(source));
         if (predicate is null) throw new ArgumentNullException(nameof(predicate));
@@ -25,40 +29,5 @@ public static class EnumerableUtils {
         //If the predicate was false for all items, return false as there was no match.
         result = default;
         return false;
-    }
-    
-    public static bool SequenceEqualsIgnoreOrder<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second) where TSource : IEquatable<TSource> {
-        if (first is null) throw new ArgumentNullException(nameof(first));
-        if (second is null) throw new ArgumentNullException(nameof(second));
-
-        Dictionary<TSource, int> firstItemCounts = first.GetItemCounts();
-        
-        foreach (TSource item in second) {
-            bool hasFoundItem = false;
-            KeyValuePair<TSource, int> itemMatch = firstItemCounts.FirstOrDefault(x => x.Key.Equals(item) && (hasFoundItem = true));
-            if (!hasFoundItem)
-                return false;
-            firstItemCounts[itemMatch.Key]--;
-        }
-        
-        return firstItemCounts.Values.All(itemCount => itemCount == 0);
-    }
-    
-    public static Dictionary<TSource, int> GetItemCounts<TSource>(this IEnumerable<TSource> source) where TSource : IEquatable<TSource> {
-        if (source is null) throw new ArgumentNullException(nameof(source));
-
-        Dictionary<TSource, int> itemCounts = new();
-        foreach (TSource item in source) {
-            bool hasFoundItem = false;
-            KeyValuePair<TSource, int> itemMatch = itemCounts.FirstOrDefault(x => x.Key.Equals(item) && (hasFoundItem = true));
-
-            if (hasFoundItem) {
-                itemCounts[itemMatch.Key]++;
-            } else {
-                itemCounts.Add(item, 1);
-            }
-        }
-
-        return itemCounts;
     }
 }

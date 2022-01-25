@@ -74,16 +74,15 @@ public class SimplifierItem {
 }
 
 public class Simplifier {
+    private const string StartMessage = "Initial boolean expression";
     private ISyntaxItem StartSyntaxItem { get; }
-    private string SimplificationReason { get; }
 
-    public Simplifier(ISyntaxItem startSyntaxItem, string simplificationReason = "Initial boolean expression") {
+    public Simplifier(ISyntaxItem startSyntaxItem) {
         StartSyntaxItem = startSyntaxItem;
-        SimplificationReason = simplificationReason;
     }
 
     public List<Tuple<ISyntaxItem, string>> Simplify() {
-        SimplifierItem simplifierTree = new(StartSyntaxItem, SimplificationReason);
+        SimplifierItem simplifierTree = new(StartSyntaxItem, StartMessage);
         simplifierTree.Simplify();
         
         return SimplifierItem.GetSmallestCostSyntaxItem(simplifierTree).GetSimplifiedSyntaxTree();

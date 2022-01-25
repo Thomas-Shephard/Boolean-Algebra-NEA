@@ -32,7 +32,7 @@ public static class SyntaxTreeSubstitution {
     /// <returns></returns>
     private static bool SyntaxTreeOnlyContainsKnownSubstitutes(ISyntaxItem syntaxTree, IReadOnlyDictionary<GenericOperand, ISyntaxItem> directSubstitutes) {
         if (syntaxTree is not Operand operand)
-            return syntaxTree.GetDaughterItems().All(daughterSyntaxItem => SyntaxTreeOnlyContainsKnownSubstitutes(daughterSyntaxItem, directSubstitutes));
+            return syntaxTree.GetChildNodes().All(daughterSyntaxItem => SyntaxTreeOnlyContainsKnownSubstitutes(daughterSyntaxItem, directSubstitutes));
         if (operand is not GenericOperand genericOperand) return true;
         return operand.Value.StartsWith("Items") || directSubstitutes.ContainsKey(genericOperand);
     }
@@ -78,12 +78,12 @@ public static class SyntaxTreeSubstitution {
     private static bool TrySimplifyDaughterSyntaxItems(ISyntaxItem syntaxTree, Dictionary<GenericOperand, ISyntaxItem> directSubstitutes,
         IReadOnlyDictionary<GenericOperand, List<ISyntaxItem>> repeatingSubstitutes, 
         [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
-        List<ISyntaxItem> syntaxTreeDaughterItems = syntaxTree.GetDaughterItems().ToList();
+        List<ISyntaxItem> syntaxTreeDaughterItems = syntaxTree.GetChildNodes().ToList();
         
         for (int i = syntaxTreeDaughterItems.Count - 1; i >= 0; i--) {
             if (syntaxTreeDaughterItems[i] is RepeatingOperator repeatingOperator) {
                 foreach (Dictionary<GenericOperand, ISyntaxItem> tempDirectSubstitutes in GetDictionaries(repeatingOperator, directSubstitutes, repeatingSubstitutes)) {
-                    if (TryInternalSubstituteSyntaxTree(repeatingOperator.Daughter, tempDirectSubstitutes, repeatingSubstitutes, out ISyntaxItem? tempSubstitutedSyntaxTree)) {
+                    if (TryInternalSubstituteSyntaxTree(repeatingOperator.Child, tempDirectSubstitutes, repeatingSubstitutes, out ISyntaxItem? tempSubstitutedSyntaxTree)) {
                         syntaxTreeDaughterItems.Insert(i + 1, tempSubstitutedSyntaxTree);
                     } else {
                         substitutedSyntaxTree = default;
@@ -101,7 +101,7 @@ public static class SyntaxTreeSubstitution {
 
         switch (syntaxTreeDaughterItems.Count) {
             case > 1:
-                substitutedSyntaxTree = new BinaryOperator(syntaxTree.Identifier, syntaxTreeDaughterItems.ToArray());
+                substitutedSyntaxTree = new BinaryOperator(syntaxTree.Identifier, syntaxTreeDaughterItems.ToArray()).Compress();
                 return true;
             case 1:
                 substitutedSyntaxTree = syntaxTree switch {
@@ -137,11 +137,11 @@ public static class SyntaxTreeSubstitution {
     /// <param name="repeatingOperator"></param>
     /// <returns></returns>
     private static IEnumerable<GenericOperand> GetRepeatingOperatorNames(RepeatingOperator repeatingOperator) {
-        ISyntaxItem daughterItem = repeatingOperator.Daughter;
+        ISyntaxItem daughterItem = repeatingOperator.Child;
 
         if (daughterItem is GenericOperand genericOperand && genericOperand.Value.StartsWith("Items"))
             return new[] {genericOperand};
 
-        return daughterItem.GetDaughterItems().OfType<GenericOperand>().Where(genericOperandDaughterItem => genericOperandDaughterItem.Value.StartsWith("Items"));
+        return daughterItem.GetChildNodes().OfType<GenericOperand>().Where(genericOperandDaughterItem => genericOperandDaughterItem.Value.StartsWith("Items"));
     }
 }

@@ -15,7 +15,7 @@ public class ParserException : Exception {
     /// <param name="message">The message that describes the error.</param>
     /// <exception cref="ArgumentNullException">Thrown when either <paramref name="lexemePosition"/> or <paramref name="message"/> is null.</exception>
     public ParserException(LexemePosition lexemePosition, string message) : base(message) {
-        if (message is null) throw new ArgumentNullException(nameof(message));                      //Ensure that message is not null
-        LexemePosition = lexemePosition ?? throw new ArgumentNullException(nameof(lexemePosition)); //Ensure that lexemePosition is not null
+        if (message is null) throw new ArgumentNullException(nameof(message));
+        LexemePosition = lexemePosition ?? throw new ArgumentNullException(nameof(lexemePosition));
     }
 }

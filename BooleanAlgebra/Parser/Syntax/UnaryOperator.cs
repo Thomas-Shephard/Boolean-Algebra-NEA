@@ -1,23 +1,18 @@
 ﻿namespace BooleanAlgebra.Parser.Syntax; 
-public class UnaryOperator : ISingleDaughterSyntaxItem {
+public class UnaryOperator : ISingleChildSyntaxItem {
     public Identifier Identifier { get; }
-    public ISyntaxItem Daughter { get; }
+    public ISyntaxItem Child { get; }
 
-    public UnaryOperator(Identifier identifier, ISyntaxItem daughter) {
+    public UnaryOperator(Identifier identifier, ISyntaxItem child) {
         Identifier = identifier;
-        Daughter = daughter;
+        Child = child;
     }
     
     public int GetCost() {
-        return 1 + Daughter.GetCost();
+        return 1 + Child.GetCost();
     }
-    
-    public string ToString(int higherLevelPrecedence) {
-        return $"{Identifier.Name}{Daughter.ToString(Identifier.Precedence)}";
-    }
-    
-    public override string ToString() {
-        return ToString(0);
+    public string GetStringRepresentation(int higherLevelPrecedence = 0) {
+        return $"{Identifier.Name}{Child.GetStringRepresentation(Identifier.Precedence)}";
     }
 
     public bool Equals(ISyntaxItem? other) {
@@ -26,7 +21,7 @@ public class UnaryOperator : ISingleDaughterSyntaxItem {
         
         return other is UnaryOperator otherUnaryOperator
             && Identifier.Equals(otherUnaryOperator.Identifier) 
-            && Daughter.Equals(otherUnaryOperator.Daughter);
+            && Child.Equals(otherUnaryOperator.Child);
     }
 
     public override bool Equals(object? obj) {
@@ -37,6 +32,6 @@ public class UnaryOperator : ISingleDaughterSyntaxItem {
     }
     
     public override int GetHashCode() {
-        return HashCode.Combine(Identifier, Daughter);
+        return HashCode.Combine(Identifier, Child);
     }
 }

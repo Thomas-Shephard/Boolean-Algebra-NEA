@@ -3,6 +3,7 @@ global using BooleanAlgebra.Identifiers;
 global using BooleanAlgebra.Lexer.Lexemes;
 global using BooleanAlgebra.Parser.Syntax;
 global using BooleanAlgebra.Utils;
+global using BooleanAlgebra.Utils.SyntaxItem;
 
 global using System.Diagnostics.CodeAnalysis;
 global using System.Diagnostics;

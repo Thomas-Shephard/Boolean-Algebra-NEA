@@ -12,11 +12,7 @@ public class Operand : ISyntaxItem {
         return 1;
     }
     
-    public string ToString(int higherLevelPrecedence) {
-        return Value;
-    }
-
-    public override string ToString() {
+    public string GetStringRepresentation(int higherLevelPrecedence = 0) {
         return Value;
     }
 

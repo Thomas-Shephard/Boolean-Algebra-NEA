@@ -21,7 +21,11 @@ public sealed class ContextualLexeme : Lexeme, IEquatable<ContextualLexeme> {
     }
 
     public override string ToString() {
-        return $"[{Identifier}, {LexemeValue}, {LexemePosition}]";  //Outputs in the format [Identifier, LexemeValue, LexemePosition].
+        //This method is not designed to be used in production code and is only for debugging purposes.
+        if (Debugger.IsAttached) {
+            return $"[{Identifier}, {LexemeValue}, {LexemePosition}]"; //Outputs in the format [Identifier, LexemeValue, LexemePosition].
+        }
+        throw new InvalidOperationException("This method is only for debugging purposes.");
     }
 
     public bool Equals(ContextualLexeme? other) {

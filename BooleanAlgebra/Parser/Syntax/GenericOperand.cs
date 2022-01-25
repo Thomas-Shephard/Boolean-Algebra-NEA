@@ -1,8 +1,21 @@
 ﻿namespace BooleanAlgebra.Parser.Syntax; 
+/// <summary>
+/// 
+/// </summary>
 public class GenericOperand : Operand {
+    /// <summary>
+    /// 
+    /// </summary>
     public bool IsRepeating { get; }
 
-    public GenericOperand(string value, Identifier identifier) : base(value, identifier) {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="identifier"></param>
+    /// <param name="isRepeating"></param>
+    public GenericOperand(string value, Identifier identifier, bool isRepeating) : base(value, identifier) {
+        IsRepeating = isRepeating;
         IsRepeating = value.StartsWith("Items");
     }
 

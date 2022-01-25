@@ -1,18 +1,17 @@
 ﻿namespace BooleanAlgebra.Parser.Syntax; 
-public class RepeatingOperator : ISingleDaughterSyntaxItem {
+public class RepeatingOperator : ISingleChildSyntaxItem {
     public Identifier Identifier { get; }
-    public ISyntaxItem Daughter { get; }
+    public ISyntaxItem Child { get; }
 
-    public RepeatingOperator(Identifier identifier, ISyntaxItem daughter) {
+    public RepeatingOperator(Identifier identifier, ISyntaxItem child) {
         Identifier = identifier;
-        Daughter = daughter;
+        Child = child;
     }
     
     public int GetCost() {
-        return 1 + Daughter.GetCost();
+        return 1 + Child.GetCost();
     }
-    
-    public string ToString(int higherLevelPrecedence) {
+    public string GetStringRepresentation(int higherLevelPrecedence = 0) {
         return string.Empty;
     }
 
@@ -22,7 +21,7 @@ public class RepeatingOperator : ISingleDaughterSyntaxItem {
         
         return other is RepeatingOperator otherRepeatingOperator
             && Identifier.Equals(otherRepeatingOperator.Identifier) 
-            && Daughter.Equals(otherRepeatingOperator.Daughter);
+            && Child.Equals(otherRepeatingOperator.Child);
     }
 
     public override bool Equals(object? obj) {
@@ -33,6 +32,6 @@ public class RepeatingOperator : ISingleDaughterSyntaxItem {
     }
     
     public override int GetHashCode() {
-        return HashCode.Combine(Identifier, Daughter);
+        return HashCode.Combine(Identifier, Child);
     }
 }

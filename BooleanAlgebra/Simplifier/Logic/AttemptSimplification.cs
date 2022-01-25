@@ -39,8 +39,8 @@ public static class AttemptSimplification {
     private static List<Tuple<ISyntaxItem, string>> TrySimplifySyntaxTreeDaughterItemsWithSimplificationRule(this ISyntaxItem syntaxTree, List<SimplificationRule> simplificationRules) {
         List<Tuple<ISyntaxItem, string>> simplifications = new();
         switch (syntaxTree) {
-            case ISingleDaughterSyntaxItem singleDaughterSyntaxItem: {
-                List<Tuple<ISyntaxItem, string>> daughterSimplifications = singleDaughterSyntaxItem.Daughter.SimplifySyntaxTreeWithSimplificationRule(simplificationRules);
+            case ISingleChildSyntaxItem singleDaughterSyntaxItem: {
+                List<Tuple<ISyntaxItem, string>> daughterSimplifications = singleDaughterSyntaxItem.Child.SimplifySyntaxTreeWithSimplificationRule(simplificationRules);
                 foreach ((ISyntaxItem? item1, string? item2) in daughterSimplifications) {
                     ISyntaxItem simplifiedSyntaxItem = syntaxTree switch {
                         UnaryOperator => new UnaryOperator(syntaxTree.Identifier, item1),
@@ -50,14 +50,14 @@ public static class AttemptSimplification {
                 }
                 break;
             }
-            case IMultipleDaughterSyntaxItem multipleDaughterSyntaxItem: {
-                for (int i = 0; i < multipleDaughterSyntaxItem.Daughters.Length; i++) {
-                    List<Tuple<ISyntaxItem, string>> daughterSimplifications = multipleDaughterSyntaxItem.Daughters[i].SimplifySyntaxTreeWithSimplificationRule(simplificationRules);
+            case IMultiChildSyntaxItem multiChildSyntaxItem: {
+                for (int i = 0; i < multiChildSyntaxItem.Children.Length; i++) {
+                    List<Tuple<ISyntaxItem, string>> daughterSimplifications = multiChildSyntaxItem.Children[i].SimplifySyntaxTreeWithSimplificationRule(simplificationRules);
                     foreach ((ISyntaxItem? item1, string? item2) in daughterSimplifications) {
-                        ISyntaxItem[] newDaughters = multipleDaughterSyntaxItem.Daughters.ToArray();
+                        ISyntaxItem[] newDaughters = multiChildSyntaxItem.Children.ToArray();
                         newDaughters[i] = item1;
-                        ISyntaxItem simplifiedSyntaxItem = multipleDaughterSyntaxItem switch {
-                            BinaryOperator => new BinaryOperator(syntaxTree.Identifier, newDaughters),
+                        ISyntaxItem simplifiedSyntaxItem = multiChildSyntaxItem switch {
+                            BinaryOperator => new BinaryOperator(syntaxTree.Identifier, newDaughters).Compress(),
                             _ => throw new Exception()
                         };
                         simplifications.Add(new Tuple<ISyntaxItem, string>(simplifiedSyntaxItem, item2));
