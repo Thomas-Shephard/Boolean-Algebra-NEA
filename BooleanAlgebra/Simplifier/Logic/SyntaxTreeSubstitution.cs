@@ -13,10 +13,10 @@ public static class SyntaxTreeSubstitution {
     /// <exception cref="ArgumentException"></exception>
     public static bool TrySubstituteSyntaxTree(ISyntaxItem syntaxTree, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
         //Ensure that the syntax tree that is being substituted has an equivalence for each match.
-        if (!SyntaxTreeOnlyContainsKnownSubstitutes(syntaxTree, matches.DirectSubstitutes))
+        if (!SyntaxTreeOnlyContainsKnownSubstitutes(syntaxTree, matches))
             throw new ArgumentException($"The parameter {nameof(matches)} did not contain a substitute for every generic operand.");
         //Attempt to substitute the syntax tree, if it fails then return false.
-        if (!TryInternalSubstituteSyntaxTree(syntaxTree, matches.DirectSubstitutes, matches.RepeatingSubstitutes, out substitutedSyntaxTree))
+        if (!TryInternalSubstituteSyntaxTree(syntaxTree, matches, out substitutedSyntaxTree))
             return false;
         //If the syntax tree was substituted, compress the syntax tree and return true.
         //Compressing the syntax tree will remove redundant operators (e.g. ((A AND B) AND C) --> (A AND B AND C))
@@ -24,66 +24,33 @@ public static class SyntaxTreeSubstitution {
         return true;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="syntaxTree"></param>
-    /// <param name="directSubstitutes"></param>
-    /// <returns></returns>
-    private static bool SyntaxTreeOnlyContainsKnownSubstitutes(ISyntaxItem syntaxTree, IReadOnlyDictionary<GenericOperand, ISyntaxItem> directSubstitutes) {
+    private static bool SyntaxTreeOnlyContainsKnownSubstitutes(ISyntaxItem syntaxTree, Matches matches) {
         if (syntaxTree is not Operand operand)
-            return syntaxTree.GetChildNodes().All(daughterSyntaxItem => SyntaxTreeOnlyContainsKnownSubstitutes(daughterSyntaxItem, directSubstitutes));
+            return syntaxTree.GetChildNodes().All(daughterSyntaxItem => SyntaxTreeOnlyContainsKnownSubstitutes(daughterSyntaxItem, matches));
         if (operand is not GenericOperand genericOperand) return true;
-        return operand.Value.StartsWith("Items") || directSubstitutes.ContainsKey(genericOperand);
+        return operand.Value.StartsWith("Items") || matches.TryGetDirectSubstituteFromGenericOperand(genericOperand, out _);
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="syntaxTree"></param>
-    /// <param name="directSubstitutes"></param>
-    /// <param name="repeatingSubstitutes"></param>
-    /// <param name="substitutedSyntaxTree"></param>
-    /// <returns></returns>
-    private static bool TryInternalSubstituteSyntaxTree(ISyntaxItem syntaxTree, Dictionary<GenericOperand, ISyntaxItem> directSubstitutes, IReadOnlyDictionary<GenericOperand, List<ISyntaxItem>> repeatingSubstitutes, 
-        [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
+    
+    private static bool TryInternalSubstituteSyntaxTree(ISyntaxItem syntaxTree, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
         if (syntaxTree is Operand operand)
-            return TrySubstituteOperand(operand, directSubstitutes, out substitutedSyntaxTree);
-        return TrySimplifyDaughterSyntaxItems(syntaxTree, directSubstitutes, repeatingSubstitutes, out substitutedSyntaxTree);
+            return TrySubstituteOperand(operand, matches, out substitutedSyntaxTree);
+        return TrySimplifyDaughterSyntaxItems(syntaxTree, matches, out substitutedSyntaxTree);
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="syntaxTree"></param>
-    /// <param name="directSubstitutes"></param>
-    /// <param name="substitutedSyntaxTree"></param>
-    /// <returns></returns>
-    private static bool TrySubstituteOperand(ISyntaxItem syntaxTree, IReadOnlyDictionary<GenericOperand, ISyntaxItem> directSubstitutes,
-        [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
+    
+    private static bool TrySubstituteOperand(ISyntaxItem syntaxTree, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
         if (syntaxTree is GenericOperand genericOperand)
-            return directSubstitutes.TryGetValue(genericOperand, out substitutedSyntaxTree);
+            return matches.TryGetDirectSubstituteFromGenericOperand(genericOperand, out substitutedSyntaxTree);
         substitutedSyntaxTree = syntaxTree;
         return true;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="syntaxTree"></param>
-    /// <param name="directSubstitutes"></param>
-    /// <param name="repeatingSubstitutes"></param>
-    /// <param name="substitutedSyntaxTree"></param>
-    /// <returns></returns>
-    private static bool TrySimplifyDaughterSyntaxItems(ISyntaxItem syntaxTree, Dictionary<GenericOperand, ISyntaxItem> directSubstitutes,
-        IReadOnlyDictionary<GenericOperand, List<ISyntaxItem>> repeatingSubstitutes, 
-        [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
+    private static bool TrySimplifyDaughterSyntaxItems(ISyntaxItem syntaxTree, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
         List<ISyntaxItem> syntaxTreeDaughterItems = syntaxTree.GetChildNodes().ToList();
         
         for (int i = syntaxTreeDaughterItems.Count - 1; i >= 0; i--) {
             if (syntaxTreeDaughterItems[i] is RepeatingOperator repeatingOperator) {
-                foreach (Dictionary<GenericOperand, ISyntaxItem> tempDirectSubstitutes in GetDictionaries(repeatingOperator, directSubstitutes, repeatingSubstitutes)) {
-                    if (TryInternalSubstituteSyntaxTree(repeatingOperator.Child, tempDirectSubstitutes, repeatingSubstitutes, out ISyntaxItem? tempSubstitutedSyntaxTree)) {
+                foreach (Matches tempMatch in GetDictionaries(repeatingOperator, matches)) {
+                    if (TryInternalSubstituteSyntaxTree(repeatingOperator.Child, tempMatch, out ISyntaxItem? tempSubstitutedSyntaxTree)) {
                         syntaxTreeDaughterItems.Insert(i + 1, tempSubstitutedSyntaxTree);
                     } else {
                         substitutedSyntaxTree = default;
@@ -92,7 +59,7 @@ public static class SyntaxTreeSubstitution {
                 }
 
                 syntaxTreeDaughterItems.RemoveAt(i);
-            } else if (TryInternalSubstituteSyntaxTree(syntaxTreeDaughterItems[i], directSubstitutes, repeatingSubstitutes, out ISyntaxItem? tempSubstitutedSyntaxTree)) {
+            } else if (TryInternalSubstituteSyntaxTree(syntaxTreeDaughterItems[i], matches, out ISyntaxItem? tempSubstitutedSyntaxTree)) {
                 syntaxTreeDaughterItems[i] = tempSubstitutedSyntaxTree;
             } else {
                 syntaxTreeDaughterItems.RemoveAt(i);
@@ -114,34 +81,24 @@ public static class SyntaxTreeSubstitution {
                 return false;
         }
     }
+    
+    private static List<Matches> GetDictionaries(RepeatingOperator repeatingOperator, Matches matches) {
+        List<Matches> matchesList = new();
+        foreach (GenericOperand tempRepeatingOperator in GetRepeatingOperatorNames(repeatingOperator)) {
+            if (!matches.TryGetRepeatingSubstituteFromGenericOperand(tempRepeatingOperator, out List<ISyntaxItem>? substitutes))
+                continue;
+            List<DirectSubstitute> directSubstitutes = substitutes.Select(substitute => new DirectSubstitute(tempRepeatingOperator, substitute)).ToList();
+            matchesList.Add(new Matches(directSubstitutes, matches.RepeatingSubstitutes));
+        }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="repeatingOperator"></param>
-    /// <param name="directSubstitutes"></param>
-    /// <param name="repeatingSubstitutes"></param>
-    /// <returns></returns>
-    private static IEnumerable<Dictionary<GenericOperand, ISyntaxItem>> GetDictionaries(RepeatingOperator repeatingOperator,
-        IDictionary<GenericOperand, ISyntaxItem> directSubstitutes, IReadOnlyDictionary<GenericOperand, List<ISyntaxItem>> repeatingSubstitutes) {
-        return from repeatingOperatorName in
-                GetRepeatingOperatorNames(repeatingOperator).Where(repeatingSubstitutes.ContainsKey).ToArray()
-            from substituteSyntaxItem in repeatingSubstitutes[repeatingOperatorName].ToArray().Reverse()
-            select new Dictionary<GenericOperand, ISyntaxItem>(directSubstitutes)
-                {{repeatingOperatorName, substituteSyntaxItem}};
+        return matchesList;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="repeatingOperator"></param>
-    /// <returns></returns>
     private static IEnumerable<GenericOperand> GetRepeatingOperatorNames(RepeatingOperator repeatingOperator) {
         ISyntaxItem daughterItem = repeatingOperator.Child;
 
-        if (daughterItem is GenericOperand genericOperand && genericOperand.Value.StartsWith("Items"))
+        if (daughterItem is GenericOperand { IsRepeating: true } genericOperand)
             return new[] {genericOperand};
-
-        return daughterItem.GetChildNodes().OfType<GenericOperand>().Where(genericOperandDaughterItem => genericOperandDaughterItem.Value.StartsWith("Items"));
+        return daughterItem.GetChildNodes().OfType<GenericOperand>().Where(genericOperandDaughterItem => genericOperandDaughterItem.IsRepeating);
     }
 }

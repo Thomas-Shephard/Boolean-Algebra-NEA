@@ -34,7 +34,10 @@ public sealed class Parser {
                     ? new GenericOperand(contextualLexeme.LexemeValue, currentLexeme.Identifier, contextualLexeme.LexemeValue.StartsWith("Items"))
                     : new Operand(contextualLexeme.LexemeValue, currentLexeme.Identifier);
                 break;
+            //All of the operands (variables and literals) require context.
+            //Otherwise, it would be impossible to tell what the value of a variable or literal was.
             case IdentifierType.OPERAND:
+                //If this does occur, it means that there is an issue with my code as it should be impossible to get here.
                 throw new InvalidOperationException("The lexeme was not a contextual lexeme");
             case IdentifierType.UNARY_OPERATOR:
                 if (previousSyntaxItem is not null)

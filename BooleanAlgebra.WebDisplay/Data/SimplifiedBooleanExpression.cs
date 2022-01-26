@@ -20,7 +20,11 @@ public class SimplifiedBooleanExpression {
     }
 
     public string FormatNumberOfSimplifications() {
+        //The Simplifications array contains the original expression at index 0.
+        //Therefore, the number of simplifications is the length of the array - 1.
         int simplificationsCount = Simplifications?.Length - 1 ?? 0;
+        //Provides a formatted number of simplifications.
+        //If there is more than 1 simplification, the string is pluralized.
         return $"{simplificationsCount} simplification{(simplificationsCount == 1 ? "" : "s")}";
     }
 }

@@ -3,14 +3,11 @@
 /// Provides a set of methods that make it easier to work with syntax items.
 /// </summary>
 public static class SyntaxItemUtils {
-    
-    //IsIdentifierEqual
-    
     /// <summary>
-    /// 
+    /// Compares two given syntax items identifiers for equality and returns true if they are equal.
     /// </summary>
-    /// <param name="syntaxItem"></param>
-    /// <param name="otherSyntaxItem"></param>
+    /// <param name="syntaxItem">The first syntax item that should be compared.</param>
+    /// <param name="otherSyntaxItem">The second syntax item that should be compared.</param>
     /// <returns>True if the identifiers of both syntax items are equal.</returns>
     public static bool IsIdentifierEqual(this ISyntaxItem syntaxItem, ISyntaxItem otherSyntaxItem) {
         return syntaxItem.Identifier.Equals(otherSyntaxItem.Identifier);

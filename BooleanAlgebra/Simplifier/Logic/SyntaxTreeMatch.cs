@@ -3,7 +3,7 @@ public static class SyntaxTreeMatch {
     public static List<Matches> GetAllMatches(ISyntaxItem syntaxTree, ISyntaxItem patternMatchTree, Matches? inputMatches = null) {
         inputMatches ??= new Matches();
 
-        if (!syntaxTree.IsShallowMatch(patternMatchTree)) return new List<Matches>();
+        if (!syntaxTree.IsIdentifierEqual(patternMatchTree)) return new List<Matches>();
         ISyntaxItem[] syntaxTreeDaughterItems = syntaxTree.GetChildNodes();
         ISyntaxItem[] patternMatchTreeDaughterItems = patternMatchTree.GetChildNodes();
 
@@ -11,7 +11,7 @@ public static class SyntaxTreeMatch {
     }
 
     private static List<Matches> GetNonRepeatingMatches(IReadOnlyCollection<ISyntaxItem> syntaxTreeDaughterItems, IReadOnlyCollection<ISyntaxItem> patternMatchTreeDaughterItems, Matches inputMatches) {
-        inputMatches = inputMatches.Clone();
+        inputMatches = inputMatches;//.Clone();
         List<Matches> returnValue = new();
         List<SyntaxItemCountPair> syntaxTreeDaughterItemCounts = syntaxTreeDaughterItems.GetSyntaxItemCounts();
         List<SyntaxItemCountPair> patternMatchTreeDaughterItemCounts = patternMatchTreeDaughterItems.GetSyntaxItemCounts();
@@ -28,14 +28,14 @@ public static class SyntaxTreeMatch {
                 patternMatchTreeDaughterItemsCopy.Remove(patternMatchTreeDaughterItem);
                 
                 switch (patternMatchTreeDaughterItem) {
-                    case GenericOperand genericOperand when inputMatches.DirectSubstitutes.TryGetValue(genericOperand, out ISyntaxItem? foundDirectSubstitute):
+                    case GenericOperand genericOperand when inputMatches.TryGetDirectSubstituteFromGenericOperand(genericOperand, out ISyntaxItem? foundDirectSubstitute):
                         if(foundDirectSubstitute.Equals(syntaxTreeDaughterItem)) {
                             returnValue.AddRange(GetNonRepeatingMatches(syntaxTreeDaughterItemsCopy, patternMatchTreeDaughterItemsCopy, inputMatches));
                         }
                         break;
                     case GenericOperand genericOperand:
-                        Matches inputMatchesClone = inputMatches.Clone();
-                        inputMatchesClone.DirectSubstitutes.Add(genericOperand, syntaxTreeDaughterItem);
+                        Matches inputMatchesClone = inputMatches;//.Clone();
+                        inputMatchesClone.DirectSubstitutes.Add(new DirectSubstitute(genericOperand, syntaxTreeDaughterItem));
                         returnValue.AddRange(GetNonRepeatingMatches(syntaxTreeDaughterItemsCopy, patternMatchTreeDaughterItemsCopy, inputMatchesClone));
                         break;
                     case Operand:
@@ -77,16 +77,20 @@ public static class SyntaxTreeMatch {
                     : GetNonRepeatingMatches(new[] { syntaxTreeDaughterItem }, new[] { repeatingOperator.Child }, inputMatches);
                 if (possibleMatches.Count == 0) continue;
                 syntaxTreeDaughterItemCounts.RemoveAll(x => x.SyntaxItem.Equals(syntaxTreeDaughterItem));
-                matchedSyntaxItems.AddRange(Enumerable.Repeat(possibleMatches.First().DirectSubstitutes[foundGenericOperand], syntaxTreeDaughterCount));
+
+                if (!possibleMatches.First().TryGetDirectSubstituteFromGenericOperand(foundGenericOperand, out ISyntaxItem? substitute))
+                    throw new Exception();
+                
+                matchedSyntaxItems.AddRange(Enumerable.Repeat(substitute, syntaxTreeDaughterCount));
             }
 
             if(matchedSyntaxItems.Count == 0)
                 continue;
                 
-            if (inputMatches.RepeatingSubstitutes.TryGetValue(foundGenericOperand, out List<ISyntaxItem>? foundSyntaxItems)) {
+            if (inputMatches.TryGetRepeatingSubstituteFromGenericOperand(foundGenericOperand, out List<ISyntaxItem>? foundSyntaxItems)) {
                 foundSyntaxItems.AddRange(matchedSyntaxItems);
             } else {
-                inputMatches.RepeatingSubstitutes.Add(foundGenericOperand, matchedSyntaxItems);
+                inputMatches.RepeatingSubstitutes.Add(new RepeatingSubstitute(foundGenericOperand, matchedSyntaxItems));
             }
                 
             returnValue.Add(inputMatches);

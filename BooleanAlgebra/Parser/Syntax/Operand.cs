@@ -33,6 +33,7 @@ public class Operand : ISyntaxItem {
     }
     
     public override int GetHashCode() {
-        return HashCode.Combine(Value, Identifier);
+        //The hash code is not supported for syntax items to ensure that equality is not based off the order of any child nodes.
+        throw new NotSupportedException("GetHashCode() is not supported for syntax items.");
     }
 }

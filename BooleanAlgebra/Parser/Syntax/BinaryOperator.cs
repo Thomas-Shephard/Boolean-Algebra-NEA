@@ -3,9 +3,6 @@
 /// 
 /// </summary>
 public class BinaryOperator : IMultiChildSyntaxItem {
-    /// <summary>
-    /// 
-    /// </summary>
     public Identifier Identifier { get; }
     public ISyntaxItem[] Children { get; }
 
@@ -88,7 +85,7 @@ public class BinaryOperator : IMultiChildSyntaxItem {
     }
     
     public override int GetHashCode() {
-        //The hash code is not supported for binary operators as equality should not be based off the order of the child nodes.
+        //The hash code is not supported for syntax items to ensure that equality is not based off the order of any child nodes.
         throw new NotSupportedException("GetHashCode() is not supported for syntax items.");
     }
 }
