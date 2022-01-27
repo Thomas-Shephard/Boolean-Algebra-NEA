@@ -14,6 +14,10 @@ public class Matches {
         RepeatingSubstitutes = repeatingSubstitutes;
     }
 
+    public Matches Clone() {
+        return new Matches(DirectSubstitutes.ToList(), RepeatingSubstitutes.ToList());
+    }
+
     public bool TryGetDirectSubstituteFromGenericOperand(GenericOperand genericOperand, [NotNullWhen(true)] out ISyntaxItem? substitute) {
         substitute = DirectSubstitutes.FirstOrDefault(directSubstitute => directSubstitute.SubstitutableSyntaxItem.Equals(genericOperand))?.Substitution;
         return substitute is not null;

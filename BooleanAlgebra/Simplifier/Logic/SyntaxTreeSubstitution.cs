@@ -3,14 +3,6 @@
 /// 
 /// </summary>
 public static class SyntaxTreeSubstitution {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="syntaxTree"></param>
-    /// <param name="matches"></param>
-    /// <param name="substitutedSyntaxTree"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
     public static bool TrySubstituteSyntaxTree(ISyntaxItem syntaxTree, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
         //Ensure that the syntax tree that is being substituted has an equivalence for each match.
         if (!SyntaxTreeOnlyContainsKnownSubstitutes(syntaxTree, matches))
@@ -26,21 +18,30 @@ public static class SyntaxTreeSubstitution {
 
     private static bool SyntaxTreeOnlyContainsKnownSubstitutes(ISyntaxItem syntaxTree, Matches matches) {
         if (syntaxTree is not Operand operand)
+            //If the syntax tree is not an operand, then check its child nodes and ensure that they contain only known substitutes.
             return syntaxTree.GetChildNodes().All(daughterSyntaxItem => SyntaxTreeOnlyContainsKnownSubstitutes(daughterSyntaxItem, matches));
+        //If the syntax item is an operand but not generic operand then it is not substitutable.
         if (operand is not GenericOperand genericOperand) return true;
-        return operand.Value.StartsWith("Items") || matches.TryGetDirectSubstituteFromGenericOperand(genericOperand, out _);
+        //Repeating generic operands are optional and therefore a match does not need to be present.
+        //If the generic operand is not repeating then it does require a substitute, if no match is present then return false.
+        return genericOperand.IsRepeating || matches.TryGetDirectSubstituteFromGenericOperand(genericOperand, out _);
     }
     
     private static bool TryInternalSubstituteSyntaxTree(ISyntaxItem syntaxTree, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
         if (syntaxTree is Operand operand)
+            //If the syntax tree is an operand, attempt to substitute it (only operands can be substituted).
             return TrySubstituteOperand(operand, matches, out substitutedSyntaxTree);
+        //If the syntax tree is not an operand, then attempt to substitute its child nodes.
         return TrySimplifyDaughterSyntaxItems(syntaxTree, matches, out substitutedSyntaxTree);
     }
     
-    private static bool TrySubstituteOperand(ISyntaxItem syntaxTree, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
-        if (syntaxTree is GenericOperand genericOperand)
+    private static bool TrySubstituteOperand(Operand operand, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
+        if (operand is GenericOperand genericOperand)
+            //If the operand is a generic operand then substitute it for its equivalence.
+            //If no match is present then return false.
             return matches.TryGetDirectSubstituteFromGenericOperand(genericOperand, out substitutedSyntaxTree);
-        substitutedSyntaxTree = syntaxTree;
+        //If the operand is not a generic operand then it is not substitutable and therefore its equivalence is its self.
+        substitutedSyntaxTree = operand;
         return true;
     }
 
@@ -84,10 +85,10 @@ public static class SyntaxTreeSubstitution {
     
     private static List<Matches> GetDictionaries(RepeatingOperator repeatingOperator, Matches matches) {
         List<Matches> matchesList = new();
-        foreach (GenericOperand tempRepeatingOperator in GetRepeatingOperatorNames(repeatingOperator)) {
-            if (!matches.TryGetRepeatingSubstituteFromGenericOperand(tempRepeatingOperator, out List<ISyntaxItem>? substitutes))
+        foreach (GenericOperand repeatingGenericOperand in GetRepeatingOperatorNames(repeatingOperator)) {
+            if (!matches.TryGetRepeatingSubstituteFromGenericOperand(repeatingGenericOperand, out List<ISyntaxItem>? substitutes))
                 continue;
-            List<DirectSubstitute> directSubstitutes = substitutes.Select(substitute => new DirectSubstitute(tempRepeatingOperator, substitute)).ToList();
+            List<DirectSubstitute> directSubstitutes = substitutes.Select(substitute => new DirectSubstitute(repeatingGenericOperand, substitute)).ToList();
             matchesList.Add(new Matches(directSubstitutes, matches.RepeatingSubstitutes));
         }
 

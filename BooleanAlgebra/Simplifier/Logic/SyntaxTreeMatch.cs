@@ -11,7 +11,7 @@ public static class SyntaxTreeMatch {
     }
 
     private static List<Matches> GetNonRepeatingMatches(IReadOnlyCollection<ISyntaxItem> syntaxTreeDaughterItems, IReadOnlyCollection<ISyntaxItem> patternMatchTreeDaughterItems, Matches inputMatches) {
-        inputMatches = inputMatches;//.Clone();
+        inputMatches = inputMatches.Clone();
         List<Matches> returnValue = new();
         List<SyntaxItemCountPair> syntaxTreeDaughterItemCounts = syntaxTreeDaughterItems.GetSyntaxItemCounts();
         List<SyntaxItemCountPair> patternMatchTreeDaughterItemCounts = patternMatchTreeDaughterItems.GetSyntaxItemCounts();
@@ -34,7 +34,7 @@ public static class SyntaxTreeMatch {
                         }
                         break;
                     case GenericOperand genericOperand:
-                        Matches inputMatchesClone = inputMatches;//.Clone();
+                        Matches inputMatchesClone = inputMatches.Clone();
                         inputMatchesClone.DirectSubstitutes.Add(new DirectSubstitute(genericOperand, syntaxTreeDaughterItem));
                         returnValue.AddRange(GetNonRepeatingMatches(syntaxTreeDaughterItemsCopy, patternMatchTreeDaughterItemsCopy, inputMatchesClone));
                         break;

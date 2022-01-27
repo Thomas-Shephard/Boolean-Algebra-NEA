@@ -26,6 +26,21 @@ public class MiscQuestions {
     
     [TestMethod]
     public void Test_05() {
+        Assert.IsTrue(SimplificationUtils.Compare("!A + !B + !C", "!(A . B . C)"));
+    }
+    
+    [TestMethod]
+    public void Test_06() {
+        Assert.IsTrue(SimplificationUtils.Compare("!A + !B + !C + !D", "!(A . B . C . D)"));
+    }
+    
+    [TestMethod]
+    public void Test_07() {
+        Assert.IsTrue(SimplificationUtils.Compare("!A + !B + !C + !D + !E", "!(A . B . C . D . E)"));
+    }
+    
+    [TestMethod]
+    public void Test_08() {
         Assert.IsTrue(SimplificationUtils.Compare("!A + !B + !C + !D + !E + !F + !G", "!(A . B . C . D . E . F . G)"));
     }
 }
