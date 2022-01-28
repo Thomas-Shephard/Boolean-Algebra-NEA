@@ -1,11 +1,20 @@
 ﻿namespace BooleanAlgebra.Parser.Syntax; 
 public class UnaryOperator : ISingleChildSyntaxItem {
     public Identifier Identifier { get; }
-    public ISyntaxItem Child { get; }
+    public ISyntaxItem Child { get; set; }
 
     public UnaryOperator(Identifier identifier, ISyntaxItem child) {
         Identifier = identifier;
         Child = child;
+    }
+    
+    public UnaryOperator(UnaryOperator unaryOperator) {
+        Identifier = unaryOperator.Identifier;
+        Child = unaryOperator.Child;
+    }
+    
+    public ISyntaxItem ShallowClone() {
+        return new UnaryOperator(this);
     }
     
     public int GetCost() {

@@ -15,8 +15,7 @@ public static class SimplificationUtils {
         ISyntaxItem parsedInput = new Parser.Parser(inputLexemes).Parse();
         ISyntaxItem parsedExpected = new Parser.Parser(expectedLexemes).Parse();
         //Simplifying the input
-        Simplifier.Simplifier simplifier = new(parsedInput);
-        List<Tuple<ISyntaxItem, string>> simplificationSteps = simplifier.Simplify();
+        List<Tuple<ISyntaxItem, string>> simplificationSteps = new Simplifier.Simplifier(parsedInput).Simplify();
         //Comparing the simplified input to the expected
         return simplificationSteps.Last().Item1.Equals(parsedExpected);
     }

@@ -4,7 +4,7 @@
 /// </summary>
 public class BinaryOperator : IMultiChildSyntaxItem {
     public Identifier Identifier { get; }
-    public ISyntaxItem[] Children { get; }
+    public ISyntaxItem[] Children { get; set; }
 
     /// <summary>
     /// 
@@ -15,6 +15,15 @@ public class BinaryOperator : IMultiChildSyntaxItem {
     public BinaryOperator(Identifier identifier, ISyntaxItem[] children) {
         Identifier = identifier ?? throw new ArgumentNullException(nameof(identifier));
         Children = children ?? throw new ArgumentNullException(nameof(children));
+    }
+
+    public BinaryOperator(BinaryOperator binaryOperator) {
+        Identifier = binaryOperator.Identifier;
+        Children = binaryOperator.Children;
+    }
+    
+    public ISyntaxItem ShallowClone() {
+        return new BinaryOperator(this);
     }
     
     public int GetCost() {
@@ -63,13 +72,14 @@ public class BinaryOperator : IMultiChildSyntaxItem {
         
         return stringBuilder.ToString();
     }
+   
 
     public bool Equals(ISyntaxItem? other) {
         if (ReferenceEquals(null, other)) return false; //If the syntax item is null, it cannot be equal to this binary operator.
         if (ReferenceEquals(this, other)) return true;  //If the syntax item is this binary operator, it is equal to this binary operator.
         
         //The syntax item is only equal to this syntax item if it is a syntax item and if all the properties are equal to each other.
-        //The child nodes are compared using a custom algorithm because the order of the child nodes is unimportant.
+        //The child nodes are compared using a custom algorithm because the order of the child nodes does not matter.
         return other is BinaryOperator otherBinaryOperator
             && Identifier.Equals(otherBinaryOperator.Identifier)
             && Children.SyntaxItemsEqualIgnoreOrder(otherBinaryOperator.Children);

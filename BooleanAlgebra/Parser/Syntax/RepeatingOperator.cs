@@ -1,11 +1,20 @@
 ﻿namespace BooleanAlgebra.Parser.Syntax; 
 public class RepeatingOperator : ISingleChildSyntaxItem {
     public Identifier Identifier { get; }
-    public ISyntaxItem Child { get; }
+    public ISyntaxItem Child { get; set; }
 
     public RepeatingOperator(Identifier identifier, ISyntaxItem child) {
         Identifier = identifier;
         Child = child;
+    }
+    
+    public RepeatingOperator(RepeatingOperator repeatingOperator) {
+        Identifier = repeatingOperator.Identifier;
+        Child = repeatingOperator.Child;
+    }
+    
+    public ISyntaxItem ShallowClone() {
+        return new RepeatingOperator(this);
     }
     
     public int GetCost() {

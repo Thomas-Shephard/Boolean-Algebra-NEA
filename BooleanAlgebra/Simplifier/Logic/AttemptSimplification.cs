@@ -57,9 +57,10 @@ public static class AttemptSimplification {
                         ISyntaxItem[] newDaughters = multiChildSyntaxItem.Children.ToArray();
                         newDaughters[i] = item1;
                         ISyntaxItem simplifiedSyntaxItem = multiChildSyntaxItem switch {
-                            BinaryOperator => new BinaryOperator(syntaxTree.Identifier, newDaughters).Compress(),
+                            BinaryOperator => new BinaryOperator(syntaxTree.Identifier, newDaughters),
                             _ => throw new Exception()
                         };
+                        simplifiedSyntaxItem.Compress();
                         simplifications.Add(new Tuple<ISyntaxItem, string>(simplifiedSyntaxItem, item2));
                     }
                     if(simplifications.Count > 0)

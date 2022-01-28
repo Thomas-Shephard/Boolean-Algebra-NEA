@@ -5,101 +5,99 @@
 public static class SyntaxTreeSubstitution {
     public static bool TrySubstituteSyntaxTree(ISyntaxItem syntaxTree, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
         //Ensure that the syntax tree that is being substituted has an equivalence for each match.
-        if (!SyntaxTreeOnlyContainsKnownSubstitutes(syntaxTree, matches))
+        if (!MatchExistsForAllGenericOperands(syntaxTree, matches))
             throw new ArgumentException($"The parameter {nameof(matches)} did not contain a substitute for every generic operand.");
         //Attempt to substitute the syntax tree, if it fails then return false.
-        if (!TryInternalSubstituteSyntaxTree(syntaxTree, matches, out substitutedSyntaxTree))
+        if (!TrySubstituteChildNodes(syntaxTree, matches, out substitutedSyntaxTree))
             return false;
         //If the syntax tree was substituted, compress the syntax tree and return true.
         //Compressing the syntax tree will remove redundant operators (e.g. ((A AND B) AND C) --> (A AND B AND C))
-        substitutedSyntaxTree = substitutedSyntaxTree.Compress();
-        return true;
+        substitutedSyntaxTree.Compress();
+        return true;                       
     }
 
-    private static bool SyntaxTreeOnlyContainsKnownSubstitutes(ISyntaxItem syntaxTree, Matches matches) {
+    private static bool MatchExistsForAllGenericOperands(ISyntaxItem syntaxTree, Matches matches) {
         if (syntaxTree is not Operand operand)
             //If the syntax tree is not an operand, then check its child nodes and ensure that they contain only known substitutes.
-            return syntaxTree.GetChildNodes().All(daughterSyntaxItem => SyntaxTreeOnlyContainsKnownSubstitutes(daughterSyntaxItem, matches));
+            return syntaxTree.GetChildNodes().All(daughterSyntaxItem => MatchExistsForAllGenericOperands(daughterSyntaxItem, matches));
         //If the syntax item is an operand but not generic operand then it is not substitutable.
         if (operand is not GenericOperand genericOperand) return true;
         //Repeating generic operands are optional and therefore a match does not need to be present.
         //If the generic operand is not repeating then it does require a substitute, if no match is present then return false.
         return genericOperand.IsRepeating || matches.TryGetDirectSubstituteFromGenericOperand(genericOperand, out _);
     }
-    
-    private static bool TryInternalSubstituteSyntaxTree(ISyntaxItem syntaxTree, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
-        if (syntaxTree is Operand operand)
-            //If the syntax tree is an operand, attempt to substitute it (only operands can be substituted).
-            return TrySubstituteOperand(operand, matches, out substitutedSyntaxTree);
-        //If the syntax tree is not an operand, then attempt to substitute its child nodes.
-        return TrySimplifyDaughterSyntaxItems(syntaxTree, matches, out substitutedSyntaxTree);
-    }
-    
-    private static bool TrySubstituteOperand(Operand operand, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
-        if (operand is GenericOperand genericOperand)
-            //If the operand is a generic operand then substitute it for its equivalence.
-            //If no match is present then return false.
-            return matches.TryGetDirectSubstituteFromGenericOperand(genericOperand, out substitutedSyntaxTree);
-        //If the operand is not a generic operand then it is not substitutable and therefore its equivalence is its self.
-        substitutedSyntaxTree = operand;
-        return true;
-    }
 
-    private static bool TrySimplifyDaughterSyntaxItems(ISyntaxItem syntaxTree, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
-        List<ISyntaxItem> syntaxTreeDaughterItems = syntaxTree.GetChildNodes().ToList();
+    private static bool TrySubstituteChildNodes(ISyntaxItem syntaxItem, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxItem) {
+        if (syntaxItem is Operand) {
+            //If the syntax item is an operand but not a generic operand, it cannot be substituted.
+            if (syntaxItem is GenericOperand genericOperand)
+                return matches.TryGetDirectSubstituteFromGenericOperand(genericOperand, out substitutedSyntaxItem);
+            substitutedSyntaxItem = syntaxItem;
+            return true;
+        }
         
-        for (int i = syntaxTreeDaughterItems.Count - 1; i >= 0; i--) {
-            if (syntaxTreeDaughterItems[i] is RepeatingOperator repeatingOperator) {
+        List<ISyntaxItem> childNodes = syntaxItem.GetChildNodes().ToList();
+        
+        for (int i = childNodes.Count - 1; i >= 0; i--) {
+            if (childNodes[i] is RepeatingOperator repeatingOperator) {
                 foreach (Matches tempMatch in GetDictionaries(repeatingOperator, matches)) {
-                    if (TryInternalSubstituteSyntaxTree(repeatingOperator.Child, tempMatch, out ISyntaxItem? tempSubstitutedSyntaxTree)) {
-                        syntaxTreeDaughterItems.Insert(i + 1, tempSubstitutedSyntaxTree);
-                    } else {
-                        substitutedSyntaxTree = default;
-                        return false;
+                    if(TrySubstituteChildNodes(repeatingOperator.Child, tempMatch, out ISyntaxItem? tempSubstitutedSyntaxItem)) {
+                        childNodes.Add(tempSubstitutedSyntaxItem);
                     }
                 }
-
-                syntaxTreeDaughterItems.RemoveAt(i);
-            } else if (TryInternalSubstituteSyntaxTree(syntaxTreeDaughterItems[i], matches, out ISyntaxItem? tempSubstitutedSyntaxTree)) {
-                syntaxTreeDaughterItems[i] = tempSubstitutedSyntaxTree;
+                childNodes.RemoveAt(i);
+            } else if (TrySubstituteChildNodes(childNodes[i], matches, out ISyntaxItem? tempSubstitutedSyntaxItem)) {
+                childNodes[i] = tempSubstitutedSyntaxItem;
             } else {
-                syntaxTreeDaughterItems.RemoveAt(i);
+                childNodes.RemoveAt(i);
             }
         }
-
-        switch (syntaxTreeDaughterItems.Count) {
-            case > 1:
-                substitutedSyntaxTree = new BinaryOperator(syntaxTree.Identifier, syntaxTreeDaughterItems.ToArray()).Compress();
+        
+        switch (childNodes.Count) {
+            case > 1 when syntaxItem is IMultiChildSyntaxItem multiChildSyntaxItem:
+                IMultiChildSyntaxItem newMultiChildSyntaxItem = (IMultiChildSyntaxItem)multiChildSyntaxItem.ShallowClone();
+                newMultiChildSyntaxItem.Children = childNodes.ToArray();
+                substitutedSyntaxItem = newMultiChildSyntaxItem;
                 return true;
-            case 1:
-                substitutedSyntaxTree = syntaxTree switch {
-                    UnaryOperator => new UnaryOperator(syntaxTree.Identifier, syntaxTreeDaughterItems[0]),
-                    _ => syntaxTreeDaughterItems[0]
-                };
+            case 1 when syntaxItem is IMultiChildSyntaxItem:
+                substitutedSyntaxItem = childNodes[0];
+                return true;
+            case 1 when syntaxItem is ISingleChildSyntaxItem singleChildSyntaxItem:
+                ISingleChildSyntaxItem newSingleChildSyntaxItem = (ISingleChildSyntaxItem)singleChildSyntaxItem.ShallowClone();
+                newSingleChildSyntaxItem.Child = childNodes[0];
+                substitutedSyntaxItem = newSingleChildSyntaxItem;
                 return true;
             default:
-                substitutedSyntaxTree = default;
+                substitutedSyntaxItem = default;
                 return false;
         }
     }
-    
+
     private static List<Matches> GetDictionaries(RepeatingOperator repeatingOperator, Matches matches) {
         List<Matches> matchesList = new();
-        foreach (GenericOperand repeatingGenericOperand in GetRepeatingOperatorNames(repeatingOperator)) {
-            if (!matches.TryGetRepeatingSubstituteFromGenericOperand(repeatingGenericOperand, out List<ISyntaxItem>? substitutes))
-                continue;
-            List<DirectSubstitute> directSubstitutes = substitutes.Select(substitute => new DirectSubstitute(repeatingGenericOperand, substitute)).ToList();
-            matchesList.Add(new Matches(directSubstitutes, matches.RepeatingSubstitutes));
+        GenericOperand repeatingGenericOperand = GetRepeatingGenericOperandFromRepeatingOperator(repeatingOperator);
+        if (!matches.TryGetRepeatingSubstituteFromGenericOperand(repeatingGenericOperand, out List<ISyntaxItem>? substitutes))
+            return matchesList;
+        foreach (ISyntaxItem syntaxItem in substitutes) {
+            List<DirectSubstitute> tempDirectSubstitutes = matches.DirectSubstitutes.ToList();
+            tempDirectSubstitutes.Add(new DirectSubstitute(repeatingGenericOperand, syntaxItem));
+            matchesList.Add(new Matches(tempDirectSubstitutes, matches.RepeatingSubstitutes));
         }
 
         return matchesList;
     }
 
-    private static IEnumerable<GenericOperand> GetRepeatingOperatorNames(RepeatingOperator repeatingOperator) {
-        ISyntaxItem daughterItem = repeatingOperator.Child;
-
-        if (daughterItem is GenericOperand { IsRepeating: true } genericOperand)
-            return new[] {genericOperand};
-        return daughterItem.GetChildNodes().OfType<GenericOperand>().Where(genericOperandDaughterItem => genericOperandDaughterItem.IsRepeating);
+    private static GenericOperand GetRepeatingGenericOperandFromRepeatingOperator(RepeatingOperator repeatingOperator) {
+        //The repeating generic operand can be directly nested within the repeating operator.
+        //If this is the case, then the repeating generic operand should be returned.
+        if(repeatingOperator.Child is GenericOperand { IsRepeating: true } repeatingGenericOperand)
+            return repeatingGenericOperand;
+        //Get all the generic operands nested inside the repeating operators child node.
+        GenericOperand[] foundRepeatingGenericOperands = repeatingOperator.Child.GetChildNodes().OfType<GenericOperand>().Where(genericOperand => genericOperand.IsRepeating).ToArray();
+        //There can only be one repeating generic operand within a repeating operator.
+        if(foundRepeatingGenericOperands.Length != 1)
+            throw new InvalidOperationException("Repeating operators must have exactly one repeating generic operand nested inside of them.");
+        //If there is only one repeating generic operand, then return it.
+        return foundRepeatingGenericOperands.First();
     }
 }

@@ -43,4 +43,9 @@ public class MiscQuestions {
     public void Test_08() {
         Assert.IsTrue(SimplificationUtils.Compare("!A + !B + !C + !D + !E + !F + !G", "!(A . B . C . D . E . F . G)"));
     }
+    
+    [TestMethod]
+    public void Test_09() {
+        Assert.IsTrue(SimplificationUtils.Compare("A + A + A", "A"));
+    }
 }

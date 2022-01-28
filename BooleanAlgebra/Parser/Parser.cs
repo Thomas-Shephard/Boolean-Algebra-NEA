@@ -54,7 +54,8 @@ public sealed class Parser {
                     daughterSyntaxItems.Add(InternalParse(currentLexeme.Identifier.Precedence + 1, endSyntaxIdentifierType: endSyntaxIdentifierType)
                         ?? throw new ParserException(currentLexeme.LexemePosition, "The parser expected an expression after the binary operator"));
                 } while (IsNextSyntaxIdentifierOfSameLexemeType(currentLexeme.Identifier));
-                nextSyntaxItem = new BinaryOperator(currentLexeme.Identifier, daughterSyntaxItems.ToArray()).Compress();
+                nextSyntaxItem = new BinaryOperator(currentLexeme.Identifier, daughterSyntaxItems.ToArray());
+                nextSyntaxItem.Compress();
                 break;
             case IdentifierType.GROUPING_OPERATOR_START:
                 string initialGroupingOperatorName = currentLexeme.Identifier.Name;

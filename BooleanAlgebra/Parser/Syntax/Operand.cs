@@ -1,11 +1,20 @@
 ﻿namespace BooleanAlgebra.Parser.Syntax; 
 public class Operand : ISyntaxItem {
-    public string Value { get; }
+    protected string Value { get; }
     public Identifier Identifier { get; }
 
     public Operand(string value, Identifier identifier) {
         Value = value;
         Identifier = identifier;
+    }
+    
+    public Operand(Operand operand) {
+        Value = operand.Value;
+        Identifier = operand.Identifier;
+    }
+    
+    public virtual ISyntaxItem ShallowClone() {
+        return new Operand(this);
     }
     
     public int GetCost() {

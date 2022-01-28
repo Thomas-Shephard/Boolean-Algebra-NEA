@@ -16,7 +16,14 @@ public class GenericOperand : Operand {
     /// <param name="isRepeating"></param>
     public GenericOperand(string value, Identifier identifier, bool isRepeating) : base(value, identifier) {
         IsRepeating = isRepeating;
-        IsRepeating = value.StartsWith("Items");
+    }
+    
+    public GenericOperand(GenericOperand genericOperand) : base(genericOperand) {
+        IsRepeating = genericOperand.IsRepeating;
+    }
+    
+    public override ISyntaxItem ShallowClone() {
+        return new GenericOperand(this);
     }
 
     public override bool Equals(ISyntaxItem? other) {

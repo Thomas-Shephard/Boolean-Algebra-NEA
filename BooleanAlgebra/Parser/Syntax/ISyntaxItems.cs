@@ -22,6 +22,8 @@ public interface ISyntaxItem : IEquatable<ISyntaxItem> {
     /// <param name="higherLevelPrecedence">The precedence of the syntax item that called this method.</param>
     /// <returns>A string representation of the queried syntax item.</returns>
     public string GetStringRepresentation(int higherLevelPrecedence = 0);
+
+    public ISyntaxItem ShallowClone();
 }
 
 /// <summary>
@@ -32,7 +34,7 @@ public interface ISingleChildSyntaxItem : ISyntaxItem {
     /// <summary>
     /// Stores the singular child node that the node has.
     /// </summary>
-    public ISyntaxItem Child { get; }
+    public ISyntaxItem Child { get; set; }
 }
 
 /// <summary>
@@ -43,5 +45,5 @@ public interface IMultiChildSyntaxItem : ISyntaxItem {
     /// <summary>
     /// Stores the multiple child nodes that the node has.
     /// </summary>
-    public ISyntaxItem[] Children { get; }
+    public ISyntaxItem[] Children { get; set; }
 }
