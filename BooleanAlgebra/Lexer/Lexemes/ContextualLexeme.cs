@@ -32,19 +32,17 @@ public sealed class ContextualLexeme : Lexeme, IEquatable<ContextualLexeme> {
         if (ReferenceEquals(null, other)) return false;     //If the other contextual lexeme is null, it cannot be equal to this contextual lexeme.
         if (ReferenceEquals(this, other)) return true;      //If the other contextual lexeme is this contextual lexeme, it is equal to this contextual lexeme.
         
-        //The other contextual lexeme is equal to this contextual lexeme if all of the properties match.
+        //The contextual lexemes are only equal if their properties are equal to each other.
         return Identifier.Equals(other.Identifier)
             && LexemePosition.Equals(other.LexemePosition)
             && LexemeValue == other.LexemeValue;
     }
 
     public override bool Equals(object? obj) {
-        if (ReferenceEquals(null, obj)) return false;   //If the other object is null, it cannot be equal to this contextual lexeme.
-        if (ReferenceEquals(this, obj)) return true;    //If the other object is this contextual lexeme, it is equal to this contextual lexeme.
-        
-        //Compare the other object as a contextual lexeme with a more specific comparison.
-        //If the other object is not a contextual lexeme, the comparison will fail.
-        return Equals(obj as ContextualLexeme);
+        //The other object is only equal to this identifier:
+        //  1. If the other object is a contextual lexeme.
+        //  2. If the other contextual lexeme satisfies the equality comparison.
+        return obj is ContextualLexeme otherContextualLexeme && Equals(otherContextualLexeme);
     }
 
     public override int GetHashCode() {

@@ -1,41 +1,49 @@
 ﻿namespace BooleanAlgebra.Parser.Syntax; 
 /// <summary>
-/// 
+/// Holds the information about the type that a binary operator is of and the child nodes that the binary operator is applied to.
+/// A binary operator is an operator that has two or more child nodes.
 /// </summary>
 public class BinaryOperator : IMultiChildSyntaxItem {
     public Identifier Identifier { get; }
-    public ISyntaxItem[] Children { get; set; }
+    public ISyntaxItem[] ChildNodes { get; set; }
 
     /// <summary>
-    /// 
+    /// Initialises a new binary operator with the given identifier and child nodes.
     /// </summary>
-    /// <param name="identifier"></param>
-    /// <param name="children"></param>
-    /// <exception cref="ArgumentNullException"></exception>
-    public BinaryOperator(Identifier identifier, ISyntaxItem[] children) {
+    /// <param name="identifier">The type that the binary operator is of.</param>
+    /// <param name="childNodes">The child nodes that are nested inside the binary operator.</param>
+    /// <exception cref="ArgumentNullException">Thrown when either <paramref name="identifier"/> or <paramref name="childNodes"/> is null.</exception>
+    public BinaryOperator(Identifier identifier, ISyntaxItem[] childNodes) {
         Identifier = identifier ?? throw new ArgumentNullException(nameof(identifier));
-        Children = children ?? throw new ArgumentNullException(nameof(children));
+        ChildNodes = childNodes ?? throw new ArgumentNullException(nameof(childNodes));
     }
 
+    /// <summary>
+    /// Initialises a new binary operator with the same properties as the given binary operator.
+    /// </summary>
+    /// <param name="binaryOperator">The binary operator to copy the properties from.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="binaryOperator"/> is null.</exception>
     private BinaryOperator(BinaryOperator binaryOperator) {
+        //Create a shallow copy of the object by initialising a new object with the same property values.
+        if (binaryOperator is null) throw new ArgumentNullException(nameof(binaryOperator));
         Identifier = binaryOperator.Identifier;
-        Children = binaryOperator.Children;
+        ChildNodes = binaryOperator.ChildNodes;
     }
     
     public ISyntaxItem ShallowClone() {
+        //Create a new binary operator object with the same properties as the current object.
         return new BinaryOperator(this);
     }
     
     public int GetCost() {
-        //To calculate the cost of the binary operator, we need to sum the cost of all the child nodes together and add the cost of this node.
-        //To calculate the base cost of this node we need to calculate how many times the operator is applied to the child nodes.
-        //For example if the expression is 'a + b + c', the base cost is 2. If the expression is 'a + b + c + d', the base cost is 3.
-        //The base cost is calculated by subtracting one from the number of child nodes this node has.
-        //The cost of the a child node can be calculated by recursively calling the GetCost() method on the child node.
-        return Children.Length - 1 + Children.Sum(childNode => childNode.GetCost());
+        //The cost of a binary operator is equal to:
+        //  1. The sum of the cost of all the recursively calculated child nodes.
+        //  2. The base cost of this node (calculated by subtracting one from the number of child nodes this node has) and multiplying by the node cost.
+        return ISyntaxItem.NodeCost * (ChildNodes.Length - 1) + ChildNodes.Sum(childNode => childNode.GetCost());
     }
     
     public string GetStringRepresentation(int higherLevelPrecedence = 0) {
+        #region Parentheses Explanation
         //Parentheses are only required if an operator with a lower precedence is nested inside an operator with a higher precedence.
         //For example in the expression '(a + b) . c', the tree structure will look like the following:
         //        .
@@ -44,6 +52,7 @@ public class BinaryOperator : IMultiChildSyntaxItem {
         //     / \
         //    a   b
         //The operator '+' has a lower precedence that the '.' operator it is nested inside, so parentheses are required to encapsulate the '+' operator.
+        #endregion
         bool parenthesesRequired = higherLevelPrecedence > Identifier.Precedence;
         
         //Use a string builder as strings are immutable and therefore each concatenation of a pre-existing string creates a new string under the hood. 
@@ -54,7 +63,7 @@ public class BinaryOperator : IMultiChildSyntaxItem {
         }
 
         //Iterate over all the child nodes and add them to the expression.
-        for (int i = 0; i < Children.Length; i++) {
+        for (int i = 0; i < ChildNodes.Length; i++) {
             if (i > 0) {
                 //On the first iteration, the operators name is not added to the expression.
                 //If this check was removed, the expression would be '+ a + b' instead of 'a + b'.
@@ -62,7 +71,7 @@ public class BinaryOperator : IMultiChildSyntaxItem {
             }
             //Recursively call the GetStringRepresentation() method on the child node.
             //This will return the string representation of the child node and add it to the expression.
-            stringBuilder.Append(Children[i].GetStringRepresentation(Identifier.Precedence));
+            stringBuilder.Append(ChildNodes[i].GetStringRepresentation(Identifier.Precedence));
         }
         
         if (parenthesesRequired) {
@@ -75,23 +84,21 @@ public class BinaryOperator : IMultiChildSyntaxItem {
    
 
     public bool Equals(ISyntaxItem? other) {
-        if (ReferenceEquals(null, other)) return false; //If the syntax item is null, it cannot be equal to this binary operator.
-        if (ReferenceEquals(this, other)) return true;  //If the syntax item is this binary operator, it is equal to this binary operator.
+        if (ReferenceEquals(null, other)) return false; //If the other syntax item is null, it cannot be equal to this binary operator.
+        if (ReferenceEquals(this, other)) return true;  //If the other syntax item is this binary operator, it is equal to this binary operator.
         
-        //The syntax item is only equal to this syntax item if it is a syntax item and if all the properties are equal to each other.
-        //The child nodes are compared using a custom algorithm because the order of the child nodes does not matter.
+        //The syntax items are only equal if they are both binary operators and have properties that are equal to each other.
+        //The child nodes of the binary operator are not compared using the Equals() method to allow for them to be equal even if they are in a different order.
         return other is BinaryOperator otherBinaryOperator
             && Identifier.Equals(otherBinaryOperator.Identifier)
-            && Children.SyntaxItemsEqualIgnoreOrder(otherBinaryOperator.Children);
+            && ChildNodes.SyntaxItemsEqualIgnoreOrder(otherBinaryOperator.ChildNodes);
     }
 
     public override bool Equals(object? obj) {
-        if (ReferenceEquals(null, obj)) return false;   //If the object is null, it cannot be equal to this object.
-        if (ReferenceEquals(this, obj)) return true;    //If the object is this object, it is equal to this object.
-        
-        //Compare the other object as a binary operator with a more specific comparison.
-        //If the other object is not a binary operator, the comparison will fail.
-        return Equals(obj as BinaryOperator);
+        //The other object is only equal to this binary operator:
+        //  1. If the other object is a binary operator.
+        //  2. If the other binary operator satisfies the equality comparison.
+        return obj is BinaryOperator otherBinaryOperator && Equals(otherBinaryOperator);
     }
     
     public override int GetHashCode() {

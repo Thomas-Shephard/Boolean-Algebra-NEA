@@ -13,7 +13,7 @@ public class Lexeme : IEquatable<Lexeme> {
     public LexemePosition LexemePosition { get; }
 
     /// <summary>
-    /// Initializes a new lexeme with an identifier and position.
+    /// Initialises a new lexeme with an identifier and position.
     /// </summary>
     /// <param name="identifier">The type that the lexeme is of.</param>
     /// <param name="lexemePosition">The position of the lexeme within the input string.</param>
@@ -35,18 +35,16 @@ public class Lexeme : IEquatable<Lexeme> {
         if (ReferenceEquals(null, other)) return false; //If the other lexeme is null, it cannot be equal to this lexeme
         if (ReferenceEquals(this, other)) return true;  //If the other lexeme is this lexeme, it is equal to this lexeme
         
-        //The other lexeme is equal to this lexeme if all of the properties match.
+        //The lexemes are only equal if their properties are equal to each other.
         return Identifier.Equals(other.Identifier)
             && LexemePosition.Equals(other.LexemePosition);
     }
 
     public override bool Equals(object? obj) {
-        if (ReferenceEquals(null, obj)) return false;   //If the other object is null, it cannot be equal to this lexeme.
-        if (ReferenceEquals(this, obj)) return true;    //If the other object is this lexeme, it is equal to this lexeme.
-        
-        //Compare the other object as a lexeme with a more specific comparison.
-        //If the other object is not a lexeme, the comparison will fail.
-        return Equals(obj as Lexeme);
+        //The other object is only equal to this lexeme:
+        //  1. If the other object is a lexeme.
+        //  2. If the other lexeme satisfies the equality comparison.
+        return obj is Lexeme otherLexeme && Equals(otherLexeme);
     }
 
     public override int GetHashCode() {

@@ -54,7 +54,10 @@ public static class IdentifierUtils {
     /// <param name="isBuildingSimplificationRule">Determines whether or not it should also match for identifiers only used in the simplification rule builder.</param>
     /// <param name="matchedIdentifier">The first identifier that has a regular expression that matches the lexeme value, null if no identifier is found.</param>
     /// <returns>True when an identifier is found that matches the lexeme value.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="symbol"/> is null.</exception>
     public static bool TryGetIdentifierFromSymbol(string symbol, bool isBuildingSimplificationRule, [NotNullWhen(true)] out Identifier? matchedIdentifier) {
+        if (symbol is null)
+            throw new ArgumentNullException(nameof(symbol));
         //Try to find an identifier that matches the lexeme value.
         return GetIdentifiers().TryFirst(identifier => {
             //If the symbol does not match the identifier's regex then it cannot be a match.

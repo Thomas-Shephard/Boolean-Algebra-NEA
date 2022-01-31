@@ -21,7 +21,7 @@ public sealed class LexemePosition : IEquatable<LexemePosition> {
     public int Length => EndPosition - StartPosition;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LexemePosition"/> class with a <paramref name="startPosition"/> and <paramref name="endPosition"/>.
+    /// Initialises a new instance of the <see cref="LexemePosition"/> class with a <paramref name="startPosition"/> and <paramref name="endPosition"/>.
     /// </summary>
     /// <param name="startPosition">The startPosition of the lexeme.</param>
     /// <param name="endPosition">The endPosition of the lexeme.</param>
@@ -49,19 +49,17 @@ public sealed class LexemePosition : IEquatable<LexemePosition> {
         if (ReferenceEquals(null, other)) return false; //If the other lexeme position is null, it cannot be equal to this lexeme position.
         if (ReferenceEquals(this, other)) return true;  //If the other lexeme position is this lexeme position, it is equal to this lexeme position.
         
-        //The other lexeme position is equal to this lexeme position if all of the properties match.
+        //The lexeme positions are only equal if their properties are equal to each other.
         //The Length property is not checked because it is a calculated property.
         return other.StartPosition == StartPosition
             && other.EndPosition == EndPosition;
     }
 
     public override bool Equals(object? obj) {
-        if (ReferenceEquals(null, obj)) return false;   //If the other object is null, it cannot be equal to this lexeme position.
-        if (ReferenceEquals(this, obj)) return true;    //If the other object is this lexeme position, it is equal to this lexeme position.
-        
-        //Compare the other object as a lexeme position with a more specific comparison.
-        //If the other object is not a lexeme position, the comparison will fail.
-        return Equals(obj as LexemePosition);
+        //The other object is only equal to this lexeme position:
+        //  1. If the other object is a lexeme position.
+        //  2. If the other lexeme position satisfies the equality comparison.
+        return obj is LexemePosition otherLexemePosition && Equals(otherLexemePosition);
     }
 
     public override int GetHashCode() {

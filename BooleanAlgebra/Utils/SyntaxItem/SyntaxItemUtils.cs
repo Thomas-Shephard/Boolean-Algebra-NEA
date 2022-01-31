@@ -26,9 +26,9 @@ public static class SyntaxItemUtils {
         //The child nodes from a syntax item are found differently depending on the type of the syntax item.
         return syntaxItem switch {
             //For an IMultiSyntaxItem, there is more than one child node and it is stored in the Children property.
-            IMultiChildSyntaxItem multiChildSyntaxItem => multiChildSyntaxItem.Children,
+            IMultiChildSyntaxItem multiChildSyntaxItem => multiChildSyntaxItem.ChildNodes,
             //For an ISingleChildSyntaxItem, there is only one child node and it is stored in the Child property.
-            ISingleChildSyntaxItem singleChildSyntaxItem => new[] { singleChildSyntaxItem.Child },
+            ISingleChildSyntaxItem singleChildSyntaxItem => new[] { singleChildSyntaxItem.ChildNode },
             //For any other implementation of ISyntaxItem, there are no child nodes.
             _ => Array.Empty<ISyntaxItem>()
         };
@@ -45,10 +45,10 @@ public static class SyntaxItemUtils {
             //When the syntax item is an IMultipleChildSyntaxItem, the child nodes are compressed recursively.
             case IMultiChildSyntaxItem multiChildSyntaxItem:
                 //Iterates over the current child nodes and recursively compresses each child nodes child nodes.
-                foreach (ISyntaxItem child in multiChildSyntaxItem.Children) {
+                foreach (ISyntaxItem child in multiChildSyntaxItem.ChildNodes) {
                     child.Compress();
                 }
-                List<ISyntaxItem> newChildNodes = multiChildSyntaxItem.Children.ToList();
+                List<ISyntaxItem> newChildNodes = multiChildSyntaxItem.ChildNodes.ToList();
                 //Iterates over the current child nodes and merges the child nodes that are of the same type.
                 for (int i = newChildNodes.Count - 1; i >= 0; i--) {
                     //The child nodes can only be merged if they have the same identifier.
@@ -60,11 +60,11 @@ public static class SyntaxItemUtils {
                     newChildNodes.RemoveAt(i);
                 }
                 //Updates the child nodes of the current syntax item.
-                multiChildSyntaxItem.Children = newChildNodes.ToArray();
+                multiChildSyntaxItem.ChildNodes = newChildNodes.ToArray();
                 break;
             //When the syntax item is an ISingleChildSyntaxItem, the child node is recursively compressed.
             case ISingleChildSyntaxItem singleChildSyntaxItem:
-                singleChildSyntaxItem.Child.Compress();
+                singleChildSyntaxItem.ChildNode.Compress();
                 break;
         }
     }
@@ -79,14 +79,14 @@ public static class SyntaxItemUtils {
     public static GenericOperand GetRepeatingGenericOperand(this RepeatingOperator repeatingOperator, out int depthOfRepeatingGenericOperand) {
         //The repeating generic operand can be directly nested within the repeating operator.
         //If this is the case, then the repeating generic operand should be returned.
-        if (repeatingOperator.Child is GenericOperand { IsRepeating: true } repeatingGenericOperand) {
+        if (repeatingOperator.ChildNode is GenericOperand { IsRepeating: true } repeatingGenericOperand) {
             //If the repeating generic operand is the child of the repeating operator, then the depth of the repeating generic operand is 0.
             depthOfRepeatingGenericOperand = 0;
             return repeatingGenericOperand;
         }
            
         //Get all the generic operands nested inside the repeating operators child node.
-        GenericOperand[] foundRepeatingGenericOperands = repeatingOperator.Child.GetChildNodes().OfType<GenericOperand>().Where(genericOperand => genericOperand.IsRepeating).ToArray();
+        GenericOperand[] foundRepeatingGenericOperands = repeatingOperator.ChildNode.GetChildNodes().OfType<GenericOperand>().Where(genericOperand => genericOperand.IsRepeating).ToArray();
         //There can only be one repeating generic operand within a repeating operator.
         if(foundRepeatingGenericOperands.Length != 1)
             throw new InvalidOperationException("Repeating operators must have exactly one repeating generic operand nested inside of them.");

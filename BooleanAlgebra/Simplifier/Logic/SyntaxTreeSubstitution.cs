@@ -10,8 +10,11 @@ public static class SyntaxTreeSubstitution {
     /// <param name="matches"></param>
     /// <param name="substitutedSyntaxTree"></param>
     /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="ArgumentException"></exception>
     public static bool TrySubstituteSyntaxTree(ISyntaxItem syntaxItem, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
+        if (syntaxItem is null) throw new ArgumentNullException(nameof(syntaxItem));
+        if (matches is null) throw new ArgumentNullException(nameof(matches));
         //Ensure that the syntax tree that is being substituted has an equivalence for each match.
         if (!MatchExistsForAllGenericOperands(syntaxItem, matches))
             throw new ArgumentException($"The parameter {nameof(matches)} did not contain a substitute for every generic operand.");
@@ -30,7 +33,10 @@ public static class SyntaxTreeSubstitution {
     /// <param name="syntaxItem"></param>
     /// <param name="matches"></param>
     /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     private static bool MatchExistsForAllGenericOperands(ISyntaxItem syntaxItem, Matches matches) {
+        if (syntaxItem is null) throw new ArgumentNullException(nameof(syntaxItem));
+        if (matches is null) throw new ArgumentNullException(nameof(matches));
         if (syntaxItem is not Operand operand)
             //If the syntax tree is not an operand, then check its child nodes and ensure that they contain only known substitutes.
             return syntaxItem.GetChildNodes().All(childSyntaxItem => MatchExistsForAllGenericOperands(childSyntaxItem, matches));
@@ -48,7 +54,10 @@ public static class SyntaxTreeSubstitution {
     /// <param name="matches"></param>
     /// <param name="substitutedSyntaxItem"></param>
     /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     private static bool TrySubstituteChildNodes(ISyntaxItem syntaxItem, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxItem) {
+        if (syntaxItem is null) throw new ArgumentNullException(nameof(syntaxItem));
+        if (matches is null) throw new ArgumentNullException(nameof(matches));
         //If the syntax item is an operand, it has no child nodes to substitute.
         if (syntaxItem is Operand) {
             //If the syntax item is an operand and a generic operand, it should be substituted.
@@ -70,7 +79,7 @@ public static class SyntaxTreeSubstitution {
                 //Iterate over all the different matches that could be substituted for the repeating generic operand.
                 foreach (Matches tempMatch in GetAllMatchesFromRepeatingOperator(repeatingOperator, matches)) {
                     //Check whether the repeating operator can be completely substituted with the current match.
-                    if(TrySubstituteChildNodes(repeatingOperator.Child, tempMatch, out ISyntaxItem? tempSubstitutedSyntaxItem)) {
+                    if(TrySubstituteChildNodes(repeatingOperator.ChildNode, tempMatch, out ISyntaxItem? tempSubstitutedSyntaxItem)) {
                         //Only insert the substituted syntax item if it was successfully substituted.
                         childNodes.Add(tempSubstitutedSyntaxItem);
                     }
@@ -97,7 +106,7 @@ public static class SyntaxTreeSubstitution {
                 //Create a clone of the original multi child syntax item.
                 IMultiChildSyntaxItem newMultiChildSyntaxItem = (IMultiChildSyntaxItem)multiChildSyntaxItem.ShallowClone();
                 //Set the child nodes of the new multi child syntax item to the substituted child nodes.
-                newMultiChildSyntaxItem.Children = childNodes.ToArray();
+                newMultiChildSyntaxItem.ChildNodes = childNodes.ToArray();
                 //Set the substituted syntax item to the new multi child syntax item and return true.
                 substitutedSyntaxItem = newMultiChildSyntaxItem;
                 return true;
@@ -111,7 +120,7 @@ public static class SyntaxTreeSubstitution {
                 //Create a clone of the original single child syntax item.
                 ISingleChildSyntaxItem newSingleChildSyntaxItem = (ISingleChildSyntaxItem)singleChildSyntaxItem.ShallowClone();
                 //Set the child node of the new single child syntax item to the substituted child node.
-                newSingleChildSyntaxItem.Child = childNodes[0];
+                newSingleChildSyntaxItem.ChildNode = childNodes[0];
                 //Set the substituted syntax item to the new single child syntax item and return true.
                 substitutedSyntaxItem = newSingleChildSyntaxItem;
                 return true;
@@ -129,7 +138,10 @@ public static class SyntaxTreeSubstitution {
     /// <param name="repeatingOperator"></param>
     /// <param name="matches"></param>
     /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     private static List<Matches> GetAllMatchesFromRepeatingOperator(RepeatingOperator repeatingOperator, Matches matches) {
+        if (repeatingOperator is null) throw new ArgumentNullException(nameof(repeatingOperator));
+        if (matches is null) throw new ArgumentNullException(nameof(matches));
         List<Matches> matchesList = new();
         //Get the repeating generic operand that is nested inside the repeating operator, the depth is irrelevant and therefore discarded.
         GenericOperand repeatingGenericOperand = repeatingOperator.GetRepeatingGenericOperand(out _);

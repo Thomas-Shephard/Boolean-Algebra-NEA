@@ -11,7 +11,7 @@ public static class EnumerableUtils {
     /// <param name="source"></param>
     /// <param name="predicate">The condition that must be met by the item within the collection.</param>
     /// <param name="result">The first item within the collection that met the predicate or the default value if no item within the collection met the predicate.</param>
-    /// <typeparam name="TSource">The type that the collection is of.</typeparam>
+    /// <typeparam name="TSource">The type that the collection's items are of.</typeparam>
     /// <returns>True when an item in the collection met the predicate.</returns>
     public static bool TryFirst<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, [NotNullWhen(true)] out TSource? result) {
         if (source is null) throw new ArgumentNullException(nameof(source));
@@ -31,8 +31,15 @@ public static class EnumerableUtils {
         return false;
     }
     
-    public static void AddRepeated<TSource>(this ICollection<TSource> list, TSource item, int count) {
+    /// <summary>
+    /// Adds an element to a collection a given number of times.
+    /// </summary>
+    /// <param name="source">The collection to add the elements to.</param>
+    /// <param name="item">The item to add to the collection.</param>
+    /// <param name="count">The number of times to add the item to the collection.</param>
+    /// <typeparam name="TSource">The type that the collection's items are of.</typeparam>
+    public static void AddRepeated<TSource>(this ICollection<TSource> source, TSource item, int count) {
         for (int i = 0; i < count; i++)
-            list.Add(item);
+            source.Add(item);
     }
 }

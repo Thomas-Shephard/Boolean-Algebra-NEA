@@ -1,21 +1,43 @@
 ﻿namespace BooleanAlgebra.Parser;
+/// <summary>
+/// Provides a method to produce a syntax tree from a collection of lexemes.
+/// </summary>
 public sealed class Parser {
+    /// <summary>
+    /// The collection of lexemes that the syntax tree will be created from.
+    /// </summary>
     private IEnumerable<Lexeme> Lexemes { get; }
+    /// <summary>
+    /// The current queue of lexemes that are being processed so that they can be used to create the syntax tree.
+    /// </summary>
     private Queue<Lexeme> LexemesQueue { get; set; }
+    /// <summary>
+    /// Whether variable operands should be created as substitutable generic operands.
+    /// This is used during the creation of simplification rules.
+    /// </summary>
     private bool UseGenericOperands { get; }
 
+    /// <summary>
+    /// Instantiates a new parser that will be able to produce a syntax tree from a given collection of lexemes.
+    /// </summary>
+    /// <param name="lexemes">The collection of lexemes that the syntax tree will be created from.</param>
+    /// <param name="useGenericOperands">Whether variable operands should be created as substitutable generic operands.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="lexemes"/> is null.</exception>
     public Parser(IEnumerable<Lexeme> lexemes, bool useGenericOperands = false) {
+        //Creates a new array of lexemes from the collection of lexemes provided.
         Lexemes = lexemes.ToArray() ?? throw new ArgumentNullException(nameof(lexemes));
+        //Sets up the lexeme queue with the given lexemes.
         LexemesQueue = new Queue<Lexeme>(Lexemes);
         UseGenericOperands = useGenericOperands;
     }
-
+    
     public ISyntaxItem Parse() {
         LexemesQueue = new Queue<Lexeme>(Lexemes);
         return InternalParse() ?? throw new ParserException(new LexemePosition(0,0), "The boolean expression must not be empty");
     }
 
-    private ISyntaxItem? InternalParse(int currentPrecedence = 0, ISyntaxItem? previousSyntaxItem = null, IdentifierType? endSyntaxIdentifierType = null) {
+    private ISyntaxItem InternalParse(int currentPrecedence = 0, ISyntaxItem? previousSyntaxItem = null, IdentifierType? endSyntaxIdentifierType = null) {
+        //
         if (currentPrecedence < IdentifierUtils.GetMaximumPrecedence())
             previousSyntaxItem = InternalParse(currentPrecedence + 1, previousSyntaxItem, endSyntaxIdentifierType);
         while (LexemesQueue.TryPeek(out Lexeme? currentLexeme) && currentLexeme.Identifier.IdentifierType != endSyntaxIdentifierType && currentLexeme.Identifier.Precedence == currentPrecedence) {
@@ -31,8 +53,8 @@ public sealed class Parser {
                 if (previousSyntaxItem is not null)
                     throw new ParserException(currentLexeme.LexemePosition, "The parser expected an operator before the operand");
                 nextSyntaxItem = UseGenericOperands && currentLexeme.Identifier.Name != "LITERAL"
-                    ? new GenericOperand(contextualLexeme.LexemeValue, currentLexeme.Identifier, contextualLexeme.LexemeValue.StartsWith("Items"))
-                    : new Operand(contextualLexeme.LexemeValue, currentLexeme.Identifier);
+                    ? new GenericOperand(currentLexeme.Identifier, contextualLexeme.LexemeValue, contextualLexeme.LexemeValue.StartsWith("Items"))
+                    : new Operand(currentLexeme.Identifier, contextualLexeme.LexemeValue);
                 break;
             //All of the operands (variables and literals) require context.
             //Otherwise, it would be impossible to tell what the value of a variable or literal was.

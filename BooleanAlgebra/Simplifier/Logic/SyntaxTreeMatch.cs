@@ -99,7 +99,7 @@ public static class SyntaxTreeMatch {
             }
         }
 
-        //If the only remaining child nodes of the pattern match tree are repeating operators, then direct substitutes are no longer possible.
+        //If the only remaining child nodes of the pattern match tree are repeating operators, then the direct substitutes have been exhausted.
         if (patternMatchTreeChildNodeCounts.All(patternMatchCountPair => patternMatchCountPair.SyntaxItem is RepeatingOperator)) {
             //If there are no longer any syntax items in the syntax tree, the optional repeat substitutes cannot be matched.
             //In this circumstance, the current matches object added to the available matches.
@@ -116,6 +116,14 @@ public static class SyntaxTreeMatch {
         return availableMatches;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="syntaxTreeChildNodeCounts"></param>
+    /// <param name="patternMatchTreeChildNodeCounts"></param>
+    /// <param name="currentMatches"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     private static List<Matches> GetRepeatingSubstitutes(List<SyntaxItemCountPair> syntaxTreeChildNodeCounts, List<SyntaxItemCountPair> patternMatchTreeChildNodeCounts, Matches currentMatches) {
         List<Matches> availableMatches = new();
         //Gets all of the available repeating operators that each syntax tree child node can be matched against.
@@ -129,18 +137,19 @@ public static class SyntaxTreeMatch {
             List<ISyntaxItem> matchedSyntaxItems = new();
             //Iterate over the syntax tree child nodes to determine which syntax tree child nodes match the repeating operator.
             for (int i = syntaxTreeChildNodeCounts.Count - 1; i >= 0; i--) {
-                //
+                //Get the syntax tree child nodes at the depth of the repeating generic operand.
                 ISyntaxItem[] syntaxTreeChildNodes = depthOfRepeatingGenericOperand == 0 
                     ? new[] { syntaxTreeChildNodeCounts[i].SyntaxItem } 
                     : syntaxTreeChildNodeCounts[i].SyntaxItem.GetChildNodes();
-                //
-                List<Matches> possibleMatches = GetDirectSubstitutes(syntaxTreeChildNodes, new[] { availableRepeatingOperator.Child }, currentMatches);
+                //Directly substitute the repeating operator with the syntax tree child nodes.
+                List<Matches> possibleMatches = GetDirectSubstitutes(syntaxTreeChildNodes, new[] { availableRepeatingOperator.ChildNode }, currentMatches);
                 //If there are no possible matches, then the syntax tree child node cannot be matched to the repeating operator.
                 if(possibleMatches.Count == 0)
                     continue;
-                //
+                //Get a substitute for the current repeating generic operand that matches the repeating generic operand.
                 if (!possibleMatches[0].TryGetDirectSubstituteFromGenericOperand(repeatingGenericOperand, out ISyntaxItem? substitute))
-                    throw new Exception();
+                    //If this does occur, it means that there is a programming error as the match should always contain the repeating generic operand.
+                    throw new InvalidOperationException("The possible match did not contain a substitute for the repeating generic operand.");
                 //Add the substitute to the list of matched syntax items the number of times that it occurred in the original syntax tree at the current depth.
                 matchedSyntaxItems.AddRepeated(substitute, syntaxTreeChildNodeCounts[i].Count);
                 //Remove the original syntax tree child node as it has been matched.
@@ -151,13 +160,16 @@ public static class SyntaxTreeMatch {
             if(matchedSyntaxItems.Count == 0)
                 continue;
 
+            //Create a new matches object with the existing substitutes from the current matches object.
             Matches newMatches = currentMatches.Clone();
             if (newMatches.TryGetRepeatingSubstituteFromGenericOperand(repeatingGenericOperand, out List<ISyntaxItem>? foundSyntaxItems)) {
+                //If the current matches object contains a substitute for the current repeating generic operand, then add the matched syntax items to the existing substitute.
                 foundSyntaxItems.AddRange(matchedSyntaxItems);
             } else {
+                //If the current matches object does not contain a substitute for the current repeating generic operand, then add the matched syntax items to a new substitute.
                 newMatches.RepeatingSubstitutes.Add(new RepeatingSubstitute(repeatingGenericOperand, matchedSyntaxItems));
             }
-                
+            //Add the new matches object to the list of available matches.
             availableMatches.Add(newMatches);
         }
 

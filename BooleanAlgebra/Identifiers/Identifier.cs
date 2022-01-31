@@ -49,33 +49,31 @@ public class Identifier : IEquatable<Identifier> {
         Precedence = precedence;
         Name = name ?? throw new ArgumentNullException(nameof(name));
         RegexPattern = regexPattern ?? throw new ArgumentNullException(nameof(regexPattern));
-        //Initializes a new instance of the Regex class with the specified regular expression pattern.
+        //Initialises a new instance of the Regex class with the specified regular expression pattern.
         Regex = new Regex(regexPattern);
         IsContextRequired = isContextRequired;
         IsSimplificationRuleSpecific = isSimplificationRuleSpecific;
     }
 
-    public bool Equals(Identifier? other) {
-        if (ReferenceEquals(null, other)) return false; //If the other identifier is null, it cannot be equal to this identifier.
-        if (ReferenceEquals(this, other)) return true;  //If the other identifier is this identifier, it is equal to this identifier.
+    public bool Equals(Identifier? otherIdentifier) {
+        if (ReferenceEquals(null, otherIdentifier)) return false; //If the other identifier is null, it cannot be equal to this identifier.
+        if (ReferenceEquals(this, otherIdentifier)) return true;  //If the other identifier is this identifier, it is equal to this identifier.
         
         //The identifiers are only equal if their properties are equal to each other.
         //The string representation of the regular expression is used instead of the regular expression itself as Regex objects do not implement the IEquatable interface.
-        return IdentifierType == other.IdentifierType 
-               && Precedence == other.Precedence 
-               && Name == other.Name 
-               && RegexPattern == other.RegexPattern 
-               && IsContextRequired == other.IsContextRequired
-               && IsSimplificationRuleSpecific == other.IsSimplificationRuleSpecific;
+        return IdentifierType == otherIdentifier.IdentifierType 
+               && Precedence == otherIdentifier.Precedence 
+               && Name == otherIdentifier.Name 
+               && RegexPattern == otherIdentifier.RegexPattern 
+               && IsContextRequired == otherIdentifier.IsContextRequired
+               && IsSimplificationRuleSpecific == otherIdentifier.IsSimplificationRuleSpecific;
     }
 
     public override bool Equals(object? obj) {
-        if (ReferenceEquals(null, obj)) return false;   //If the object is null, it cannot be equal to this object.
-        if (ReferenceEquals(this, obj)) return true;    //If the object is this object, it is equal to this object.
-        
-        //Compare the other object as an identifier with a more specific comparison.
-        //If the other object is not an identifier, the comparison will fail.
-        return Equals(obj as Identifier);
+        //The other object is only equal to this identifier:
+        //  1. If the other object is an identifier.
+        //  2. If the other identifier satisfies the equality comparison.
+        return obj is Identifier otherIdentifier && Equals(otherIdentifier);
     }
     
     public override int GetHashCode() {
