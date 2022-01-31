@@ -17,8 +17,8 @@ public class GenericOperand : Operand {
     public GenericOperand(string value, Identifier identifier, bool isRepeating) : base(value, identifier) {
         IsRepeating = isRepeating;
     }
-    
-    public GenericOperand(GenericOperand genericOperand) : base(genericOperand) {
+
+    private GenericOperand(GenericOperand genericOperand) : base(genericOperand) {
         IsRepeating = genericOperand.IsRepeating;
     }
     

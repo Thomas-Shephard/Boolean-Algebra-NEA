@@ -7,8 +7,8 @@ public class Operand : ISyntaxItem {
         Value = value;
         Identifier = identifier;
     }
-    
-    public Operand(Operand operand) {
+
+    protected Operand(Operand operand) {
         Value = operand.Value;
         Identifier = operand.Identifier;
     }

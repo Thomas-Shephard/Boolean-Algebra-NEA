@@ -30,4 +30,9 @@ public static class EnumerableUtils {
         result = default;
         return false;
     }
+    
+    public static void AddRepeated<TSource>(this ICollection<TSource> list, TSource item, int count) {
+        for (int i = 0; i < count; i++)
+            list.Add(item);
+    }
 }

@@ -68,4 +68,31 @@ public static class SyntaxItemUtils {
                 break;
         }
     }
+
+    /// <summary>
+    /// Returns the repeating generic operand that is nested inside the repeating operator.
+    /// </summary>
+    /// <param name="repeatingOperator">The repeating operator to search for a repeating generic operand inside of.</param>
+    /// <param name="depthOfRepeatingGenericOperand">The depth that the repeating generic operand was found at.</param>
+    /// <returns>The repeating generic operand that is nested inside of the given repeating operator.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when there is not exactly one repeating generic operand nested inside of the given repeating operator.</exception>
+    public static GenericOperand GetRepeatingGenericOperand(this RepeatingOperator repeatingOperator, out int depthOfRepeatingGenericOperand) {
+        //The repeating generic operand can be directly nested within the repeating operator.
+        //If this is the case, then the repeating generic operand should be returned.
+        if (repeatingOperator.Child is GenericOperand { IsRepeating: true } repeatingGenericOperand) {
+            //If the repeating generic operand is the child of the repeating operator, then the depth of the repeating generic operand is 0.
+            depthOfRepeatingGenericOperand = 0;
+            return repeatingGenericOperand;
+        }
+           
+        //Get all the generic operands nested inside the repeating operators child node.
+        GenericOperand[] foundRepeatingGenericOperands = repeatingOperator.Child.GetChildNodes().OfType<GenericOperand>().Where(genericOperand => genericOperand.IsRepeating).ToArray();
+        //There can only be one repeating generic operand within a repeating operator.
+        if(foundRepeatingGenericOperands.Length != 1)
+            throw new InvalidOperationException("Repeating operators must have exactly one repeating generic operand nested inside of them.");
+        //If the repeating generic operand is one of the children of the child of the repeating operator, then the depth of the repeating generic operand is 1
+        depthOfRepeatingGenericOperand = 1;
+        //If there is only one repeating generic operand, then return it.
+        return foundRepeatingGenericOperands.First();
+    }
 }

@@ -27,21 +27,6 @@ public class Matches {
         substitutes = RepeatingSubstitutes.FirstOrDefault(repeatingSubstitute => repeatingSubstitute.SubstitutableSyntaxItem.Equals(genericOperand))?.Substitutions;
         return substitutes is not null;
     }
-    
-    
-
- /*   private Matches(Dictionary<GenericOperand, ISyntaxItem> directSubstitutes, Dictionary<GenericOperand, List<ISyntaxItem>> repeatingSubstitutes) {
-        DirectSubstitutes = directSubstitutes;
-        RepeatingSubstitutes = repeatingSubstitutes;
-    }
-
-    public Matches Clone() {
-        Dictionary<GenericOperand, ISyntaxItem> directSubstitutesCopy =
-            DirectSubstitutes.ToDictionary(x => x.Key, x => x.Value);
-        Dictionary<GenericOperand, List<ISyntaxItem>> repeatingSubstitutesCopy =
-            RepeatingSubstitutes.ToDictionary(x => x.Key, x => x.Value);
-        return new Matches(directSubstitutesCopy, repeatingSubstitutesCopy);
-    } */
 }
 
 public class DirectSubstitute {

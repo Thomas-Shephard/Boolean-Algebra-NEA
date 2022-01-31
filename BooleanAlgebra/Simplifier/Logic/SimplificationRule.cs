@@ -1,19 +1,40 @@
 ﻿namespace BooleanAlgebra.Simplifier.Logic;
+/// <summary>
+/// 
+/// </summary>
 public class SimplificationRule {
+    /// <summary>
+    /// 
+    /// </summary>
     public ISyntaxItem LeftHandSide { get; }
+    /// <summary>
+    /// 
+    /// </summary>
     public ISyntaxItem RightHandSide { get; }
+    /// <summary>
+    /// 
+    /// </summary>
     public string Message { get; }
+    /// <summary>
+    /// 
+    /// </summary>
     public int Precedence { get; }
+    /// <summary>
+    /// 
+    /// </summary>
     public SimplificationPattern SimplificationPattern { get; }
+    /// <summary>
+    /// 
+    /// </summary>
     public SimplificationOrder SimplificationOrder { get; }
+    /// <summary>
+    /// 
+    /// </summary>
     public bool AllowMultiple { get; }
 
     private SimplificationRule(string leftHandSide, string rightHandSide, string message, int precedence, SimplificationPattern simplificationPattern, SimplificationOrder simplificationOrder, bool allowMultiple) {
-        List<Lexeme> leftHandSideLexemes = new Lexer.Lexer(leftHandSide, true).Lex();
-        List<Lexeme> rightHandSideLexemes = new Lexer.Lexer(rightHandSide, true).Lex();
-        
-        LeftHandSide = new Parser.Parser(leftHandSideLexemes, true).Parse();
-        RightHandSide = new Parser.Parser(rightHandSideLexemes, true).Parse();
+        LeftHandSide = new Parser.Parser(new Lexer.Lexer(leftHandSide, true).Lex(), true).Parse();
+        RightHandSide = new Parser.Parser(new Lexer.Lexer(rightHandSide, true).Lex(), true).Parse();
         Message = message;
         Precedence = precedence;
         SimplificationPattern = simplificationPattern;

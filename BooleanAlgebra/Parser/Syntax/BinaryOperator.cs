@@ -17,7 +17,7 @@ public class BinaryOperator : IMultiChildSyntaxItem {
         Children = children ?? throw new ArgumentNullException(nameof(children));
     }
 
-    public BinaryOperator(BinaryOperator binaryOperator) {
+    private BinaryOperator(BinaryOperator binaryOperator) {
         Identifier = binaryOperator.Identifier;
         Children = binaryOperator.Children;
     }
@@ -27,11 +27,11 @@ public class BinaryOperator : IMultiChildSyntaxItem {
     }
     
     public int GetCost() {
-        //To calculate the cost of the binary operator, we need to sum the cost of all the daughter items together and add the cost of this node.
-        //To calculate the base cost of this node we need to calculate how many times the operator is applied to the daughter items.
+        //To calculate the cost of the binary operator, we need to sum the cost of all the child nodes together and add the cost of this node.
+        //To calculate the base cost of this node we need to calculate how many times the operator is applied to the child nodes.
         //For example if the expression is 'a + b + c', the base cost is 2. If the expression is 'a + b + c + d', the base cost is 3.
         //The base cost is calculated by subtracting one from the number of child nodes this node has.
-        //The cost of the daughter items can be calculated by recursively calling the GetCost() method on each of the child items and summing them together.
+        //The cost of the a child node can be calculated by recursively calling the GetCost() method on the child node.
         return Children.Length - 1 + Children.Sum(childNode => childNode.GetCost());
     }
     

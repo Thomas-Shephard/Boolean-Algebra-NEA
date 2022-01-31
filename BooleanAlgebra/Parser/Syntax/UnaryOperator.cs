@@ -7,8 +7,8 @@ public class UnaryOperator : ISingleChildSyntaxItem {
         Identifier = identifier;
         Child = child;
     }
-    
-    public UnaryOperator(UnaryOperator unaryOperator) {
+
+    private UnaryOperator(UnaryOperator unaryOperator) {
         Identifier = unaryOperator.Identifier;
         Child = unaryOperator.Child;
     }

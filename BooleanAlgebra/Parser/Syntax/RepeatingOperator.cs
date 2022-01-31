@@ -7,8 +7,8 @@ public class RepeatingOperator : ISingleChildSyntaxItem {
         Identifier = identifier;
         Child = child;
     }
-    
-    public RepeatingOperator(RepeatingOperator repeatingOperator) {
+
+    private RepeatingOperator(RepeatingOperator repeatingOperator) {
         Identifier = repeatingOperator.Identifier;
         Child = repeatingOperator.Child;
     }
