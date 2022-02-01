@@ -1,4 +1,4 @@
-﻿namespace BooleanAlgebra.Simplifier; 
+﻿namespace BooleanAlgebra.Simplifier.Logic; 
 /// <summary>
 /// The order by which the simplifier should process the expression.
 /// </summary>

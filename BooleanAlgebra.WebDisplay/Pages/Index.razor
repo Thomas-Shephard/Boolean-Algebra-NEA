@@ -39,7 +39,7 @@
                         <h2 class="accordion-header" id="headingTwo">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                 <div style="max-width: calc(100% - 50px);word-break: break-all;">
-                                    @(_simplifiedBooleanExpression.Simplifications?.Last().Item1.GetStringRepresentation() ?? string.Empty)
+                                    @(_simplifiedBooleanExpression.Simplifications?.Last().SimplifiedSyntaxItem.GetStringRepresentation() ?? string.Empty)
                                     <p class="small m-0 mt-2">@FormatNumberOfSimplifications()</p>
                                 </div>
                             </button>

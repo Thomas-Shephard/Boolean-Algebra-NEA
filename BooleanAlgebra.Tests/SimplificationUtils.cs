@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using BooleanAlgebra.Lexer.Lexemes;
 using BooleanAlgebra.Parser.Syntax;
+using BooleanAlgebra.Simplifier;
+using BooleanAlgebra.Simplifier.Logic;
 
 namespace BooleanAlgebra.Tests; 
 
@@ -15,8 +16,8 @@ public static class SimplificationUtils {
         ISyntaxItem parsedInput = new Parser.Parser(inputLexemes).Parse();
         ISyntaxItem parsedExpected = new Parser.Parser(expectedLexemes).Parse();
         //Simplifying the input
-        List<Tuple<ISyntaxItem, string>> simplificationSteps = new Simplifier.Simplifier(parsedInput).Simplify();
+        List<SimplificationReason> simplificationSteps = new Simplifier.Simplifier(parsedInput).Simplify();
         //Comparing the simplified input to the expected
-        return simplificationSteps.Last().Item1.Equals(parsedExpected);
+        return simplificationSteps.Last().SimplifiedSyntaxItem.Equals(parsedExpected);
     }
 }

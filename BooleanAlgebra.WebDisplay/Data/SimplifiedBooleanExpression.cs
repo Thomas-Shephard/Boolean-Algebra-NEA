@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using BooleanAlgebra.Parser.Syntax;
+using BooleanAlgebra.Simplifier;
+using BooleanAlgebra.Simplifier.Logic;
 
 namespace BooleanAlgebra.WebDisplay.Data; 
 public class SimplifiedBooleanExpression {
@@ -7,9 +8,9 @@ public class SimplifiedBooleanExpression {
     [MemberNotNullWhen(false, nameof(IsSuccess))]
     public string? ErrorMessage { get; }
     [MemberNotNullWhen(true, nameof(IsSuccess))]
-    public Tuple<ISyntaxItem, string>[]? Simplifications { get; }
+    public SimplificationReason[]? Simplifications { get; }
 
-    public SimplifiedBooleanExpression(IEnumerable<Tuple<ISyntaxItem, string>> simplifications) {
+    public SimplifiedBooleanExpression(IEnumerable<SimplificationReason> simplifications) {
         Simplifications = simplifications.ToArray();
         IsSuccess = true;
     }

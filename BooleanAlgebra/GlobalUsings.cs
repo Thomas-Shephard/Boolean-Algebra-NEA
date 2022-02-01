@@ -2,6 +2,7 @@
 global using BooleanAlgebra.Identifiers;
 global using BooleanAlgebra.Lexer.Lexemes;
 global using BooleanAlgebra.Parser.Syntax;
+global using BooleanAlgebra.Simplifier.Logic;
 global using BooleanAlgebra.Utils;
 global using BooleanAlgebra.Utils.SyntaxItem;
 

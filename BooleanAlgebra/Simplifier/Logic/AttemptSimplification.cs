@@ -1,9 +1,16 @@
 ﻿namespace BooleanAlgebra.Simplifier.Logic;
 /// <summary>
-/// 
+/// Provides a method to allow a syntax tree to be simplified by applying the laws of boolean algebra.
 /// </summary>
 public static class AttemptSimplification {
-    public static IEnumerable<SimplificationReason> SimplifySyntaxTree(this ISyntaxItem syntaxTree, bool isPostSimplification) {
+    /// <summary>
+    /// Returns a list of simplifications and their associated reasons that a given syntax tree can be substituted for.
+    /// </summary>
+    /// <param name="syntaxTree">The syntax tree that should be simplified.</param>
+    /// <param name="isPostSimplification">Whether the simplification rules applied should be those with the post simplification flag.</param>
+    /// <returns>A list of simplifications and their associated reasons that the syntax tree can be substituted for.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="syntaxTree"/> is null.</exception>
+    public static List<SimplificationReason> SimplifySyntaxTree(this ISyntaxItem syntaxTree, bool isPostSimplification) {
         if (syntaxTree is null) throw new ArgumentNullException(nameof(syntaxTree));
         //Only use the post-simplification rules if the isPostSimplification flag is set to true.
         //Otherwise, use the non post-simplification rules.
@@ -25,6 +32,14 @@ public static class AttemptSimplification {
         return new List<SimplificationReason>();
     }
 
+    /// <summary>
+    /// Returns a list of simplifications and their associated reasons that a given syntax tree can be substituted for.
+    /// This is based off the simplification rules that are provided.
+    /// </summary>
+    /// <param name="syntaxTree">The syntax tree that is being simplified.</param>
+    /// <param name="simplificationRules">The simplification rules that can be applied to the given syntax tree.</param>
+    /// <returns>A list of simplifications and their associated reasons that the syntax tree can be substituted for.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when either <paramref name="syntaxTree"/> or <paramref name="simplificationRules"/> is null.</exception>
     private static List<SimplificationReason> SimplifySyntaxTreeWithSimplificationRules(this ISyntaxItem syntaxTree, SimplificationRule[] simplificationRules) {
         if (syntaxTree is null) throw new ArgumentNullException(nameof(syntaxTree));
         if (simplificationRules is null) throw new ArgumentNullException(nameof(simplificationRules));
@@ -37,11 +52,11 @@ public static class AttemptSimplification {
             //Otherwise, attempt to simplify the current syntax item with the simplification rules.
             return simplifications.Count > 0 
                 ? simplifications 
-                : syntaxTree.SimplifySyntaxTrees(simplificationRules);
+                : syntaxTree.GetSimplificationsForSyntaxTreeFromSimplificationRules(simplificationRules);
         } else {
             //If the traversal order is not INSIDE_OUT, it must be OUTSIDE_IN.
             //In this case, the simplification rules should be applied to the current syntax item.
-            List<SimplificationReason> simplifications = syntaxTree.SimplifySyntaxTrees(simplificationRules);
+            List<SimplificationReason> simplifications = syntaxTree.GetSimplificationsForSyntaxTreeFromSimplificationRules(simplificationRules);
             //If any simplifications are possible, return the list of simplifications.
             //Otherwise, attempt to simplify the child nodes of the current syntax item with the simplification rules.
             return simplifications.Count > 0 
@@ -50,29 +65,52 @@ public static class AttemptSimplification {
         }
     }
 
+    /// <summary>
+    /// Simplifies the child nodes of a given syntax tree and provides the simplified version in the place of the simplified child node.
+    /// This is based off the simplification rules that are provided.
+    /// </summary>
+    /// <param name="syntaxTree">The syntax tree that is being simplified.</param>
+    /// <param name="simplificationRules">The simplification rules that can be applied to the given syntax tree.</param>
+    /// <returns>A list of simplifications and their associated reasons that a given syntax tree can be converted into.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when either <paramref name="syntaxTree"/> or <paramref name="simplificationRules"/> is null.</exception>
     private static List<SimplificationReason> SimplifySyntaxTreeChildNodesWithSimplificationRules(this ISyntaxItem syntaxTree, SimplificationRule[] simplificationRules) {
         if (syntaxTree is null) throw new ArgumentNullException(nameof(syntaxTree));
         if (simplificationRules is null) throw new ArgumentNullException(nameof(simplificationRules));
         List<SimplificationReason> simplifications = new();
+        //Simplifying a syntax tree is different depending on the type of the syntax tree.
         switch (syntaxTree) {
+            //If the syntax tree has a single child node, then the simplification rules should be applied to the child node.
             case ISingleChildSyntaxItem singleChildSyntaxItem: {
+                //Get all the possible simplifications that can arise from simplifying the child node of the current syntax item.
                 List<SimplificationReason> childNodeSimplifications = singleChildSyntaxItem.ChildNode.SimplifySyntaxTreeWithSimplificationRules(simplificationRules);
+                //Iterate over all of the possible simplifications that can arise from simplifying the child node of the current syntax item.
                 foreach ((ISyntaxItem simplifiedSyntaxItem, string reason) in childNodeSimplifications) {
+                    //Create a shallow clone of the current syntax item.
                     ISingleChildSyntaxItem newSingleChildSyntaxItem = (ISingleChildSyntaxItem) singleChildSyntaxItem.ShallowClone();
+                    //Set the child node of the new syntax item to the simplified syntax item.
                     newSingleChildSyntaxItem.ChildNode = simplifiedSyntaxItem;
+                    //Add the new syntax item to the list of simplifications.
                     simplifications.Add(new SimplificationReason(newSingleChildSyntaxItem, reason));
                 }
                 break;
             }
+            //If the syntax tree has multiple child nodes, then the simplification rules should be applied to each child node.
             case IMultiChildSyntaxItem multiChildSyntaxItem: {
+                //Iterate over all the child nodes of the current syntax item.
                 for (int i = 0; i < multiChildSyntaxItem.ChildNodes.Length; i++) {
+                    //Get all the possible simplifications that can arise from simplifying the current child node of the current syntax item.
                     List<SimplificationReason> childNodeSimplifications = multiChildSyntaxItem.ChildNodes[i].SimplifySyntaxTreeWithSimplificationRules(simplificationRules);
+                    //Iterate over all of the possible simplifications that can arise from simplifying the current child node of the current syntax item.
                     foreach ((ISyntaxItem simplifiedSyntaxItem, string reason) in childNodeSimplifications) {
+                        //Create a shallow clone of the current syntax item.
                         IMultiChildSyntaxItem newMultiChildSyntaxItem = (IMultiChildSyntaxItem) multiChildSyntaxItem.ShallowClone();
+                        //Set the current child node of the new syntax item to the simplified syntax item.
                         newMultiChildSyntaxItem.ChildNodes[i] = simplifiedSyntaxItem;
                         newMultiChildSyntaxItem.Compress();
+                        //Add the new syntax item to the list of simplifications.
                         simplifications.Add(new SimplificationReason(newMultiChildSyntaxItem, reason));
                     }
+                    //If a simplification has been found, then no further simplifications should be found.
                     if(simplifications.Count > 0)
                         break;
                 }
@@ -83,21 +121,44 @@ public static class AttemptSimplification {
         return simplifications;
     }
 
-    private static List<SimplificationReason> SimplifySyntaxTrees(this ISyntaxItem syntaxTree, SimplificationRule[] simplificationRules) {
+    /// <summary>
+    /// Returns a list of simplifications and their associated reasons that a given syntax tree can be substituted for.
+    /// This is based off the simplification rules that are provided.
+    /// </summary>
+    /// <param name="syntaxTree">The syntax tree that is being simplified.</param>
+    /// <param name="simplificationRules">The simplification rules that can be applied to the given syntax tree.</param>
+    /// <returns>A list of simplifications and their associated reasons that the given syntax tree can be converted into.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when either <paramref name="syntaxTree"/> or <paramref name="simplificationRules"/> is null.</exception>
+    private static List<SimplificationReason> GetSimplificationsForSyntaxTreeFromSimplificationRules(this ISyntaxItem syntaxTree, SimplificationRule[] simplificationRules) {
         if (syntaxTree is null) throw new ArgumentNullException(nameof(syntaxTree));
         if (simplificationRules is null) throw new ArgumentNullException(nameof(simplificationRules));
         List<SimplificationReason> simplifiedSyntaxItems = new();
-        
+        //Iterate over all of the possible simplification rules at the current precedence level.
         foreach (SimplificationRule simplificationRule in simplificationRules) {
-            if (syntaxTree.TryMatchAndSubstitute(simplificationRule, out SimplificationReason? syntaxTreeSimplification))
-                simplifiedSyntaxItems.Add(syntaxTreeSimplification);
-            if (!simplificationRule.AllowMultiple && simplifiedSyntaxItems.Count > 0)
+            //If the current syntax tree is not able to be simplified by the current simplification rule, continue to the next simplification rule.
+            if (!syntaxTree.TryMatchAndSubstitute(simplificationRule, out SimplificationReason? syntaxTreeSimplification))
+                continue;
+            //If the simplification rule was able to be applied, add the new syntax tree and its simplification reason to the list of simplification reasons.
+            simplifiedSyntaxItems.Add(syntaxTreeSimplification);
+            //If multiple simplification rules are not allowed, break out of the loop.
+            if (!simplificationRule.AllowMultiple)
                 break;
         }
 
         return simplifiedSyntaxItems;
     }
 
+    /// <summary>
+    /// Returns true if the given syntax tree can be simplified by the given simplification rule.
+    /// If this method returns true, then the simplification reason parameter will contain the substituted syntax tree and the reason for the simplification.
+    /// If this method returns false, then the simplification reason parameter will be null.
+    /// </summary>
+    /// <param name="syntaxTree">The syntax tree that is being simplified.</param>
+    /// <param name="simplificationRule">The simplification rule that is being applied to the given syntax tree.</param>
+    /// <param name="simplificationReason">The substituted form of the syntax tree and the associated reason for the simplification. If it is not substituted correctly, this is null.</param>
+    /// <returns>True if the given syntax tree was successfully substituted with the given simplification rule.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the either <paramref name="syntaxTree"/> or <paramref name="simplificationRule"/> is null.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the right hand side of the simplification rule could not be substituted with the found matches.</exception>
     private static bool TryMatchAndSubstitute(this ISyntaxItem syntaxTree, SimplificationRule simplificationRule, [NotNullWhen(true)] out SimplificationReason? simplificationReason) {
         if (syntaxTree is null) throw new ArgumentNullException(nameof(syntaxTree));
         if (simplificationRule is null) throw new ArgumentNullException(nameof(simplificationRule));

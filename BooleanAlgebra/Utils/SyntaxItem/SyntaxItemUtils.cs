@@ -1,8 +1,4 @@
-﻿using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Xml.Serialization;
-
-namespace BooleanAlgebra.Utils.SyntaxItem; 
+﻿namespace BooleanAlgebra.Utils.SyntaxItem; 
 /// <summary>
 /// Provides a set of methods that make it easier to work with syntax items.
 /// </summary>
