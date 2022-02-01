@@ -27,7 +27,7 @@ public class BinaryOperator : IMultiChildSyntaxItem {
         //Create a shallow copy of the object by initialising a new object with the same property values.
         if (binaryOperator is null) throw new ArgumentNullException(nameof(binaryOperator));
         Identifier = binaryOperator.Identifier;
-        ChildNodes = binaryOperator.ChildNodes;
+        ChildNodes = binaryOperator.ChildNodes.ToArray();
     }
     
     public ISyntaxItem ShallowClone() {

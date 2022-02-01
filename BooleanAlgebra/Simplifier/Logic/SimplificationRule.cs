@@ -1,53 +1,57 @@
 ﻿namespace BooleanAlgebra.Simplifier.Logic;
 /// <summary>
-/// 
+/// Provides a method to obtain all of the available simplification rules that can be applied to a given syntax tree.
 /// </summary>
 public class SimplificationRule {
     /// <summary>
-    /// 
+    /// The left hand side of the rule that must be matched against the syntax tree that is being simplified.
     /// </summary>
     public ISyntaxItem LeftHandSide { get; }
     /// <summary>
-    /// 
+    /// The right hand side of the rule that must be substituted based off the matches from the left hand side.
     /// </summary>
     public ISyntaxItem RightHandSide { get; }
     /// <summary>
-    /// 
+    /// A simple explanation about the rule that is used to explain the rule to the user.
     /// </summary>
     public string Description { get; }
     /// <summary>
-    /// 
+    /// The priority of the rule.
+    /// Some rules such as A AND 0 --> 0 have a higher priority than A AND A --> A.
     /// </summary>
     public int Precedence { get; }
     /// <summary>
-    /// 
+    /// The order by which the tree is traversed when applying the simplification rule.
     /// </summary>
     public SimplificationTraversalOrder SimplificationTraversalOrder { get; }
     /// <summary>
-    /// 
+    /// Whether the rule should only be applied once the tree has already been simplified with the non post simplification rules.
     /// </summary>
     public bool IsPostSimplification { get; }
     /// <summary>
-    /// 
+    /// Whether the rule should be applied with all of the possible matches that have been found.
     /// </summary>
     public bool AllowMultiple { get; }
 
     /// <summary>
-    /// 
+    /// Initialises a new simplification rule with the specified parameters so that the rule can be used to simplify a given syntax tree.
     /// </summary>
-    /// <param name="leftHandSide">The pattern that must be matched for the simplification to be valid.</param>
-    /// <param name="rightHandSide">The pattern that is substituted to simplify the syntax tree.</param>
-    /// <param name="description">The reason why the simplification can occur.</param>
-    /// <param name="precedence"></param>
-    /// <param name="simplificationPattern"></param>
-    /// <param name="simplificationOrder"></param>
-    /// <param name="allowMultiple"></param>
+    /// <param name="leftHandSide">The left hand side of the rule that must be matched against the syntax tree that is being simplified.</param>
+    /// <param name="rightHandSide">The right hand side of the rule that must be substituted based off the matches from the left hand side.</param>
+    /// <param name="description">A simple explanation about the rule that is used to explain the rule to the user.</param>
+    /// <param name="precedence">The priority of the rule.</param>
+    /// <param name="simplificationTraversalOrder">The order by which the tree is traversed when applying the simplification rule.</param>
+    /// <param name="isPostSimplification">Whether the rule should only be applied once the tree has already been simplified with the non post simplification rules.</param>
+    /// <param name="allowMultiple">Whether the rule should be applied with all of the possible matches that have been found.</param>
+    /// <exception cref="ArgumentNullException">Thrown when either <paramref name="leftHandSide"/> or <paramref name="rightHandSide"/> or <paramref name="description"/> is null.</exception>
     private SimplificationRule(string leftHandSide, string rightHandSide, string description, int precedence, SimplificationTraversalOrder simplificationTraversalOrder, bool isPostSimplification, bool allowMultiple) {
+        if (leftHandSide is null) throw new ArgumentNullException(nameof(leftHandSide));
+        if (rightHandSide == null) throw new ArgumentNullException(nameof(rightHandSide));
         //Lex and then parse the left hand side and store the resultant syntax tree.
         LeftHandSide = new Parser.Parser(new Lexer.Lexer(leftHandSide, true).Lex(), true).Parse();
         //Lex and then parse the right hand side and store the resultant syntax tree.
         RightHandSide = new Parser.Parser(new Lexer.Lexer(rightHandSide, true).Lex(), true).Parse();
-        Description = description;
+        Description = description ?? throw new ArgumentNullException(nameof(description));
         Precedence = precedence;
         SimplificationTraversalOrder = simplificationTraversalOrder;
         IsPostSimplification = isPostSimplification;

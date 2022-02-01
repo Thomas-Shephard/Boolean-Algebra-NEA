@@ -4,13 +4,16 @@
 /// </summary>
 public static class SyntaxTreeMatch {
     /// <summary>
-    /// 
+    /// Returns a list of matches that satisfy both the given syntax tree and the given pattern match tree as well as any previously found matches.
     /// </summary>
-    /// <param name="syntaxTree"></param>
-    /// <param name="patternMatchTree"></param>
-    /// <param name="currentMatches"></param>
+    /// <param name="syntaxTree">A syntax tree that the pattern match tree is compared against.</param>
+    /// <param name="patternMatchTree">A pattern match tree that the syntax tree is compared against</param>
+    /// <param name="currentMatches">A previously found matches that the given syntax tree must also but matched against.</param>
     /// <returns>A list of matches that satisfy both the given syntax tree and the given pattern match tree.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when either <paramref name="syntaxTree"/> or <paramref name="patternMatchTree"/> is null.</exception>
     public static List<Matches> GetAllMatches(ISyntaxItem syntaxTree, ISyntaxItem patternMatchTree, Matches? currentMatches = null) {
+        if (syntaxTree is null) throw new ArgumentNullException(nameof(syntaxTree));
+        if (patternMatchTree is null) throw new ArgumentNullException(nameof(patternMatchTree));
         //If the syntax tree does not have the same identifier as the pattern match tree, then there is no match.
         if (!syntaxTree.IsIdentifierEqual(patternMatchTree)) return new List<Matches>();
         //If the matches is currently null, then create a new matches object.
@@ -23,13 +26,17 @@ public static class SyntaxTreeMatch {
     }
 
     /// <summary>
-    /// 
+    /// Returns a list of matches that satisfy both the collection of given syntax items and the collection of given pattern match syntax items for the direct substitutes.
     /// </summary>
-    /// <param name="syntaxTreeChildNodes"></param>
-    /// <param name="patternMatchChildNodes"></param>
-    /// <param name="currentMatches"></param>
-    /// <returns></returns>
+    /// <param name="syntaxTreeChildNodes">A collection of syntax items that the collection of pattern match items is compared against.</param>
+    /// <param name="patternMatchChildNodes">A collection of pattern match items that the collection of syntax items is compared against.</param>
+    /// <param name="currentMatches">A previously found matches that the given syntax items must also but matched against.</param>
+    /// <returns>A list of matches that satisfy both the collection of given syntax items and the collection of given pattern match syntax items.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when either <paramref name="syntaxTreeChildNodes"/> or <paramref name="patternMatchChildNodes"/> or <paramref name="currentMatches"/> is null.</exception>
     private static List<Matches> GetDirectSubstitutes(IReadOnlyCollection<ISyntaxItem> syntaxTreeChildNodes, IReadOnlyCollection<ISyntaxItem> patternMatchChildNodes, Matches currentMatches) {
+        if (syntaxTreeChildNodes is null) throw new ArgumentNullException(nameof(syntaxTreeChildNodes));
+        if (patternMatchChildNodes is null) throw new ArgumentNullException(nameof(patternMatchChildNodes));
+        if (currentMatches is null) throw new ArgumentNullException(nameof(currentMatches));
         List<Matches> availableMatches = new();
         //Get the distinct child nodes of the syntax tree and pattern match tree.
         //This removes unnecessary operations as checking the same child node more than once is not necessary.
@@ -117,14 +124,18 @@ public static class SyntaxTreeMatch {
     }
 
     /// <summary>
-    /// 
+    /// Returns a list of matches that satisfy both the collection of given syntax items and the collection of given pattern match syntax items for the repeating substitutes.
     /// </summary>
-    /// <param name="syntaxTreeChildNodeCounts"></param>
-    /// <param name="patternMatchTreeChildNodeCounts"></param>
-    /// <param name="currentMatches"></param>
-    /// <returns></returns>
+    /// <param name="syntaxTreeChildNodeCounts">A collection of syntax items (with their respected counts) that the collection of pattern match items is compared against.</param>
+    /// <param name="patternMatchTreeChildNodeCounts">A collection of pattern match items (with their respected counts) that the collection of syntax items is compared against.</param>
+    /// <param name="currentMatches">The previously found matches that the given syntax items must also but matched against.</param>
+    /// <returns>A list of matches that satisfy both the collection of given syntax items and the collection of given pattern match syntax items.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when either <paramref name="syntaxTreeChildNodeCounts"/> or <paramref name="patternMatchTreeChildNodeCounts"/> or <paramref name="currentMatches"/> is null.</exception>
     /// <exception cref="InvalidOperationException">Thrown when a discovered matches object does not contain a substitute for a repeating generic operand.</exception>
     private static List<Matches> GetRepeatingSubstitutes(List<SyntaxItemCountPair> syntaxTreeChildNodeCounts, List<SyntaxItemCountPair> patternMatchTreeChildNodeCounts, Matches currentMatches) {
+        if (syntaxTreeChildNodeCounts is null) throw new ArgumentNullException(nameof(syntaxTreeChildNodeCounts));
+        if (patternMatchTreeChildNodeCounts is null) throw new ArgumentNullException(nameof(patternMatchTreeChildNodeCounts));
+        if (currentMatches is null) throw new ArgumentNullException(nameof(currentMatches));
         List<Matches> availableMatches = new();
         //Gets all of the available repeating operators that each syntax tree child node can be matched against.
         IEnumerable<RepeatingOperator> availableRepeatingOperators = patternMatchTreeChildNodeCounts

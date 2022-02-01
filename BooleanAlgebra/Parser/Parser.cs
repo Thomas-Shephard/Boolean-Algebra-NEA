@@ -72,12 +72,12 @@ public sealed class Parser {
             case IdentifierType.BINARY_OPERATOR:
                 if (previousSyntaxItem is null)
                     throw new ParserException(currentLexeme.LexemePosition, "The parser expected an expression before the binary operator");
-                List<ISyntaxItem> daughterSyntaxItems = new() { previousSyntaxItem };
+                List<ISyntaxItem> childSyntaxItems = new() { previousSyntaxItem };
                 do {
-                    daughterSyntaxItems.Add(InternalParse(currentLexeme.Identifier.Precedence + 1, endSyntaxIdentifierType: endSyntaxIdentifierType)
+                    childSyntaxItems.Add(InternalParse(currentLexeme.Identifier.Precedence + 1, endSyntaxIdentifierType: endSyntaxIdentifierType)
                         ?? throw new ParserException(currentLexeme.LexemePosition, "The parser expected an expression after the binary operator"));
                 } while (IsNextSyntaxIdentifierOfSameLexemeType(currentLexeme.Identifier));
-                nextSyntaxItem = new BinaryOperator(currentLexeme.Identifier, daughterSyntaxItems.ToArray());
+                nextSyntaxItem = new BinaryOperator(currentLexeme.Identifier, childSyntaxItems.ToArray());
                 nextSyntaxItem.Compress();
                 break;
             case IdentifierType.GROUPING_OPERATOR_START:
