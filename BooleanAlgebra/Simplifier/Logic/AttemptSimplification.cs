@@ -1,15 +1,15 @@
 ﻿namespace BooleanAlgebra.Simplifier.Logic;
 public static class AttemptSimplification {
-    public static IEnumerable<Tuple<ISyntaxItem, string>> SimplifySyntaxTree(this ISyntaxItem syntaxTree, SimplificationOrder simplificationOrder) {
+    public static IEnumerable<Tuple<ISyntaxItem, string>> SimplifySyntaxTree(this ISyntaxItem syntaxTree, bool isPostSimplification) {
        IEnumerable<IGrouping<int, SimplificationRule>> groupedByPrecedenceSimplificationRules = SimplificationRule.GetSimplificationRules()
-           .Where(simplificationRule => simplificationRule.SimplificationOrder == simplificationOrder)
+           .Where(simplificationRule => simplificationRule.IsPostSimplification == isPostSimplification)
            .OrderBy(simplificationRule => simplificationRule.Precedence)
            .GroupBy(simplificationRule => simplificationRule.Precedence);
 
         foreach (IGrouping<int, SimplificationRule> groupedSimplificationRule in groupedByPrecedenceSimplificationRules) {
-            IEnumerable<IGrouping<SimplificationTreeTraversalOrder, SimplificationRule>> simplificationRules = groupedSimplificationRule
+            IEnumerable<IGrouping<SimplificationTraversalOrder, SimplificationRule>> simplificationRules = groupedSimplificationRule
                 .Select(x => x)
-                .GroupBy(x => x.SimplificationPattern);
+                .GroupBy(x => x.SimplificationTraversalOrder);
             
             foreach (IEnumerable<SimplificationRule> simplificationRule in simplificationRules.Select(x=> x)) {
                 List<Tuple<ISyntaxItem, string>> simplifications = syntaxTree.SimplifySyntaxTreeWithSimplificationRule(simplificationRule.ToList());
@@ -23,7 +23,7 @@ public static class AttemptSimplification {
 
     private static List<Tuple<ISyntaxItem, string>> SimplifySyntaxTreeWithSimplificationRule(this ISyntaxItem syntaxTree, List<SimplificationRule> simplificationRules) {
         simplificationRules = simplificationRules.ToList();
-        if (simplificationRules.First().SimplificationPattern is SimplificationTreeTraversalOrder.INSIDE_OUT) {
+        if (simplificationRules.First().SimplificationTraversalOrder is SimplificationTraversalOrder.INSIDE_OUT) {
             List<Tuple<ISyntaxItem, string>> simplifications = syntaxTree.TrySimplifySyntaxTreeDaughterItemsWithSimplificationRule(simplificationRules);
             if (simplifications.Count > 0)
                 return simplifications;
@@ -87,6 +87,8 @@ public static class AttemptSimplification {
     }
 
     private static bool TryMatchAndSubstitute(this ISyntaxItem syntaxTree, SimplificationRule simplificationRule, [NotNullWhen(true)] out Tuple<ISyntaxItem, string>? syntaxTreeSimplification) {
+        if (syntaxTree is null) throw new ArgumentNullException(nameof(syntaxTree));
+        if (simplificationRule is null) throw new ArgumentNullException(nameof(simplificationRule));
         //Get all of the matches that are possible for the syntax tree and the simplification rule.
         List<Matches> availableMatches = SyntaxTreeMatch.GetAllMatches(syntaxTree, simplificationRule.LeftHandSide);
         if (availableMatches.Count == 0) {

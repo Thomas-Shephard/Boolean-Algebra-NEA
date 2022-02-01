@@ -32,6 +32,7 @@ public sealed class Parser {
     }
     
     public ISyntaxItem Parse() {
+        //Sets up the lexeme queue with the given lexemes.
         LexemesQueue = new Queue<Lexeme>(Lexemes);
         return InternalParse() ?? throw new ParserException(new LexemePosition(0,0), "The boolean expression must not be empty");
     }

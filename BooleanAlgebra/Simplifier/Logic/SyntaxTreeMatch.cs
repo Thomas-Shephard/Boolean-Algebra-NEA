@@ -123,7 +123,7 @@ public static class SyntaxTreeMatch {
     /// <param name="patternMatchTreeChildNodeCounts"></param>
     /// <param name="currentMatches"></param>
     /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="InvalidOperationException">Thrown when a discovered matches object does not contain a substitute for a repeating generic operand.</exception>
     private static List<Matches> GetRepeatingSubstitutes(List<SyntaxItemCountPair> syntaxTreeChildNodeCounts, List<SyntaxItemCountPair> patternMatchTreeChildNodeCounts, Matches currentMatches) {
         List<Matches> availableMatches = new();
         //Gets all of the available repeating operators that each syntax tree child node can be matched against.

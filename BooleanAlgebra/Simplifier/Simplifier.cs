@@ -19,7 +19,7 @@ public class SimplifierItem {
     public void Simplify(SimplifierItem? startItem = null) {
         startItem ??= this;
         if (!IsInAfterStage) {
-            IEnumerable<Tuple<ISyntaxItem, string>> lowestCostNextItem = SyntaxTree.SimplifySyntaxTree(SimplificationOrder.PRE)
+            IEnumerable<Tuple<ISyntaxItem, string>> lowestCostNextItem = SyntaxTree.SimplifySyntaxTree(false)
                 .Where(x => startItem.PreviousSyntaxItems().All(y => !y.Equals(x.Item1)));
             foreach ((ISyntaxItem? item1, string? item2) in lowestCostNextItem) {
                 if(item1.GetCost() > Math.Max(startItem.SyntaxTree.GetCost() * 2.5, startItem.SyntaxTree.GetCost() + 50))
@@ -29,7 +29,7 @@ public class SimplifierItem {
             }
         }
         
-        foreach ((ISyntaxItem? item1, string? item2) in SyntaxTree.SimplifySyntaxTree(SimplificationOrder.POST).Where(x => startItem.PreviousSyntaxItems().All(y => !y.Equals(x.Item1)))) {
+        foreach ((ISyntaxItem? item1, string? item2) in SyntaxTree.SimplifySyntaxTree(true).Where(x => startItem.PreviousSyntaxItems().All(y => !y.Equals(x.Item1)))) {
             if(item1.GetCost() > Math.Max(startItem.SyntaxTree.GetCost() * 2.5, startItem.SyntaxTree.GetCost() + 50))
                 continue;
             Children.Add(new SimplifierItem(item1, item2, this, true, RootNode ?? this));

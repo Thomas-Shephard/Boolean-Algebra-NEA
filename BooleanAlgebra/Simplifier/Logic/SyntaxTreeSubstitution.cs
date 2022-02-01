@@ -4,20 +4,22 @@
 /// </summary>
 public static class SyntaxTreeSubstitution {
     /// <summary>
-    /// 
+    /// Attempts to substitute a given syntax tree with a given set of substitutes within the given matches object.
+    /// Returns true if if the substitution was successful, false otherwise.
+    /// Provides the substitution result if successful, null otherwise.
     /// </summary>
-    /// <param name="syntaxItem"></param>
-    /// <param name="matches"></param>
-    /// <param name="substitutedSyntaxTree"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="ArgumentException"></exception>
+    /// <param name="syntaxItem">The syntax tree to substitute with the given matches object.</param>
+    /// <param name="matches">The matches to substitute into the places within the given syntax tree.</param>
+    /// <param name="substitutedSyntaxTree">The syntax tree that results after substituting the given syntax item with the given matches. Null if a substitution was not possible.</param>
+    /// <returns>True when the given syntax tree was successfully substituted with the given matches.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when either <paramref name="syntaxItem"/> or <paramref name="matches"/> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <param name="matches"> does not contain a substitute for every required generic operand.</param></exception>
     public static bool TrySubstituteSyntaxTree(ISyntaxItem syntaxItem, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
         if (syntaxItem is null) throw new ArgumentNullException(nameof(syntaxItem));
         if (matches is null) throw new ArgumentNullException(nameof(matches));
         //Ensure that the syntax tree that is being substituted has an equivalence for each match.
-        if (!MatchExistsForAllGenericOperands(syntaxItem, matches))
-            throw new ArgumentException($"The parameter {nameof(matches)} did not contain a substitute for every generic operand.");
+        if (!SubstituteExistsForAllGenericOperands(syntaxItem, matches))
+            throw new ArgumentException($"The parameter {nameof(matches)} did not contain a substitute for every required generic operand.");
         //Attempt to substitute the syntax tree, if it fails then return false.
         if (!TrySubstituteChildNodes(syntaxItem, matches, out substitutedSyntaxTree))
             return false;
@@ -28,18 +30,18 @@ public static class SyntaxTreeSubstitution {
     }
 
     /// <summary>
-    /// 
+    /// Determines whether a given syntax tree has a substitute for every required generic operand.
     /// </summary>
-    /// <param name="syntaxItem"></param>
-    /// <param name="matches"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    private static bool MatchExistsForAllGenericOperands(ISyntaxItem syntaxItem, Matches matches) {
+    /// <param name="syntaxItem">The syntax tree to search for required generic operands in.</param>
+    /// <param name="matches">The substitutes to determine whether each required generic operand has an equivalence for.</param>
+    /// <returns>True if all required generic operands have a substitute.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when either <paramref name="syntaxItem"/> or <paramref name="matches"/> is null.</exception>
+    private static bool SubstituteExistsForAllGenericOperands(ISyntaxItem syntaxItem, Matches matches) {
         if (syntaxItem is null) throw new ArgumentNullException(nameof(syntaxItem));
         if (matches is null) throw new ArgumentNullException(nameof(matches));
         if (syntaxItem is not Operand operand)
             //If the syntax tree is not an operand, then check its child nodes and ensure that they contain only known substitutes.
-            return syntaxItem.GetChildNodes().All(childSyntaxItem => MatchExistsForAllGenericOperands(childSyntaxItem, matches));
+            return syntaxItem.GetChildNodes().All(childSyntaxItem => SubstituteExistsForAllGenericOperands(childSyntaxItem, matches));
         //If the syntax item is an operand but not generic operand then it is not substitutable.
         if (operand is not GenericOperand genericOperand) return true;
         //Repeating generic operands are optional and therefore a match does not need to be present.
@@ -48,14 +50,16 @@ public static class SyntaxTreeSubstitution {
     }
 
     /// <summary>
-    /// 
+    /// Attempts to substitute a given syntax tree with a given set of substitutes within the given matches object.
+    /// Returns true if if the substitution was successful, false otherwise.
+    /// Provides the substitution result if successful, null otherwise.
     /// </summary>
-    /// <param name="syntaxItem"></param>
-    /// <param name="matches"></param>
-    /// <param name="substitutedSyntaxItem"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    private static bool TrySubstituteChildNodes(ISyntaxItem syntaxItem, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxItem) {
+    /// <param name="syntaxItem">The syntax tree to substitute with the given matches object.</param>
+    /// <param name="matches">The matches to substitute into the places within the given syntax tree.</param>
+    /// <param name="substitutedSyntaxTree">The syntax tree that results after substituting the given syntax item with the given matches. Null if a substitution was not possible.</param>
+    /// <returns>True when the given syntax tree was successfully substituted with the given matches.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when either <paramref name="syntaxItem"/> or <paramref name="matches"/> is null.</exception>
+    private static bool TrySubstituteChildNodes(ISyntaxItem syntaxItem, Matches matches, [NotNullWhen(true)] out ISyntaxItem? substitutedSyntaxTree) {
         if (syntaxItem is null) throw new ArgumentNullException(nameof(syntaxItem));
         if (matches is null) throw new ArgumentNullException(nameof(matches));
         //If the syntax item is an operand, it has no child nodes to substitute.
@@ -64,10 +68,10 @@ public static class SyntaxTreeSubstitution {
             //The substituted syntax item is set to the generic operand's substitute if it exists, else null.
             //If a substitute is found return true, else return false.
             if (syntaxItem is GenericOperand genericOperand)
-                return matches.TryGetDirectSubstituteFromGenericOperand(genericOperand, out substitutedSyntaxItem);
+                return matches.TryGetDirectSubstituteFromGenericOperand(genericOperand, out substitutedSyntaxTree);
             //If the syntax item is an operand but not a generic operand, it cannot be substituted.
             //Therefore, the substituted syntax item is the same as the original syntax item.
-            substitutedSyntaxItem = syntaxItem;
+            substitutedSyntaxTree = syntaxItem;
             return true;
         }
         
@@ -94,7 +98,7 @@ public static class SyntaxTreeSubstitution {
             //If the current child is not a repeating operator and was not successfully substituted, then the syntax item cannot be substituted.
             } else {
                 //As the syntax item could not be substituted, return false.
-                substitutedSyntaxItem = default;
+                substitutedSyntaxTree = default;
                 return false;
             }
         }
@@ -108,12 +112,12 @@ public static class SyntaxTreeSubstitution {
                 //Set the child nodes of the new multi child syntax item to the substituted child nodes.
                 newMultiChildSyntaxItem.ChildNodes = childNodes.ToArray();
                 //Set the substituted syntax item to the new multi child syntax item and return true.
-                substitutedSyntaxItem = newMultiChildSyntaxItem;
+                substitutedSyntaxTree = newMultiChildSyntaxItem;
                 return true;
             //If the original syntax item was a multi child syntax item but there is only one child node, then only return the substituted child node.
             case 1 when syntaxItem is IMultiChildSyntaxItem:
                 //Set the substituted syntax item to the substituted child node and return true.
-                substitutedSyntaxItem = childNodes[0];
+                substitutedSyntaxTree = childNodes[0];
                 return true;
             //If the original syntax item was a single child syntax item and there is one child node, then return the substituted child node as a child of the original syntax item.
             case 1 when syntaxItem is ISingleChildSyntaxItem singleChildSyntaxItem:
@@ -122,23 +126,23 @@ public static class SyntaxTreeSubstitution {
                 //Set the child node of the new single child syntax item to the substituted child node.
                 newSingleChildSyntaxItem.ChildNode = childNodes[0];
                 //Set the substituted syntax item to the new single child syntax item and return true.
-                substitutedSyntaxItem = newSingleChildSyntaxItem;
+                substitutedSyntaxTree = newSingleChildSyntaxItem;
                 return true;
             //If none of the above cases are true, then the syntax item cannot be substituted correctly.
             default:
                 //As the syntax item could not be substituted correctly, return false.
-                substitutedSyntaxItem = default;
+                substitutedSyntaxTree = default;
                 return false;
         }
     }
 
     /// <summary>
-    /// 
+    /// Returns a list of matches that can then be substituted with the syntax tree that is nested within the provided repeating operator.
     /// </summary>
-    /// <param name="repeatingOperator"></param>
-    /// <param name="matches"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <param name="repeatingOperator">The repeating operator that contains a repeating generic operand nested inside it.</param>
+    /// <param name="matches">The matches that are being substituted into the places within the given syntax tree.</param>
+    /// <returns>A list of matches that can then be substituted with the syntax tree that is nested within the provided repeating operator.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when either <paramref name="repeatingOperator"/> or <paramref name="matches"/> is null.</exception>
     private static List<Matches> GetAllMatchesFromRepeatingOperator(RepeatingOperator repeatingOperator, Matches matches) {
         if (repeatingOperator is null) throw new ArgumentNullException(nameof(repeatingOperator));
         if (matches is null) throw new ArgumentNullException(nameof(matches));
