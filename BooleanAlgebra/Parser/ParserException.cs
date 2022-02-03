@@ -6,7 +6,7 @@ public class ParserException : Exception {
     /// <summary>
     /// The position of the error within the input text.
     /// </summary>
-    public LexemePosition LexemePosition { get; }
+    private LexemePosition LexemePosition { get; }
 
     /// <summary>
     /// Initialises a new instance of the <see cref="ParserException"/> class with a <paramref name="lexemePosition"/> and <paramref name="message"/>.

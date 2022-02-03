@@ -3,7 +3,6 @@ using BooleanAlgebra.Lexer.Lexemes;
 using BooleanAlgebra.Parser;
 using BooleanAlgebra.Parser.Syntax;
 using BooleanAlgebra.Simplifier;
-using BooleanAlgebra.Simplifier.Logic;
 
 namespace BooleanAlgebra.WebDisplay.Data;
 
@@ -26,7 +25,7 @@ public static class BooleanExpressionSimplificationService {
         }
         
         Simplifier.Simplifier simplifier = new(parsedSyntaxTree);
-        List<SimplificationReason> simplificationOrder = await Task.Run(() => simplifier.Simplify());
+        List<SimplificationRulePair> simplificationOrder = await Task.Run(() => simplifier.Simplify());
         return new SimplifiedBooleanExpression(simplificationOrder);
     }
 }

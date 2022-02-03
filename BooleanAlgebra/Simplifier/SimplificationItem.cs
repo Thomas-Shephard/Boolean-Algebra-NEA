@@ -3,10 +3,8 @@
 /// 
 /// </summary>
 public class SimplificationItem {
-    /// <summary>
-    /// 
-    /// </summary>
-    private SimplificationItem? ParentItem { get; }
+    private SimplificationItem? ParentNode { get; }
+    
     /// <summary>
     /// 
     /// </summary>
@@ -22,7 +20,7 @@ public class SimplificationItem {
     /// <summary>
     /// 
     /// </summary>
-    private SimplificationItem? RootNode { get; }
+    private SimplificationItem RootNode { get; }
     /// <summary>
     /// 
     /// </summary>
@@ -33,16 +31,15 @@ public class SimplificationItem {
     /// </summary>
     /// <param name="syntaxTree"></param>
     /// <param name="simplificationReason"></param>
-    /// <param name="parentItem"></param>
     /// <param name="isInAfterStage"></param>
     /// <param name="rootNode"></param>
     /// <exception cref="ArgumentNullException"></exception>
-    public SimplificationItem(ISyntaxItem syntaxTree, string simplificationReason, SimplificationItem? parentItem = null, bool isInAfterStage = false, SimplificationItem? rootNode = null) {
+    public SimplificationItem(ISyntaxItem syntaxTree, string simplificationReason, SimplificationItem? parentNode = null, bool isInAfterStage = false, SimplificationItem? rootNode = null) {
         SyntaxTree = syntaxTree ?? throw new ArgumentNullException(nameof(syntaxTree));
         SimplificationReason = simplificationReason ?? throw new ArgumentNullException(nameof(simplificationReason));
-        ParentItem = parentItem;
+        ParentNode = parentNode;
         IsInAfterStage = isInAfterStage;
-        RootNode = rootNode;
+        RootNode = rootNode ?? this;
         Children = new List<SimplificationItem>();
     }
 
@@ -52,21 +49,35 @@ public class SimplificationItem {
     /// <param name="startItem"></param>
     public void Simplify(SimplificationItem? startItem = null) {
         startItem ??= this;
+        List<ISyntaxItem> previousSyntaxItems = new();
+        startItem.GetSyntaxItemsInChildNodes(previousSyntaxItems);
         if (!IsInAfterStage) {
-            IEnumerable<SimplificationReason> lowestCostNextItem = SyntaxTree.SimplifySyntaxTree(false)
-                .Where(x => startItem.PreviousSyntaxItems().All(y => !y.Equals(x.SimplifiedSyntaxItem)));
-            foreach ((ISyntaxItem? item1, string? item2) in lowestCostNextItem) {
-                if(item1.GetCost() > Math.Max(startItem.SyntaxTree.GetCost() * 2.5, startItem.SyntaxTree.GetCost() + 50))
-                    continue;
-                Children.Add(new SimplificationItem(item1, item2, this, rootNode: RootNode ?? this));
-                Children.Last().Simplify(startItem);
-            }
+            InternalSimplify(previousSyntaxItems, startItem, false);
         }
         
-        foreach ((ISyntaxItem? item1, string? item2) in SyntaxTree.SimplifySyntaxTree(true).Where(x => startItem.PreviousSyntaxItems().All(y => !y.Equals(x.SimplifiedSyntaxItem)))) {
-            if(item1.GetCost() > Math.Max(startItem.SyntaxTree.GetCost() * 2.5, startItem.SyntaxTree.GetCost() + 50))
+        InternalSimplify(previousSyntaxItems, startItem, true);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="startItem"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    private static int MaxAllowedCost(SimplificationItem startItem) {
+        if (startItem is null) throw new ArgumentNullException(nameof(startItem));
+        //The maximum allowed cost is somewhat arbitrary. It is assumed that if the cost of a tree is greater than the following value, there would be no benefit to simplifying it.
+        return (int) Math.Max(startItem.SyntaxTree.GetCost() * 2.5, startItem.SyntaxTree.GetCost() + 50);
+    }
+
+    private void InternalSimplify(List<ISyntaxItem> previousSyntaxItems, SimplificationItem startItem, bool isPostSimplification) {
+        if (startItem is null) throw new ArgumentNullException(nameof(startItem));
+
+        foreach ((ISyntaxItem simplifiedSyntaxItem, string reason) in SyntaxTree.SimplifySyntaxTree(isPostSimplification)
+                     .Where(x => previousSyntaxItems.All(y => !y.Equals(x.SimplifiedSyntaxItem)))) {
+            if(simplifiedSyntaxItem.GetCost() > MaxAllowedCost(startItem))
                 continue;
-            Children.Add(new SimplificationItem(item1, item2, this, true, RootNode ?? this));
+            Children.Add(new SimplificationItem(simplifiedSyntaxItem, reason, this, isPostSimplification, RootNode));
             Children.Last().Simplify(startItem);
         }
     }
@@ -75,12 +86,22 @@ public class SimplificationItem {
     /// 
     /// </summary>
     /// <returns></returns>
-    private List<ISyntaxItem> PreviousSyntaxItems() {
-        List<ISyntaxItem> returnValue = new() {SyntaxTree};
-        foreach(SimplificationItem child in Children) {
-            returnValue.AddRange(child.PreviousSyntaxItems());
+    private void GetSyntaxItemsInChildNodes(List<ISyntaxItem> foundSyntaxItems) {
+        if (foundSyntaxItems is null) throw new ArgumentNullException(nameof(foundSyntaxItems));
+        foundSyntaxItems.Add(SyntaxTree);
+        foreach (SimplificationItem simplificationItem in Children) {
+            simplificationItem.GetSyntaxItemsInChildNodes(foundSyntaxItems);
         }
-        return returnValue;
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public void GetSimplificationSteps(List<SimplificationRulePair> simplificationSteps) {
+        if (simplificationSteps is null) throw new ArgumentNullException(nameof(simplificationSteps));
+        ParentNode?.GetSimplificationSteps(simplificationSteps);
+        simplificationSteps.Add(new SimplificationRulePair(SyntaxTree, SimplificationReason));
     }
 
     /// <summary>
@@ -89,16 +110,18 @@ public class SimplificationItem {
     /// <param name="rootNode"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static SimplificationItem GetSmallestCostSyntaxItem(SimplificationItem rootNode) {
+    public static SimplificationItem GetSmallestCostSyntaxItemWithSmallestDepth(SimplificationItem rootNode) {
         if (rootNode is null) throw new ArgumentNullException(nameof(rootNode));
         SimplificationItem lowestCostItem = rootNode;
+        int currentLowestCost = int.MaxValue;
 
         Queue<SimplificationItem> queue = new();
         queue.Enqueue(rootNode);
         while (queue.Count > 0) {
             SimplificationItem currentItem = queue.Dequeue();
-            if (currentItem.SyntaxTree.GetCost() < lowestCostItem.SyntaxTree.GetCost()) {
+            if (currentItem.SyntaxTree.GetCost() < currentLowestCost) {
                 lowestCostItem = currentItem;
+                currentLowestCost = lowestCostItem.SyntaxTree.GetCost();
             }
             foreach (SimplificationItem child in currentItem.Children) {
                 queue.Enqueue(child);
@@ -106,18 +129,5 @@ public class SimplificationItem {
         }
 
         return lowestCostItem;
-    }
-
-    
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    public List<SimplificationReason> GetSimplifiedSyntaxTree() {
-        List<SimplificationReason> returnValue = new();
-        if(ParentItem is not null)
-            returnValue.AddRange(ParentItem.GetSimplifiedSyntaxTree());
-        returnValue.Add(new SimplificationReason(SyntaxTree, SimplificationReason));
-        return returnValue;
     }
 }

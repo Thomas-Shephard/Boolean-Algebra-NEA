@@ -8,9 +8,9 @@ public class SimplifiedBooleanExpression {
     [MemberNotNullWhen(false, nameof(IsSuccess))]
     public string? ErrorMessage { get; }
     [MemberNotNullWhen(true, nameof(IsSuccess))]
-    public SimplificationReason[]? Simplifications { get; }
+    public SimplificationRulePair[]? Simplifications { get; }
 
-    public SimplifiedBooleanExpression(IEnumerable<SimplificationReason> simplifications) {
+    public SimplifiedBooleanExpression(IEnumerable<SimplificationRulePair> simplifications) {
         Simplifications = simplifications.ToArray();
         IsSuccess = true;
     }

@@ -1,6 +1,6 @@
 ﻿namespace BooleanAlgebra.Simplifier.Logic;
 /// <summary>
-/// Provides a set of methods that allow a given syntax tree to be substituted with a given set of substitutes.
+/// Provides a set of methods that allow a given syntax tree to be substituted with a given matches object.
 /// </summary>
 public static class SyntaxTreeSubstitution {
     /// <summary>
