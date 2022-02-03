@@ -5,11 +5,11 @@
 /// </summary>
 public enum SimplificationRuleTraversalOrder {
     /// <summary>
-    /// The inside out option means that the most nested expression will be processed first.
+    /// The inside out option means that the most nested nodes in the syntax tree will be compared against first.
     /// </summary>
     INSIDE_OUT,
     /// <summary>
-    /// The outside in option means that the least nested expression will be processed first.
+    /// The outside in option means that the least nested nodes in the syntax tree will be compared against first.
     /// </summary>
     OUTSIDE_IN
 }
