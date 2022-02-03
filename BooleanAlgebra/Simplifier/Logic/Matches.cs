@@ -71,7 +71,7 @@ public class Matches {
 }
 
 /// <summary>
-/// Holds information about a direct substitute including the generic operand to be substituted and its associated substitution.
+/// Holds information about a direct substitute including the generic operand to be substituted and its corresponding substitute.
 /// </summary>
 public class DirectSubstitute {
     /// <summary>
@@ -95,7 +95,7 @@ public class DirectSubstitute {
 }
 
 /// <summary>
-/// Holds information about a repeating substitute including the generic operand to be substituted and all the associated substitutes.
+/// Holds information about a repeating substitute including the generic operand to be substituted and all the corresponding substitutes.
 /// </summary>
 public class RepeatingSubstitute {
     /// <summary>
