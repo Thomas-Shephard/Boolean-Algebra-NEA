@@ -2,7 +2,7 @@
 /// <summary>
 /// Provides a set of methods to match a given syntax tree against a given pattern match tree.
 /// </summary>
-public static class SyntaxTreeMatch {
+public static class SimplificationRuleMatcher {
     /// <summary>
     /// Returns a list of matches that satisfy both the given syntax tree and the given pattern match tree as well as any previously found matches.
     /// </summary>

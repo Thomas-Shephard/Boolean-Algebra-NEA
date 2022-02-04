@@ -163,7 +163,7 @@ public static class AttemptSimplification {
         if (syntaxTree is null) throw new ArgumentNullException(nameof(syntaxTree));
         if (simplificationRule is null) throw new ArgumentNullException(nameof(simplificationRule));
         //Get all of the matches that are possible for the syntax tree and the simplification rule.
-        List<Matches> availableMatches = SyntaxTreeMatch.GetAllMatches(syntaxTree, simplificationRule.LeftHandSide);
+        List<Matches> availableMatches = SimplificationRuleMatcher.GetAllMatches(syntaxTree, simplificationRule.LeftHandSide);
         if (availableMatches.Count == 0) {
             //If no matches were found then there is no simplification possible.
             simplificationReason = default;
@@ -171,7 +171,7 @@ public static class AttemptSimplification {
         }
 
         //Attempt to substitute the simplification rule with the found matches.
-        if (!SyntaxTreeSubstitution.TrySubstituteSyntaxTree(simplificationRule.RightHandSide, availableMatches[0], out ISyntaxItem? substitutedSyntaxTree))
+        if (!SimplificationRuleSubstituter.TrySubstituteSyntaxTree(simplificationRule.RightHandSide, availableMatches[0], out ISyntaxItem? substitutedSyntaxTree))
             //If this fails, it means that there is a programming error as the right hand side should always be able to be substituted with the found matches.
             throw new InvalidOperationException("The right hand side of the simplification rule was not able to be substituted with the found matches.");
         //If the substitution was successful then return the result with the description of the simplification.

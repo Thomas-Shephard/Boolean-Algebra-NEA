@@ -2,7 +2,7 @@
 /// <summary>
 /// Provides a set of methods that allow a given syntax tree to be substituted with a given matches object.
 /// </summary>
-public static class SyntaxTreeSubstitution {
+public static class SimplificationRuleSubstituter {
     /// <summary>
     /// Attempts to substitute a given syntax tree with a given set of substitutes within the given matches object.
     /// Returns true if if the substitution was successful, false otherwise.
