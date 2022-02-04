@@ -29,11 +29,11 @@ public class Simplifier {
     public List<SimplificationRulePair> Simplify() {
         //Create an apex node from the original syntax item so that it can be simplified.
         //Use the start message as the message for the apex node.
-        SimplificationItem simplifierTree = new(OriginalSyntaxItem, StartMessage);
+        SimplificationItem simplifierTree = new(new SimplificationRulePair(OriginalSyntaxItem, StartMessage));
         simplifierTree.Simplify();
         //Create a new list of steps to store the process by which the original syntax item was simplified.
         List<SimplificationRulePair> simplificationSteps = new();
-        SimplificationItem.GetSmallestCostSyntaxItemWithSmallestDepth(simplifierTree).GetSimplificationSteps(simplificationSteps);
+        SimplificationItem.GetSmallestCostSyntaxTreeWithSmallestDepth(simplifierTree).GetSimplificationSteps(simplificationSteps);
         return simplificationSteps;
     }
 }
