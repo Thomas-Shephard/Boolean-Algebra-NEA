@@ -3,7 +3,6 @@ using System.Linq;
 using BooleanAlgebra.Lexer.Lexemes;
 using BooleanAlgebra.Parser.Syntax;
 using BooleanAlgebra.Simplifier;
-using BooleanAlgebra.Simplifier.Logic;
 
 namespace BooleanAlgebra.Tests; 
 
@@ -13,8 +12,8 @@ public static class SimplificationUtils {
         List<Lexeme> inputLexemes = new Lexer.Lexer(input).Lex();
         List<Lexeme> expectedLexemes = new Lexer.Lexer(expected).Lex();
         //Parsing the input and expected
-        ISyntaxItem parsedInput = new Parser.Parser(inputLexemes).Parse();
-        ISyntaxItem parsedExpected = new Parser.Parser(expectedLexemes).Parse();
+        ISyntaxItem parsedInput = new Parser.Parser(inputLexemes, input).Parse();
+        ISyntaxItem parsedExpected = new Parser.Parser(expectedLexemes, expected).Parse();
         //Simplifying the input
         List<SimplificationRulePair> simplificationSteps = new Simplifier.Simplifier(parsedInput).Simplify();
         //Comparing the simplified input to the expected

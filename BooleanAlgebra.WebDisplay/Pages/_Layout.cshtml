@@ -6,29 +6,38 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
+    <!-- Make the web page responsive to the device width -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="~/" />
+    <!-- Add the bootstrap css but overload it with the dark boostrap theme -->
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap-dark.min.css" />
+    <!-- Overload the bootstrap css with the custom css -->
     <link href="css/site.css" rel="stylesheet" />
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+    <!-- The message in the tab -->
     <title>Boolean Algebra Simplification</title>
 </head>
 <body>
     <div class="d-flex flex-column overflow-hidden min-vh-100 vh-100">
+        <!-- The blazor error UI is shown as a popup modal -->
         <div id="blazor-error-ui" class="modal show backdrop-blur" role="alertdialog">
-             <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header border-bottom-0">
                         <h4 class="modal-title">
+                            <!-- Depending on the environment, the error summary will be different -->
                             <environment include="Staging,Production">An error has occurred</environment>
                             <environment include="Development">An unhandled exception has occurred</environment>
                         </h4>
                     </div>
                     <div class="modal-body py-0">
+                        <!-- Depending on the environment, the error message will be different -->
                         <environment include="Staging,Production">An error has occurred within the application. Please refresh the page and try again.</environment>
                         <environment include="Development">An unhandled exception has occurred within the application. Check the browser dev tools for more details.</environment>
                     </div>
+                    <!-- Because the blazor error is caused by a runtime exception, allow the user to refresh the page if an error occurs to 
+                    allow them to reconnect to the blazor server -->
                     <div class="modal-footer flex-column border-top-0">
                         <button type="button" class="btn btn-primary w-100 mx-0 mb-2" onClick="window.location.reload();">Refresh Page</button>
                     </div>
@@ -37,15 +46,18 @@
         </div>
 
         <main role="main" class="flex-grow-1 overflow-auto">
+            <!-- The rest of the webpage is rendered in the main layout section -->
             @RenderBody()
         </main>
-        
+
+        <!-- The footer that is used on every page, it includes a simple copyright right notice -->
         <footer class="container-fluid flex-grow-0 flex-shrink-1">
             <ul class="border-bottom"></ul>
             <p class="text-center text-muted">© Thomas Shephard 2021 - @(DateTime.Now.Year)</p>
-      </footer>
-  </div>
+        </footer>
+    </div>
 
+    <!-- Scripts are added here to ensure they are loaded after the body (decreasing load time) -->
     <script src="_framework/blazor.server.js"></script>
     <script src="js/bootstrap.min.js"></script>
 </body>

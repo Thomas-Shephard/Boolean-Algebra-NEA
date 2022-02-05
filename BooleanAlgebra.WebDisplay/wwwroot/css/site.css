@@ -26,11 +26,6 @@ a, .btn-link {
     outline: 1px solid #26b050;
 }
 
-.not-rounded-right{
-    border-top-right-radius:0;
-    border-bottom-right-radius:0
-}
-
 .invalid {
     outline: 1px solid red;
 }
@@ -56,17 +51,19 @@ a, .btn-link {
     gap: 0.5em 0;
 }
 
-/* slightly transparent fallback */
-@supports not ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
-    .backdrop-blur {
-        background-color: rgba(0, 0, 0, .9);
-    }
-}
+/* The following section blurs the background when an error message is displayed */
 
-/* if backdrop support: blurred */
+/* If the browser supports either webkit-filter or backdrop-filter then blur the background */
 @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
     .backdrop-blur {
         -webkit-backdrop-filter: blur(1em);
         backdrop-filter: blur(1em);
+    }
+}
+
+/* If the browser does not support a method to blur the background, change the background colour and set the transparency */
+@supports not ((-webkit-backdrop-filter: none) and (backdrop-filter: none)) {
+    .backdrop-blur {
+        background-color: rgba(0, 0, 0, .9);
     }
 }

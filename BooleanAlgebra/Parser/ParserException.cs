@@ -4,18 +4,22 @@
 /// </summary>
 public class ParserException : Exception {
     /// <summary>
-    /// The position of the error within the input text.
+    /// The message that describes the exception.
+    /// The message contains the lexeme that caused the exception as well as the start and end position of the lexeme.
     /// </summary>
-    private LexemePosition LexemePosition { get; }
+    public override string Message { get; }
 
     /// <summary>
     /// Initialises a new instance of the <see cref="ParserException"/> class with a <paramref name="lexemePosition"/> and <paramref name="message"/>.
     /// </summary>
-    /// <param name="lexemePosition">The position of the error within the input text.</param>
-    /// <param name="message">The message that describes the error.</param>
-    /// <exception cref="ArgumentNullException">Thrown when either <paramref name="lexemePosition"/> or <paramref name="message"/> is null.</exception>
-    public ParserException(LexemePosition lexemePosition, string message) : base(message) {
+    /// <param name="lexemePosition">The position of the exception within the input text.</param>
+    /// <param name="rawText">The input boolean expression as a string.</param>
+    /// <param name="message">The message that describes the exception.</param>
+    /// <exception cref="ArgumentNullException">Thrown when either <paramref name="lexemePosition"/> or <paramref name="rawText"/> or <paramref name="message"/> is null.</exception>
+    public ParserException(LexemePosition lexemePosition, string rawText, string message) {
+        if (lexemePosition is null) throw new ArgumentNullException(nameof(lexemePosition));
+        if (rawText is null) throw new ArgumentNullException(nameof(rawText));
         if (message is null) throw new ArgumentNullException(nameof(message));
-        LexemePosition = lexemePosition ?? throw new ArgumentNullException(nameof(lexemePosition));
+        Message = $"{message} '{rawText.Substring(lexemePosition.StartPosition, lexemePosition.Length)}' that starts at index {lexemePosition.StartPosition} and ends at index {lexemePosition.EndPosition}";
     }
 }

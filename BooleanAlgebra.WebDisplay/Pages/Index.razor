@@ -39,7 +39,7 @@
                         <h2 class="accordion-header" id="headingTwo">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                 <div style="max-width: calc(100% - 50px);word-break: break-all;">
-                                    @(_simplifiedBooleanExpression.Simplifications?.Last().SimplifiedSyntaxItem.GetStringRepresentation() ?? string.Empty)
+                                    @(_simplifiedBooleanExpression.SimplificationSteps?.Last().SimplifiedSyntaxItem.GetStringRepresentation() ?? string.Empty)
                                     <p class="small m-0 mt-2">@FormatNumberOfSimplifications()</p>
                                 </div>
                             </button>
@@ -47,7 +47,7 @@
                         <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <ul class="list-group">
-                                    @foreach ((ISyntaxItem item1, string item2) in _simplifiedBooleanExpression.Simplifications ?? throw new NullReferenceException(nameof(_simplifiedBooleanExpression))) {
+                                    @foreach ((ISyntaxItem item1, string item2) in _simplifiedBooleanExpression.SimplificationSteps ?? throw new NullReferenceException(nameof(_simplifiedBooleanExpression))) {
                                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                                 @item1.GetStringRepresentation()
                                                 <span class="badge bg-muted">@item2</span>
@@ -75,6 +75,7 @@
             </thead>
             <tbody>
             <tr>
+                <!-- The 'or' operator can be represented by 'OR' and '+' -->
                 <td>Or</td>
                 <td>
                     <kbd>OR</kbd> <kbd>+</kbd>

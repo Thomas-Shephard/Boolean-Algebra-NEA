@@ -48,9 +48,9 @@ public class SimplificationRule {
         if (leftHandSide is null) throw new ArgumentNullException(nameof(leftHandSide));
         if (rightHandSide == null) throw new ArgumentNullException(nameof(rightHandSide));
         //Lex and then parse the left hand side and store the resultant syntax tree.
-        LeftHandSide = new Parser.Parser(new Lexer.Lexer(leftHandSide, true).Lex(), true).Parse();
+        LeftHandSide = new Parser.Parser(new Lexer.Lexer(leftHandSide, true).Lex(), leftHandSide, true).Parse();
         //Lex and then parse the right hand side and store the resultant syntax tree.
-        RightHandSide = new Parser.Parser(new Lexer.Lexer(rightHandSide, true).Lex(), true).Parse();
+        RightHandSide = new Parser.Parser(new Lexer.Lexer(rightHandSide, true).Lex(), rightHandSide, true).Parse();
         Description = description ?? throw new ArgumentNullException(nameof(description));
         Precedence = precedence;
         SyntaxTreeTraversalOrder = syntaxTreeTraversalOrder;

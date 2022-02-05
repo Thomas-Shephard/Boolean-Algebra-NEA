@@ -1,24 +1,14 @@
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+/* This file contains the pre-built template that allows for a standard blazor server web application to be built. */
 
-// Add services to the container.
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 WebApplication app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment()) {
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
-}
-
 app.UseStatusCodePages();
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 

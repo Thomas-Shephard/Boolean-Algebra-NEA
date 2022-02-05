@@ -16,7 +16,7 @@ public static class BooleanExpressionSimplificationService {
             return new SimplifiedBooleanExpression(unknownLexemeException);
         }
 
-        Parser.Parser parser = new(lexemes);
+        Parser.Parser parser = new(lexemes, booleanExpression);
         ISyntaxItem parsedSyntaxTree;
         try {
             parsedSyntaxTree = await Task.Run(() => parser.Parse());

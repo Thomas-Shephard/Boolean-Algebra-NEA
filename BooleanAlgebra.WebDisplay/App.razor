@@ -1,18 +1,21 @@
 ﻿<Router AppAssembly="@typeof(App).Assembly">
+    <!-- If the requested route is found, the main layout is used -->
+    <!-- In the future, it would be possible to use a different layout for each route -->
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
+        <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
     </Found>
+    <!-- If the requested route is not found, display a 404 error message -->
     <NotFound>
-        <PageTitle>Not found</PageTitle>
+        <PageTitle>Page Not Found</PageTitle>
         <LayoutView Layout="@typeof(MainLayout)">
             <!-- 404 Error -->
-                <div class="p-3 mb-3 bg-danger rounded-3">
-                    <div class="container-fluid">
-                        <!-- Message -->
-                        <h4 class="text-center">Page not found</h4>
-                    </div>
+            <div class="p-3 mb-3 bg-danger rounded-3">
+                <div class="container-fluid">
+                    <!-- Message -->
+                    <h4 class="text-center">404 - Page Not Found</h4>
                 </div>
+            </div>
         </LayoutView>
     </NotFound>
 </Router>
