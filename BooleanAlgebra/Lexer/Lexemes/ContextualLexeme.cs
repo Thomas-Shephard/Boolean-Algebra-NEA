@@ -3,7 +3,7 @@
 /// Holds the information about a lexeme that has been created by the lexer.
 /// A contextual lexeme is an extended form of the lexeme that also contains the context of the lexeme.
 /// </summary>
-public sealed class ContextualLexeme : Lexeme, IEquatable<ContextualLexeme> {
+public sealed class ContextualLexeme : Lexeme {
     /// <summary>
     /// The string representation of a lexeme.
     /// </summary>
@@ -23,19 +23,20 @@ public sealed class ContextualLexeme : Lexeme, IEquatable<ContextualLexeme> {
     public override string ToString() {
         //This method is not designed to be used in production code and is only for debugging purposes.
         if (Debugger.IsAttached) {
-            return $"[{Identifier}, {LexemeValue}, {LexemePosition}]"; //Outputs in the format [Identifier, LexemeValue, LexemePosition].
+            return $"[{Identifier.Name}, {LexemeValue}, {LexemePosition}]"; //Outputs in the format [Identifier, LexemeValue, LexemePosition].
         }
         throw new InvalidOperationException("This method is only for debugging purposes.");
     }
 
-    public bool Equals(ContextualLexeme? other) {
-        if (ReferenceEquals(null, other)) return false;     //If the other contextual lexeme is null, it cannot be equal to this contextual lexeme.
-        if (ReferenceEquals(this, other)) return true;      //If the other contextual lexeme is this contextual lexeme, it is equal to this contextual lexeme.
+    public override bool Equals(Lexeme? other) {
+        if (ReferenceEquals(null, other)) return false;     //If the other lexeme is null, it cannot be equal to this contextual lexeme.
+        if (ReferenceEquals(this, other)) return true;      //If the other lexeme is this contextual lexeme, it is equal to this contextual lexeme.
         
-        //The contextual lexemes are only equal if their properties are equal to each other.
-        return Identifier.Equals(other.Identifier)
+        //The lexemes are only equal if the other lexeme is a contextual lexeme and if their properties are equal to each other.
+        return other is ContextualLexeme otherContextualLexeme 
+            && Identifier.Equals(other.Identifier)
             && LexemePosition.Equals(other.LexemePosition)
-            && LexemeValue == other.LexemeValue;
+            && LexemeValue == otherContextualLexeme.LexemeValue;
     }
 
     public override bool Equals(object? obj) {

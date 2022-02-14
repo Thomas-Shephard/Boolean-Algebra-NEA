@@ -11,7 +11,9 @@ public sealed class Parser {
     /// The current queue of lexemes that are being processed so that they can be used to create the syntax tree.
     /// </summary>
     private Queue<Lexeme> LexemesQueue { get; set; }
-    
+    /// <summary>
+    /// The input boolean expression.
+    /// </summary>
     private string RawText { get; }
     /// <summary>
     /// Whether variable operands should be created as substitutable generic operands.
@@ -23,6 +25,7 @@ public sealed class Parser {
     /// Instantiates a new parser that will be able to produce a syntax tree from a given collection of lexemes.
     /// </summary>
     /// <param name="lexemes">The collection of lexemes that the syntax tree will be created from.</param>
+    /// <param name="rawText">The input boolean expression.</param>
     /// <param name="useGenericOperands">Whether variable operands should be created as substitutable generic operands.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="lexemes"/> is null.</exception>
     public Parser(IEnumerable<Lexeme> lexemes, string rawText, bool useGenericOperands = false) {
@@ -73,7 +76,7 @@ public sealed class Parser {
                 //If a previous syntax item was provided, an error will be thrown.
                 //An operand should only have an operator before it and that would be generated at a lower precedence.
                 if (previousSyntaxItem is not null)
-                    throw new ParserException(currentLexeme.LexemePosition, "The parser expected an operator before the operand", RawText);
+                    throw new ParserException("The parser expected an operator before the operand", currentLexeme.LexemePosition, RawText);
                 //If generic operands are being used and if the current lexeme is a variable, create a generic operand.
                 nextSyntaxItem = UseGenericOperands && currentLexeme.Identifier.Name == "VARIABLE"
                     //A generic operand has the property is repeating, when it begins with the string 'Items' whereas non-repeating generic operands begin with 'Item'.
@@ -90,11 +93,11 @@ public sealed class Parser {
                 //If a previous syntax item was provided, an error will be thrown.
                 //A unary operator should only be nested inside of an existing operator and that would be generated without a previous syntax item.
                 if (previousSyntaxItem is not null)
-                    throw new ParserException(currentLexeme.LexemePosition, "The parser expected an operator before the unary operator", RawText);
+                    throw new ParserException("The parser expected an operator before the unary operator", currentLexeme.LexemePosition, RawText);
                 //Create a new syntax item at the current precedence and with the same end identifier type.
                 //If a new syntax item is not created, an error will be thrown as a unary operator always needs a child node.
                 nextSyntaxItem = InternalParse(currentLexeme.Identifier.Precedence, endIdentifierType: endIdentifierType)
-                                 ?? throw new ParserException(currentLexeme.LexemePosition, "The parser expected an expression after the unary operator", RawText);
+                                 ?? throw new ParserException("The parser expected an expression after the unary operator", currentLexeme.LexemePosition, RawText);
                 //Create a new unary operator with the identifier and the previously generated syntax item as a child node.
                 nextSyntaxItem = new UnaryOperator(currentLexeme.Identifier, nextSyntaxItem);
                 break;
@@ -104,7 +107,7 @@ public sealed class Parser {
                 //A binary operator is required to have two or more nested syntax items, one of which is required to come before the binary operator.
                 //e.g. A + A, the first A comes before the + operator.
                 if (previousSyntaxItem is null)
-                    throw new ParserException(currentLexeme.LexemePosition, "The parser expected an expression before the binary operator", RawText);
+                    throw new ParserException("The parser expected an expression before the binary operator", currentLexeme.LexemePosition, RawText);
                 //All of the child syntax items are added to a list with the previous syntax item as the first item.
                 List<ISyntaxItem> childSyntaxItems = new() { previousSyntaxItem };
                 //A do while loop is used as there must be at least one more child syntax items for the binary operator to be successfully parsed.
@@ -113,7 +116,7 @@ public sealed class Parser {
                     //The increased precedence is required to ensure that the child syntax items are parsed in the correct order.
                     //If the newly generated child syntax item is null, an error will be thrown.
                     childSyntaxItems.Add(InternalParse(currentLexeme.Identifier.Precedence + 1, endIdentifierType: endIdentifierType)
-                        ?? throw new ParserException(currentLexeme.LexemePosition, "The parser expected an expression after the binary operator", RawText));
+                        ?? throw new ParserException("The parser expected an expression after the binary operator", currentLexeme.LexemePosition, RawText));
                 //Continue to add new child syntax items whilst the next identifier is the same as the current identifier.
                 //A + A + A would have the same identifier as the first is '+' and the second is also '+'.
                 } while (IsNextSyntaxIdentifierOfSameLexemeType(currentLexeme.Identifier));
@@ -125,17 +128,17 @@ public sealed class Parser {
                 //If a previous syntax item was provided, an error will be thrown.
                 //A grouping operator should only be nested inside of an existing operator and that would be generated without a previous syntax item.
                 if (previousSyntaxItem is not null)
-                    throw new ParserException(currentLexeme.LexemePosition, "The parser expected an operator before the opening parenthesis", RawText);
+                    throw new ParserException("The parser expected an operator before the opening parenthesis", currentLexeme.LexemePosition, RawText);
                 //Store the current lexeme's name to determine the type of it later.
                 string initialGroupingOperatorName = currentLexeme.Identifier.Name;
                 //Create a new syntax item at the initial precedence and with the grouping operator end as the identifier type.
                 //The initial precedence is used so that another tree can be created with all the available operators.
                 //If a new syntax item is not created, an error will be thrown as a unary operator always needs a child node.
                 nextSyntaxItem = InternalParse(endIdentifierType: IdentifierType.GROUPING_OPERATOR_END)
-                    ?? throw new ParserException(currentLexeme.LexemePosition, "The parser expected an expression after the opening parenthesis", RawText);
+                    ?? throw new ParserException("The parser expected an expression after the opening parenthesis", currentLexeme.LexemePosition, RawText);
                 //If the lexeme after the child node is generated is not a grouping operator end with the initial grouping operator's name, an error will be thrown.
                 if(!IsNextIdentifierOfSameIdentifierTypeAndName(IdentifierType.GROUPING_OPERATOR_END, initialGroupingOperatorName))
-                    throw new ParserException(currentLexeme.LexemePosition, "The parser expected a closing parenthesis", RawText);
+                    throw new ParserException("The parser expected a closing parenthesis", currentLexeme.LexemePosition, RawText);
                 //If the grouping operator was a repeating operator, then the child node is added as the child node of the new repeating operator.
                 //Else, it is left as is.
                 if (initialGroupingOperatorName == "REPEATING") {
@@ -144,7 +147,7 @@ public sealed class Parser {
                 break;
             //If the current lexeme is the end of a grouping operator, then an error has occurred as the parser should have already found the start of the operator and set that as the end identifier type.
             case IdentifierType.GROUPING_OPERATOR_END:
-                throw new ParserException(currentLexeme.LexemePosition, "The parser did not expect a closing parenthesis", RawText);
+                throw new ParserException("The parser did not expect a closing parenthesis", currentLexeme.LexemePosition, RawText);
             //If the current lexeme is none of the above, then an error has occurred as the lexer has mistakenly produced a lexeme that the parser does not expect.
             default:
                 throw new InvalidOperationException("An unknown syntax identifier was mistakenly lexed");
@@ -164,9 +167,10 @@ public sealed class Parser {
     }
 
     private bool IsNextIdentifierOfSameIdentifierTypeAndName(IdentifierType identifierType, string name) {
-        //The next lexeme only has an identifier equal to the current identifier if:
+        //The next lexeme only has the same identifier type and name if:
         //  1. Another lexeme exists in the queue.
-        //  2. The next lexeme has an identifier that satisfies the Equals() method of the current identifier.
+        //  2. The next lexeme has an identifier type equal to the current identifier type.
+        //  3. The next lexeme has an identifier name equal to the current identifier name.
         //The next lexeme in the queue is then discarded if this is true.
         return LexemesQueue.Count > 0
             && LexemesQueue.TryPeek(out Lexeme? currentLexeme)

@@ -16,10 +16,10 @@ public class ParserException : Exception {
     /// <param name="rawText">The input boolean expression as a string.</param>
     /// <param name="message">The message that describes the exception.</param>
     /// <exception cref="ArgumentNullException">Thrown when either <paramref name="lexemePosition"/> or <paramref name="rawText"/> or <paramref name="message"/> is null.</exception>
-    public ParserException(LexemePosition lexemePosition, string rawText, string message) {
+    public ParserException(string message, LexemePosition lexemePosition, string rawText) {
+        if (message is null) throw new ArgumentNullException(nameof(message));
         if (lexemePosition is null) throw new ArgumentNullException(nameof(lexemePosition));
         if (rawText is null) throw new ArgumentNullException(nameof(rawText));
-        if (message is null) throw new ArgumentNullException(nameof(message));
-        Message = $"{message} '{rawText.Substring(lexemePosition.StartPosition, lexemePosition.Length)}' that starts at index {lexemePosition.StartPosition} and ends at index {lexemePosition.EndPosition}";
+        Message = $"{message} '{rawText.Substring(lexemePosition.StartPosition, lexemePosition.Length)}' (at position {lexemePosition.StartPosition} to {lexemePosition.EndPosition})";
     }
 }

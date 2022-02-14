@@ -26,17 +26,18 @@ public class Lexeme : IEquatable<Lexeme> {
     public override string ToString() {
         //This method is not designed to be used in production code and is only for debugging purposes.
         if (Debugger.IsAttached) {
-            return$"[{Identifier}, {LexemePosition}]"; //Outputs in the format [Identifier, LexemePosition].
+            return$"[{Identifier.Name}, {LexemePosition}]"; //Outputs in the format [Identifier, LexemePosition].
         }
         throw new InvalidOperationException("This method is only for debugging purposes.");
     }
 
-    public bool Equals(Lexeme? other) {
+    public virtual bool Equals(Lexeme? other) {
         if (ReferenceEquals(null, other)) return false; //If the other lexeme is null, it cannot be equal to this lexeme
         if (ReferenceEquals(this, other)) return true;  //If the other lexeme is this lexeme, it is equal to this lexeme
-        
+
         //The lexemes are only equal if their properties are equal to each other.
-        return Identifier.Equals(other.Identifier)
+        return other is not ContextualLexeme
+            && Identifier.Equals(other.Identifier)
             && LexemePosition.Equals(other.LexemePosition);
     }
 

@@ -1,12 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using BooleanAlgebra.Lexer.Lexemes;
-using BooleanAlgebra.Parser.Syntax;
-using BooleanAlgebra.Simplifier;
-
-namespace BooleanAlgebra.Tests; 
-
-public static class SimplificationUtils {
+﻿namespace BooleanAlgebra.Tests.SimplificationTests;
+public static class SimplificationTestUtils {
     public static bool Compare(string input, string expected) {
         //Lexing the input and expected
         List<Lexeme> inputLexemes = new Lexer.Lexer(input).Lex();

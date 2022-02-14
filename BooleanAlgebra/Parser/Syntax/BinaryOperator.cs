@@ -12,8 +12,13 @@ public class BinaryOperator : IMultiChildSyntaxItem {
     /// </summary>
     /// <param name="identifier">The type that the binary operator is of.</param>
     /// <param name="childNodes">The child nodes that are nested inside the binary operator.</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="childNodes"/> has a count less than 2.</exception>
     /// <exception cref="ArgumentNullException">Thrown when either <paramref name="identifier"/> or <paramref name="childNodes"/> is null.</exception>
     public BinaryOperator(Identifier identifier, ISyntaxItem[] childNodes) {
+        //Uses a pattern to first check that the child nodes array is not null and then checks if the length of the array is smaller than 2.
+        if (childNodes is { Length: < 2 }) {
+            throw new ArgumentException("A binary operator must have at least two child nodes");
+        }
         Identifier = identifier ?? throw new ArgumentNullException(nameof(identifier));
         ChildNodes = childNodes ?? throw new ArgumentNullException(nameof(childNodes));
     }
